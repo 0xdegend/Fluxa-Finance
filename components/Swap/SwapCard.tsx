@@ -146,16 +146,16 @@ const SwapCard: React.FC = () => {
         style={{ boxShadow: "0 4px 24px 0 rgba(0,0,0,0.04)" }}
       >
         {/* Sell row */}
-        <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center justify-between mb-2 ">
           <label
             htmlFor="sell-amount"
-            className="text-xs font-semibold text-gray-600"
+            className="text-xs font-semibold text-gray-600 font-audiowide"
           >
             Sell
           </label>
           <div className="flex gap-2">
             <button
-              className="text-xs px-2 py-1 bg-gray-100 rounded-full font-medium hover:bg-gray-200 text-black hover:cursor-pointer"
+              className="text-xs px-2 py-1 bg-gray-100 rounded-full font-medium hover:bg-gray-200 text-black hover:cursor-pointer font-audiowide"
               onClick={() => handleQuick(1)}
               aria-label="Set max amount"
             >
@@ -313,7 +313,7 @@ const SwapCard: React.FC = () => {
         </div>
 
         {/* Slippage control */}
-        <div className="flex items-center gap-2 mb-2 mt-2">
+        <div className="flex items-center gap-2 mb-2">
           <label htmlFor="slippage" className="text-xs text-gray-500">
             Slippage
           </label>
@@ -325,7 +325,7 @@ const SwapCard: React.FC = () => {
             step="0.1"
             value={slippage}
             onChange={(e) => setSlippage(Number(e.target.value))}
-            className="border rounded px-2 py-1 w-20 text-xs text-black no-spinner outline-none"
+            className="border-[#6b63633f] border rounded px-2 py-1 w-20 text-xs text-black no-spinner outline-none mt-3"
             aria-label="Slippage tolerance"
           />
           <span className="text-xs text-gray-400">%</span>

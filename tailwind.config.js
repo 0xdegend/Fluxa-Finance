@@ -18,9 +18,7 @@ module.exports = {
         "fluxa-glow": "var(--fluxa-glow)",
       },
       fontFamily: {
-        display: ["Poppins", "Inter", "sans-serif"],
-        sans: ["Inter", "system-ui", "sans-serif"],
-        mono: ["Roboto Mono", "ui-monospace", "monospace"],
+        audiowide: ["var(--font-audiowide)", "sans-serif"],
       },
       borderRadius: {
         "xl-2": "16px",

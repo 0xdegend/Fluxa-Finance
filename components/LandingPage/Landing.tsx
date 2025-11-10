@@ -24,16 +24,18 @@ const tokens = [
 const Landing: React.FC = () => {
   return (
     <div className="min-h-screen w-full flex flex-col items-center justify-center relative overflow-hidden">
-      {/* Full-page SVG grid background */}
-      <div className="absolute inset-0 w-full h-full flex items-center justify-center pointer-events-none z-0">
-        <div className="w-[800px] h-[800px] opacity-90">
+      {/* Full-page SVG grid background, pointer-events-none on the absolute container */}
+      <div className="absolute inset-0 w-full h-full flex items-center justify-center z-0 pointer-events-none">
+        <div className="w-[900px] h-[900px] opacity-60">
           <GridBg />
         </div>
       </div>
 
-      <nav className="absolute top-0 left-0 w-full flex items-center justify-between px-6 py-4 z-10">
+      <nav className="top-0 left-0 w-full flex items-center justify-between px-6 py-4 relative">
         <div className="flex items-center gap-6">
-          <span className="font-bold text-lg text-indigo-700">Fluxa</span>
+          <span className="font-bold text-lg text-indigo-700 font-audiowide">
+            Fluxa
+          </span>
           <ul
             className="flex gap-4 text-sm text-gray-700"
             aria-label="Main navigation"
@@ -57,7 +59,7 @@ const Landing: React.FC = () => {
         </div>
         <div className="flex items-center gap-3">
           <button
-            className="px-4 py-2 rounded-md border-(--fluxa-border) bg-(--fluxa-accent) hover:text-white cursor-pointer text-white"
+            className="px-4 py-2 rounded-md border-(--fluxa-border) bg-(--fluxa-accent) hover:text-white cursor-pointer text-white "
             aria-label="Connect wallet"
           >
             Connect Wallet
@@ -84,8 +86,7 @@ const Landing: React.FC = () => {
         </div>
       </nav>
 
-      {/* Main content: centered column */}
-      <main className="flex flex-col items-center justify-center w-full flex-1 pt-24 pb-8 z-10">
+      <main className="flex flex-col items-center justify-center w-full flex-1 pt-24 pb-8 relative">
         <h1 className="sr-only">Fluxa Finance - Swap</h1>
         <section
           className="w-full max-w-md bg-white/90 rounded-2xl shadow-xl p-6 flex flex-col items-center mb-6"
