@@ -83,30 +83,34 @@ const SwapCard: React.FC = () => {
 
   function handleQuick(percent: number) {
     setAmount((fromToken.balance * percent).toFixed(4));
-    setPreview(null);
   }
 
-  function handlePreview() {
+  // Auto-preview calculation as user types
+  React.useEffect(() => {
     const err = validate();
     setError(err);
-    if (err) return;
+    if (err) {
+      setPreview(null);
+      return;
+    }
     // TODO: Replace with real price/fee/impact logic
-    const rate =
-      fromToken.symbol === "ETH" && toToken.symbol === "USDC" ? 2000 : 1 / 2000;
     const priceImpact = 0.2 + Math.random() * 0.3; // 0.2-0.5%
     const fee = parsedAmount * 0.001; // 0.1%
-    const estOut =
-      fromToken.symbol === "ETH" && toToken.symbol === "USDC"
-        ? parsedAmount * 2000
-        : parsedAmount / 2000;
+    let estOut = 0;
+    if (fromToken.symbol === "ETH" && toToken.symbol === "USDC") {
+      estOut = parsedAmount * 2000;
+    } else if (fromToken.symbol === "USDC" && toToken.symbol === "ETH") {
+      estOut = parsedAmount / 2000;
+    } else if (fromToken.symbol === "ETH" && toToken.symbol === "DAI") {
+      estOut = parsedAmount * 2000; // treat DAI like USDC for demo
+    } else if (fromToken.symbol === "DAI" && toToken.symbol === "ETH") {
+      estOut = parsedAmount / 2000;
+    } else {
+      estOut = parsedAmount; // same token or unknown pair
+    }
     const minReceived = estOut * (1 - slippage / 100);
-    setPreview({
-      estOut,
-      priceImpact,
-      fee,
-      minReceived,
-    });
-  }
+    setPreview({ estOut, priceImpact, fee, minReceived });
+  }, [amount, slippage, fromToken, toToken]);
 
   async function handleSwap() {
     setSwapping(true);
@@ -124,6 +128,7 @@ const SwapCard: React.FC = () => {
 
   // Animation fallback for preview
   const [showAnim, setShowAnim] = useState(false);
+  const [showPreview, setShowPreview] = useState(true);
   React.useEffect(() => {
     if (preview) {
       setShowAnim(true);
@@ -195,23 +200,26 @@ const SwapCard: React.FC = () => {
         <div className="flex-1 flex flex-col items-end">
           <input
             id="sell-amount"
-            type="number"
-            min="0"
+            type="text"
+            inputMode="decimal"
+            pattern="[0-9]*[.,]?[0-9]*"
             step="any"
             value={amount}
             onChange={(e) => {
               setAmount(e.target.value);
               setPreview(null);
             }}
-            className="text-2xl font-mono text-right outline-none bg-transparent w-full"
-            placeholder="0.0"
+            className="text-2xl font-mono text-right outline-none bg-transparent w-full text-black no-spinner"
+            placeholder="0"
             aria-label="Sell amount"
           />
           <span className="text-xs text-gray-400">
             $
-            {getUsdValue(fromToken, amount).toLocaleString(undefined, {
-              maximumFractionDigits: 2,
-            })}
+            {amount
+              ? getUsdValue(fromToken, amount).toLocaleString(undefined, {
+                  maximumFractionDigits: 2,
+                })
+              : "0.00"}
           </span>
         </div>
       </div>
@@ -269,7 +277,7 @@ const SwapCard: React.FC = () => {
                 unoptimized
               />
             </div>
-            <span className="font-semibold">{toToken.symbol}</span>
+            <span className="font-semibold text-black">{toToken.symbol}</span>
             <svg
               width="16"
               height="16"
@@ -284,7 +292,7 @@ const SwapCard: React.FC = () => {
           </button>
           <div className="flex-1 flex flex-col items-end">
             <span className="text-2xl font-mono text-right text-gray-700">
-              {preview ? preview.estOut.toFixed(4) : "--"}
+              {preview ? preview.estOut.toFixed(0) : "0"}
             </span>
             <span className="text-xs text-gray-400">
               $
@@ -315,43 +323,57 @@ const SwapCard: React.FC = () => {
         />
         <span className="text-xs text-gray-400">%</span>
       </div>
-      {/* Error */}
-      {error && <div className="text-red-500 text-xs mb-2">{error}</div>}
-      {/* Preview CTA */}
-      <div className="flex gap-2 mb-2">
+      {/* Preview dropdown toggle */}
+      <div className="flex justify-center mb-2">
         <button
-          className="flex-1 bg-blue-600 text-white py-2 rounded-lg font-semibold shadow hover:bg-blue-700 disabled:opacity-50"
-          onClick={handlePreview}
-          disabled={swapping}
-          aria-label="Preview swap"
+          type="button"
+          aria-label={showPreview ? "Hide preview" : "Show preview"}
+          onClick={() => setShowPreview((v) => !v)}
+          className="p-1 rounded-full hover:bg-gray-100 focus:outline-none"
         >
-          Preview Swap
+          <svg
+            width="24"
+            height="24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            viewBox="0 0 24 24"
+            className={`transition-transform duration-200 ${
+              showPreview ? "rotate-180" : ""
+            }`}
+            aria-hidden="true"
+          >
+            <path d="M6 9l6 6 6-6" />
+          </svg>
         </button>
       </div>
-      {/* Preview box with fade-in */}
-      {preview && (
+      {/* Error */}
+      {error && <div className="text-red-500 text-xs mb-2">{error}</div>}
+
+      {/* Preview info shown in toToken input area, toggled by dropdown */}
+      {preview && showPreview && (
         <div
           className={`transition-opacity duration-300 ${
             showAnim ? "opacity-0" : "opacity-100"
           } bg-gray-50 rounded-lg p-4 mb-2 border border-gray-100`}
           aria-live="polite"
         >
-          <div className="mb-1">
+          <div className="mb-1 text-black">
             Estimated Output:{" "}
             <b>
               {preview.estOut.toFixed(4)} {toToken.symbol}
             </b>
           </div>
-          <div className="mb-1">
+          <div className="mb-1 text-black">
             Price Impact: <b>{preview.priceImpact.toFixed(2)}%</b>
           </div>
-          <div className="mb-1">
+          <div className="mb-1 text-black">
             Fee:{" "}
             <b>
               {preview.fee.toFixed(4)} {fromToken.symbol}
             </b>
           </div>
-          <div>
+          <div className="text-black">
             Minimum Received:{" "}
             <b>
               {preview.minReceived.toFixed(4)} {toToken.symbol}

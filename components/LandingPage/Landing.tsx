@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import TokenSummaryCard from "../TokenSummaryCard";
+import TokenSummaryCard from "../Swap/TokenSummaryCard";
 import SwapCard from "../Swap/SwapCard";
 
 // Placeholder token data and price series
