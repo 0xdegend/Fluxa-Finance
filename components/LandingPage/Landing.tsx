@@ -3,6 +3,7 @@ import React from "react";
 import TokenSummaryCard from "../Swap/TokenSummaryCard";
 import SwapCard from "../Swap/SwapCard";
 import GridBg from "../Common/GridBg";
+import PriceMarquee from "../Common/PriceMarquee";
 
 // Placeholder token data and price series
 const tokens = [
@@ -106,6 +107,7 @@ const Landing: React.FC = () => {
             <TokenSummaryCard key={t.token} {...t} />
           ))}
         </section>
+        <PriceMarquee />
       </main>
       {/* Responsive: stack TokenSummaryCards vertically on small screens */}
       <style jsx>{`
