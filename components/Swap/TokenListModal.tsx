@@ -46,12 +46,12 @@ const TokenListModal = ({
       onClick={onClose}
     >
       <div className="bg-white rounded-xl shadow-lg p-4 min-w-[380px]">
-        <h3 className="font-bold mb-2">Select a token</h3>
+        <h3 className="font-bold mb-2 font-[audiowide]">Select a token</h3>
         <ul>
           {tokens.map((t) => (
             <li key={t.symbol}>
               <button
-                className="w-full text-left py-2 px-2 hover:bg-gray-100 rounded flex items-center gap-2"
+                className="w-full text-left py-2 px-2 hover:bg-gray-100 rounded flex items-center gap-2 cursor-pointer"
                 onClick={() => {
                   onSelect(t);
                   onClose();
@@ -68,7 +68,7 @@ const TokenListModal = ({
                     unoptimized
                   />
                 </div>
-                <span className="text-black">
+                <span className="text-black font-[audiowide]">
                   {t.symbol} - {t.name}
                 </span>
               </button>

@@ -376,16 +376,16 @@ const SwapCard: React.FC = () => {
             } bg-gray-50 rounded-lg p-4 mb-2 border border-gray-100`}
             aria-live="polite"
           >
-            <div className="mb-1 text-black font-[audiowide]">
+            <div className="mb-2 text-black font-[audiowide]">
               Estimated Output:{" "}
               <b>
-                {preview.estOut.toFixed(4)} {toToken.symbol}
+                {preview.estOut.toFixed(1)} {toToken.symbol}
               </b>
             </div>
-            <div className="mb-1 text-black font-[audiowide]">
+            <div className="mb-2 text-black font-[audiowide]">
               Price Impact: <b>{preview.priceImpact.toFixed(2)}%</b>
             </div>
-            <div className="mb-1 text-black font-[audiowide]">
+            <div className="mb-2 text-black font-[audiowide]">
               Fee:{" "}
               <b>
                 {preview.fee.toFixed(4)} {fromToken.symbol}
@@ -394,7 +394,7 @@ const SwapCard: React.FC = () => {
             <div className="text-black font-[audiowide]">
               Minimum Received:{" "}
               <b>
-                {preview.minReceived.toFixed(4)} {toToken.symbol}
+                {preview.minReceived.toFixed(1)} {toToken.symbol}
               </b>
             </div>
           </div>
