@@ -2,6 +2,7 @@
 import React from "react";
 import TokenSummaryCard from "../Swap/TokenSummaryCard";
 import SwapCard from "../Swap/SwapCard";
+import GridBg from "../Common/GridBg";
 
 // Placeholder token data and price series
 const tokens = [
@@ -22,8 +23,14 @@ const tokens = [
 // Async Next.js page component
 const Landing: React.FC = () => {
   return (
-    <div className="min-h-screen w-full flex flex-col items-center justify-center bg-[url('/grid.png')] bg-repeat relative">
-      {/* Top nav and wallet connect */}
+    <div className="min-h-screen w-full flex flex-col items-center justify-center relative overflow-hidden">
+      {/* Full-page SVG grid background */}
+      <div className="absolute inset-0 w-full h-full flex items-center justify-center pointer-events-none z-0">
+        <div className="w-[800px] h-[800px] opacity-90">
+          <GridBg />
+        </div>
+      </div>
+
       <nav className="absolute top-0 left-0 w-full flex items-center justify-between px-6 py-4 z-10">
         <div className="flex items-center gap-6">
           <span className="font-bold text-lg text-indigo-700">Fluxa</span>
@@ -50,7 +57,7 @@ const Landing: React.FC = () => {
         </div>
         <div className="flex items-center gap-3">
           <button
-            className="px-4 py-2 bg-indigo-600 text-white rounded shadow hover:bg-indigo-700 focus:outline-none"
+            className="px-4 py-2 rounded-md border-(--fluxa-border) bg-(--fluxa-accent) hover:text-white cursor-pointer text-white"
             aria-label="Connect wallet"
           >
             Connect Wallet
@@ -78,7 +85,7 @@ const Landing: React.FC = () => {
       </nav>
 
       {/* Main content: centered column */}
-      <main className="flex flex-col items-center justify-center w-full flex-1 pt-24 pb-8">
+      <main className="flex flex-col items-center justify-center w-full flex-1 pt-24 pb-8 z-10">
         <h1 className="sr-only">Fluxa Finance - Swap</h1>
         <section
           className="w-full max-w-md bg-white/90 rounded-2xl shadow-xl p-6 flex flex-col items-center mb-6"
@@ -87,7 +94,7 @@ const Landing: React.FC = () => {
           <SwapCard />
         </section>
         <section
-          className="w-full max-w-md flex flex-row gap-4 justify-center items-stretch md:flex-row flex-col md:gap-4 gap-2"
+          className="w-full max-w-md flex  justify-center items-stretch md:flex-row flex-col md:gap-4 gap-2"
           aria-label="Token summaries"
         >
           {/* TokenSummaryCards: replace placeholder data with real web3 data */}

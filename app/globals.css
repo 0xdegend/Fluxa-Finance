@@ -1,26 +1,90 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* neutrals */
+  --fluxa-white: #ffffff;
+  --fluxa-black: #0a0f17;
+  --fluxa-text: #071225;
+  --fluxa-muted: #5c6670;
+
+  /* accents */
+  --fluxa-accent: #00c7ff;
+  --fluxa-accent-600: #00a5cc;
+  --fluxa-violet: #6f4cff;
+  --fluxa-reward: #ffd166;
+
+  /* glass (light) */
+  --fluxa-glass-light: rgba(255, 255, 255, 0.72);
+  --fluxa-glass-light-border: rgba(17, 24, 39, 0.06);
+  --fluxa-glass-frost: rgba(255, 255, 255, 0.3);
+
+  /* glass (dark) */
+  --fluxa-glass-dark: rgba(10, 15, 23, 0.52);
+  --fluxa-glass-dark-border: rgba(255, 255, 255, 0.06);
+
+  /* shadows & glow */
+  --fluxa-shadow-soft: 0 8px 30px rgba(10, 15, 23, 0.08);
+  --fluxa-glow: 0 10px 40px rgba(0, 199, 255, 0.1);
+
+  /* brand gradient */
+  --fluxa-gradient: linear-gradient(90deg, #00c7ff 0%, #6f4cff 70%);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+.dark {
+  --fluxa-white: #071225; /* invert naming for convenience on dark mode */
+  --fluxa-black: #ffffff;
+  --fluxa-text: #e8f9ff;
+  --fluxa-muted: #9fb0bd;
+  --fluxa-accent: #00c7ff;
+  --fluxa-violet: #6f4cff;
+  --fluxa-glass-light: rgba(255, 255, 255, 0.04);
+  --fluxa-glass-light-border: rgba(255, 255, 255, 0.06);
+  --fluxa-glass-dark: rgba(6, 12, 18, 0.6);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* glassmorphism utility classes (use alongside Tailwind) */
+.glass {
+  background: var(--fluxa-glass-light);
+  border: 1px solid var(--fluxa-glass-light-border);
+  backdrop-filter: blur(10px) saturate(120%);
+  -webkit-backdrop-filter: blur(10px) saturate(120%);
+  box-shadow: var(--fluxa-shadow-soft);
+  border-radius: 16px;
 }
 
-body {
+/* dark variant */
+.glass-dark {
+  background: var(--fluxa-glass-dark);
+  border: 1px solid var(--fluxa-glass-dark-border);
+  backdrop-filter: blur(10px) saturate(120%);
+  -webkit-backdrop-filter: blur(10px) saturate(120%);
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.45);
+  border-radius: 16px;
+}
+
+/* inner sheen line for premium feel */
+.glass::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.06),
+    rgba(255, 255, 255, 0)
+  );
+  mix-blend-mode: overlay;
+}
+
+.no-spinner::-webkit-outer-spin-button,
+.no-spinner::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
-}
+} */
