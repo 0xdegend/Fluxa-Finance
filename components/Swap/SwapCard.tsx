@@ -149,20 +149,20 @@ const SwapCard: React.FC = () => {
         <div className="flex items-center justify-between mb-2 ">
           <label
             htmlFor="sell-amount"
-            className="text-xs font-semibold text-gray-600 font-audiowide"
+            className="text-xs font-semibold text-gray-600 font-[audiowide]"
           >
             Sell
           </label>
           <div className="flex gap-2">
             <button
-              className="text-xs px-2 py-1 bg-gray-100 rounded-full font-medium hover:bg-gray-200 text-black hover:cursor-pointer font-audiowide"
+              className="text-xs px-2 py-1 bg-gray-100 rounded-full font-medium hover:bg-gray-200 text-black hover:cursor-pointer font-[audiowide]"
               onClick={() => handleQuick(1)}
               aria-label="Set max amount"
             >
               Max
             </button>
             <button
-              className="text-xs px-2 py-1 bg-gray-100 rounded-full font-medium hover:bg-gray-200 text-black hover:cursor-pointer"
+              className="text-xs px-2 py-1 bg-gray-100 rounded-full font-medium hover:bg-gray-200 text-black hover:cursor-pointer font-[audiowide]"
               onClick={() => handleQuick(0.5)}
               aria-label="Set 50 percent amount"
             >
@@ -172,7 +172,7 @@ const SwapCard: React.FC = () => {
         </div>
         <div className="flex items-center gap-3 mb-2">
           <button
-            className="flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-200 bg-gray-50 hover:bg-gray-100 focus:outline-none text-black"
+            className="flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-200 bg-gray-50 hover:bg-gray-100 focus:outline-none text-black font-[audiowide]"
             onClick={() => setShowFromModal(true)}
             aria-label="Select sell token"
           >
@@ -187,7 +187,9 @@ const SwapCard: React.FC = () => {
                 unoptimized
               />
             </div>
-            <span className="font-semibold">{fromToken.symbol}</span>
+            <span className="font-semibold font-[audiowide]">
+              {fromToken.symbol}
+            </span>
             <svg
               width="16"
               height="16"
@@ -214,11 +216,11 @@ const SwapCard: React.FC = () => {
               }}
               onFocus={() => setAmountTouched(true)}
               onBlur={() => setAmountTouched(true)}
-              className="text-2xl font-mono text-right outline-none bg-transparent w-full text-black "
+              className="text-2xl text-right outline-none bg-transparent w-full text-black font-[audiowide]"
               placeholder="0"
               aria-label="Sell amount"
             />
-            <span className="text-xs text-gray-400">
+            <span className="text-xs font-[audiowide] text-gray-400">
               $
               {amount
                 ? getUsdValue(fromToken, amount).toLocaleString(undefined, {
@@ -229,7 +231,7 @@ const SwapCard: React.FC = () => {
           </div>
         </div>
         <div className="flex items-center justify-between mb-2">
-          <span className="text-xs text-[--fluxa-muted)">
+          <span className="text-xs font-[audiowide] text-[--fluxa-muted)">
             Bal: {fromToken.balance}
           </span>
         </div>
@@ -262,14 +264,14 @@ const SwapCard: React.FC = () => {
         <div>
           <label
             htmlFor="sell-amount"
-            className="text-xs font-semibold text-gray-600"
+            className="text-xs font-semibold text-gray-600 font-[audiowide]"
           >
             Buy
           </label>
 
           <div className="flex items-center gap-3 mb-2">
             <button
-              className="flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-200 bg-gray-50 hover:bg-gray-100 focus:outline-none"
+              className="flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-200 bg-gray-50 hover:bg-gray-100 focus:outline-none font-[audiowide]"
               onClick={() => setShowToModal(true)}
               aria-label="Select buy token"
             >
@@ -284,7 +286,9 @@ const SwapCard: React.FC = () => {
                   unoptimized
                 />
               </div>
-              <span className="font-semibold text-black">{toToken.symbol}</span>
+              <span className="font-semibold text-black font-[audiowide]">
+                {toToken.symbol}
+              </span>
               <svg
                 width="16"
                 height="16"
@@ -298,10 +302,10 @@ const SwapCard: React.FC = () => {
               </svg>
             </button>
             <div className="flex-1 flex flex-col items-end">
-              <span className="text-2xl font-mono text-right text-gray-700">
+              <span className="text-2xl text-right text-gray-700 font-[audiowide]">
                 {preview ? preview.estOut.toFixed(0) : "0"}
               </span>
-              <span className="text-xs text-gray-400">
+              <span className="text-xs font-[audiowide] text-gray-400">
                 $
                 {getUsdValue(
                   toToken,
@@ -314,7 +318,10 @@ const SwapCard: React.FC = () => {
 
         {/* Slippage control */}
         <div className="flex items-center gap-2 mb-2">
-          <label htmlFor="slippage" className="text-xs text-gray-500">
+          <label
+            htmlFor="slippage"
+            className="text-xs text-gray-500 font-[audiowide]"
+          >
             Slippage
           </label>
           <input
@@ -325,7 +332,7 @@ const SwapCard: React.FC = () => {
             step="0.1"
             value={slippage}
             onChange={(e) => setSlippage(Number(e.target.value))}
-            className="border-[#6b63633f] border rounded px-2 py-1 w-20 text-xs text-black no-spinner outline-none mt-3"
+            className="border-[#6b63633f] border rounded px-2 py-1 w-20 text-xs text-black no-spinner outline-none mt-3 font-[audiowide]"
             aria-label="Slippage tolerance"
           />
           <span className="text-xs text-gray-400">%</span>
@@ -356,7 +363,9 @@ const SwapCard: React.FC = () => {
         </div>
         {/* Error */}
         {amountTouched && error && (
-          <div className="text-red-500 text-xs mb-2">{error}</div>
+          <div className="text-red-500 text-xs mb-2 font-[audiowide]">
+            {error}
+          </div>
         )}
 
         {/* Preview info shown in toToken input area, toggled by dropdown */}
@@ -367,22 +376,22 @@ const SwapCard: React.FC = () => {
             } bg-gray-50 rounded-lg p-4 mb-2 border border-gray-100`}
             aria-live="polite"
           >
-            <div className="mb-1 text-black">
+            <div className="mb-1 text-black font-[audiowide]">
               Estimated Output:{" "}
               <b>
                 {preview.estOut.toFixed(4)} {toToken.symbol}
               </b>
             </div>
-            <div className="mb-1 text-black">
+            <div className="mb-1 text-black font-[audiowide]">
               Price Impact: <b>{preview.priceImpact.toFixed(2)}%</b>
             </div>
-            <div className="mb-1 text-black">
+            <div className="mb-1 text-black font-[audiowide]">
               Fee:{" "}
               <b>
                 {preview.fee.toFixed(4)} {fromToken.symbol}
               </b>
             </div>
-            <div className="text-black">
+            <div className="text-black font-[audiowide]">
               Minimum Received:{" "}
               <b>
                 {preview.minReceived.toFixed(4)} {toToken.symbol}
@@ -392,7 +401,7 @@ const SwapCard: React.FC = () => {
         )}
         {/* CTA button */}
         <button
-          className={`w-full mt-2 py-3 rounded-md font-bold text-lg uppercase tracking-wide shadow-inner ${
+          className={`w-full mt-2 py-3 rounded-md font-bold text-lg uppercase tracking-wide shadow-inner font-[audiowide] ${
             isWalletConnected
               ? "bg-green-500 text-white hover:bg-green-600"
               : "bg-(--fluxa-accent) hover:bg-(--fluxa-accent-600) text-white shadow-(--fluxa-glow)"
@@ -412,15 +421,15 @@ const SwapCard: React.FC = () => {
         {success && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
             <div className="bg-white rounded-lg p-6 shadow-lg text-center">
-              <div className="text-green-600 text-2xl mb-2">
+              <div className="text-green-600 text-2xl mb-2 font-[audiowide]">
                 Swap Successful!
               </div>
-              <div className="mb-2">
+              <div className="mb-2 font-[audiowide]">
                 Tx Hash:{" "}
                 <span className="font-mono text-xs">{success.txHash}</span>
               </div>
               <button
-                className="mt-2 px-4 py-2 bg-blue-600 text-white rounded"
+                className="mt-2 px-4 py-2 bg-blue-600 text-white rounded font-[audiowide]"
                 onClick={() => setSuccess(null)}
                 aria-label="Close success modal"
               >

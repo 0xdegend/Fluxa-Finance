@@ -33,7 +33,7 @@ const Landing: React.FC = () => {
 
       <nav className="top-0 left-0 w-full flex items-center justify-between px-6 py-4 relative">
         <div className="flex items-center gap-6">
-          <span className="font-bold text-lg text-indigo-700 font-audiowide">
+          <span className="font-bold text-lg text-indigo-700 font-[audiowide]">
             Fluxa
           </span>
           <ul
@@ -41,17 +41,20 @@ const Landing: React.FC = () => {
             aria-label="Main navigation"
           >
             <li>
-              <a href="#" className="hover:text-indigo-600 font-medium">
+              <a
+                href="#"
+                className="hover:text-indigo-600 font-medium font-[audiowide]"
+              >
                 Swap
               </a>
             </li>
             <li>
-              <a href="#" className="hover:text-indigo-600">
+              <a href="#" className="hover:text-indigo-600 font-[audiowide]">
                 Liquidity
               </a>
             </li>
             <li>
-              <a href="#" className="hover:text-indigo-600">
+              <a href="#" className="hover:text-indigo-600 font-[audiowide]">
                 Portfolio
               </a>
             </li>
@@ -59,8 +62,8 @@ const Landing: React.FC = () => {
         </div>
         <div className="flex items-center gap-3">
           <button
-            className="px-4 py-2 rounded-md border-(--fluxa-border) bg-(--fluxa-accent) hover:text-white cursor-pointer text-white "
-            aria-label="Connect wallet"
+            className="px-4 py-2 rounded-md border-(--fluxa-border) bg-(--fluxa-accent) hover:text-white cursor-pointer text-white font-[audiowide] "
+            aria-label="Connect wallet "
           >
             Connect Wallet
           </button>
