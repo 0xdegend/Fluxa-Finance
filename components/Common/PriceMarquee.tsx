@@ -17,6 +17,7 @@ const DEFAULT_ASSETS = [
   { id: "binancecoin", symbol: "BNB" },
   { id: "solana", symbol: "SOL" },
   { id: "cardano", symbol: "ADA" },
+  { id: "pudgy-penguins", symbol: "PENGU" },
 ];
 
 function formatPrice(n?: number) {
@@ -127,7 +128,7 @@ export default function PriceMarquee({
         const res = await fetch(url);
         if (!res.ok) throw new Error("CoinGecko fetch failed");
         const json = await res.json();
-        console.log("CoinGecko metadata", json);
+
         if (!active) return;
         setTickers((prev) => {
           const copy = { ...prev };
@@ -176,12 +177,11 @@ export default function PriceMarquee({
       change: t.change24h,
     };
   });
-  console.log("Marquee items:", items);
 
   return (
     <div
       aria-live="polite"
-      className="w-full overflow-hidden border   bg-[(--fluxa-glass-dark)]"
+      className="w-full overflow-hidden bg-[(--fluxa-glass-dark)]"
     >
       <div
         style={{
@@ -203,8 +203,10 @@ export default function PriceMarquee({
               key={`${it.id}-${i}`}
               className="flex items-center gap-3 min-w-[220px]"
             >
-              <div className="font-semibold mr-1">{it.symbol}</div>
-              <div className="text-[(--fluxa-muted)]">
+              <div className="font-semibold mr-1 font-[audiowide]">
+                {it.symbol}
+              </div>
+              <div className="text-[(--fluxa-muted)] font-[audiowide]">
                 {it.price === undefined ? (
                   <span className="animate-pulse">...</span>
                 ) : (
@@ -212,10 +214,10 @@ export default function PriceMarquee({
                 )}
               </div>
               <div
-                className={`ml-2 text-xs font-semibold ${
+                className={`ml-2 text-xs font-semibold font-[audiowide] ${
                   it.change && it.change >= 0
-                    ? "text-[#12B886]"
-                    : "text-[#EF4444]"
+                    ? "text-[#00c7ff]"
+                    : "text-[#ffd166]"
                 }`}
               >
                 {it.change == null

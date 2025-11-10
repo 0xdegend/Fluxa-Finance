@@ -90,7 +90,7 @@ const Landing: React.FC = () => {
         </div>
       </nav>
 
-      <main className="flex flex-col items-center justify-center w-full flex-1 pt-24 pb-8 relative">
+      <main className="flex flex-col items-center justify-center w-full flex-1 pt-7 pb-8 relative">
         <h1 className="sr-only">Fluxa Finance - Swap</h1>
         <section
           className="w-full max-w-md bg-white/90 rounded-2xl shadow-xl p-6 flex flex-col items-center mb-6"
@@ -107,7 +107,9 @@ const Landing: React.FC = () => {
             <TokenSummaryCard key={t.token} {...t} />
           ))}
         </section>
-        <PriceMarquee />
+        <div className="mt-8">
+          <PriceMarquee />
+        </div>
       </main>
       {/* Responsive: stack TokenSummaryCards vertically on small screens */}
       <style jsx>{`
