@@ -3,11 +3,14 @@ import TokenListModal from "./TokenListModal";
 import Image from "next/image";
 import { Token, Preview, SwapParams, SwapResult } from "@/types";
 import { TOKENS } from "@/data";
+import { useLogin, usePrivy } from "@privy-io/react-auth";
+import { useAccount } from "wagmi";
 
 // TODO: Replace with real wallet connection logic
-const isWalletConnected = false;
 
 const SwapCard: React.FC = () => {
+  const { ready, authenticated, user } = usePrivy();
+  const isWalletConnected = authenticated;
   const [fromToken, setFromToken] = useState<Token>(TOKENS[0]);
   const [toToken, setToToken] = useState<Token>(TOKENS[1]);
   const [amount, setAmount] = useState<string>("");
@@ -19,6 +22,7 @@ const SwapCard: React.FC = () => {
   const [amountTouched, setAmountTouched] = useState(false);
   const [swapping, setSwapping] = useState(false);
   const [success, setSuccess] = useState<SwapResult | null>(null);
+  const { address } = useAccount();
 
   // TODO: Replace with real USD price lookup
   const getUsdValue = (token: Token, amt: string | number) => {

@@ -1,19 +1,20 @@
 "use client";
-import React, { use } from "react";
+import React from "react";
 import TokenSummaryCard from "../Swap/TokenSummaryCard";
 import SwapCard from "../Swap/SwapCard";
 import GridBg from "../Common/GridBg";
 import PriceMarquee from "../Common/PriceMarquee";
 import { tokens } from "@/data";
 import { useLogin, usePrivy } from "@privy-io/react-auth";
+import { useAccount } from "wagmi";
 
 // Async Next.js page component
 const Landing: React.FC = () => {
   const { ready, authenticated, user } = usePrivy();
+  const { address } = useAccount();
   const { login } = useLogin({
     onComplete: ({ user }) => {
       console.log("User logged in successfully", user);
-
       // Navigate to dashboard, show welcome message, etc.
     },
     onError: (error) => {
@@ -65,7 +66,7 @@ const Landing: React.FC = () => {
             aria-label="Connect wallet "
             onClick={login}
           >
-            Connect Wallet
+            {authenticated ? `${address}` : "Connect Wallet"}
           </button>
           <button
             className="p-2 rounded hover:bg-gray-200 focus:outline-none cursor-pointer"
