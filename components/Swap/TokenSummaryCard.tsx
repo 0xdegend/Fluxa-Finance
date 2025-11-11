@@ -1,12 +1,6 @@
 "use client";
 import React from "react";
-
-interface TokenSummaryCardProps {
-  token: string;
-  price: number;
-  change: number;
-  priceSeries: number[];
-}
+import type { TokenSummaryCardProps } from "@/types";
 
 // Placeholder sparkline using SVG
 function Sparkline({ series }: { series: number[] }) {

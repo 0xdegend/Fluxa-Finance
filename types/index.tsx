@@ -31,3 +31,10 @@ export interface SwapResult {
   txHash: string;
   status: "success" | "error";
 }
+
+export interface TokenSummaryCardProps {
+  token: string;
+  price: number;
+  change: number;
+  priceSeries: number[];
+}
