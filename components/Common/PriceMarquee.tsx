@@ -18,6 +18,10 @@ const DEFAULT_ASSETS = [
   { id: "solana", symbol: "SOL" },
   { id: "cardano", symbol: "ADA" },
   { id: "pudgy-penguins", symbol: "PENGU" },
+  { id: "hyperliquid", symbol: "HYPE" },
+  { id: "aster-2", symbol: "ASTER" },
+  { id: "ripple", symbol: "XRP" },
+  { id: "dogecoin", symbol: "DOGE" },
 ];
 
 function formatPrice(n?: number) {
@@ -187,7 +191,7 @@ export default function PriceMarquee({
         style={{
           display: "inline-flex",
           whiteSpace: "nowrap",
-          gap: "28px",
+          gap: "10px",
           padding: "12px 16px",
           animation: "marquee 18s linear infinite",
         }}
