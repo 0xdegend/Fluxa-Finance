@@ -38,3 +38,22 @@ export interface TokenSummaryCardProps {
   change: number;
   priceSeries: number[];
 }
+
+export type Web3LoginButtonVariant = "navbar" | "inline";
+
+export type Web3LoginButtonSize = "sm" | "md" | "lg";
+
+export type TokenBalance = {
+  symbol: string;
+  balance: number;
+  usd: number;
+};
+
+export interface Web3LoginButtonProps {
+  variant?: Web3LoginButtonVariant;
+  size?: Web3LoginButtonSize;
+  onAction?: () => Promise<void> | void;
+  showSmallWhenConnected?: boolean;
+  label?: string;
+  className?: string;
+}

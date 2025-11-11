@@ -7,8 +7,8 @@ import PriceMarquee from "../Common/PriceMarquee";
 import { tokens } from "@/data";
 import { useLogin, usePrivy } from "@privy-io/react-auth";
 import { useAccount } from "wagmi";
+import Web3LoginButton from "../Common/Web3LoginButton";
 
-// Async Next.js page component
 const Landing: React.FC = () => {
   const { ready, authenticated, user } = usePrivy();
   const { address } = useAccount();
@@ -61,13 +61,14 @@ const Landing: React.FC = () => {
           </ul>
         </div>
         <div className="flex items-center gap-3">
-          <button
+          {/* <button
             className="px-4 py-2 rounded-md bg-(--fluxa-accent) hover:bg-(--fluxa-accent-600) hover:text-white cursor-pointer text-white font-[audiowide] "
             aria-label="Connect wallet "
             onClick={login}
           >
             {authenticated ? `${address}` : "Connect Wallet"}
-          </button>
+          </button> */}
+          <Web3LoginButton variant="navbar" size="md" />
           <button
             className="p-2 rounded hover:bg-gray-200 focus:outline-none cursor-pointer"
             aria-label="Open menu"

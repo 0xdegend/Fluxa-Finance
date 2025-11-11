@@ -17,3 +17,22 @@ export async function swap({
     status: "success",
   };
 }
+
+// Returns a mocked list of token balances for a given wallet address
+export async function getTokenBalances(address: string): Promise<
+  Array<{
+    symbol: string;
+    balance: number;
+    usd: number;
+  }>
+> {
+  // Simulate network delay
+  await new Promise((res) => setTimeout(res, 800));
+  // Return a fake token list
+  return [
+    { symbol: "ETH", balance: 0.234, usd: 800 },
+    { symbol: "USDC", balance: 1200, usd: 1200 },
+    { symbol: "DAI", balance: 500, usd: 500 },
+    { symbol: "WETH", balance: 0.05, usd: 170 },
+  ];
+}
