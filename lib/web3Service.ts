@@ -1,6 +1,3 @@
-// lib/web3Service.ts
-// Mocked web3Service for swap functionality
-
 export async function swap({
   fromToken,
   toToken,
