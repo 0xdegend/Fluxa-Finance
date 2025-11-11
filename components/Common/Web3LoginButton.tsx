@@ -5,6 +5,7 @@ import { getTokenBalances } from "../../lib/web3Service";
 import { IoCopy } from "react-icons/io5";
 import type { TokenBalance } from "@/types";
 import { Web3LoginButtonProps } from "@/types";
+import { FaEthereum } from "react-icons/fa6";
 
 export const Web3LoginButton: React.FC<Web3LoginButtonProps> = ({
   variant = "navbar",
@@ -109,8 +110,8 @@ export const Web3LoginButton: React.FC<Web3LoginButtonProps> = ({
           {user ? (
             <>
               <span className="font-mono">{truncate(address)}</span>
-              <span className="ml-2 bg-fluxa-glass px-2 py-0.5 rounded text-xs">
-                Ξ 0.00
+              <span className="ml-2 bg-fluxa-glass px-2 py-0.5 rounded text-xs flex gap-1">
+                <FaEthereum /> 0.00
               </span>
             </>
           ) : (

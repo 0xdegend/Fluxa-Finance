@@ -61,13 +61,6 @@ const Landing: React.FC = () => {
           </ul>
         </div>
         <div className="flex items-center gap-3">
-          {/* <button
-            className="px-4 py-2 rounded-md bg-(--fluxa-accent) hover:bg-(--fluxa-accent-600) hover:text-white cursor-pointer text-white font-[audiowide] "
-            aria-label="Connect wallet "
-            onClick={login}
-          >
-            {authenticated ? `${address}` : "Connect Wallet"}
-          </button> */}
           <Web3LoginButton variant="navbar" size="md" />
           <button
             className="p-2 rounded hover:bg-gray-200 focus:outline-none cursor-pointer"
