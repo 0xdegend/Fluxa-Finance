@@ -34,3 +34,18 @@ export const TOKENS: Token[] = [
     icon: "/logos/dai-logo.png",
   },
 ];
+
+export const tokens = [
+  {
+    token: "ETH",
+    price: 2012.34,
+    change: 2.13,
+    priceSeries: [2000, 2005, 2010, 2008, 2012, 2011, 2012.34],
+  },
+  {
+    token: "USDC",
+    price: 1.0,
+    change: 0.01,
+    priceSeries: [1, 1, 1, 1, 1, 1, 1],
+  },
+];

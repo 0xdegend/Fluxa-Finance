@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Audiowide } from "next/font/google";
 import { PrivyProvider } from "@privy-io/react-auth";
 import "./globals.css";
+import { ClientProviders } from "./Wrapper/ClientProvider";
 
 const audioWide = Audiowide({
   variable: "--font-audiowide",
@@ -22,9 +23,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${audioWide.variable}  antialiased`}>
-        <PrivyProvider appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID || ""}>
-          {children}
-        </PrivyProvider>
+        <ClientProviders>{children}</ClientProviders>
       </body>
     </html>
   );

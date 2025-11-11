@@ -1,8 +1,6 @@
 "use client";
 import React from "react";
 import type { TokenSummaryCardProps } from "@/types";
-
-// Placeholder sparkline using SVG
 function Sparkline({ series }: { series: number[] }) {
   const width = 180;
   const height = 48;

@@ -1,28 +1,26 @@
 "use client";
-import React from "react";
+import React, { use } from "react";
 import TokenSummaryCard from "../Swap/TokenSummaryCard";
 import SwapCard from "../Swap/SwapCard";
 import GridBg from "../Common/GridBg";
 import PriceMarquee from "../Common/PriceMarquee";
-
-// Placeholder token data and price series
-const tokens = [
-  {
-    token: "ETH",
-    price: 2012.34,
-    change: 2.13,
-    priceSeries: [2000, 2005, 2010, 2008, 2012, 2011, 2012.34],
-  },
-  {
-    token: "USDC",
-    price: 1.0,
-    change: 0.01,
-    priceSeries: [1, 1, 1, 1, 1, 1, 1],
-  },
-];
+import { tokens } from "@/data";
+import { useLogin, usePrivy } from "@privy-io/react-auth";
 
 // Async Next.js page component
 const Landing: React.FC = () => {
+  const { ready, authenticated, user } = usePrivy();
+  const { login } = useLogin({
+    onComplete: ({ user }) => {
+      console.log("User logged in successfully", user);
+
+      // Navigate to dashboard, show welcome message, etc.
+    },
+    onError: (error) => {
+      console.error("Login failed", error);
+      // Show error message
+    },
+  });
   return (
     <div className="min-h-screen w-full flex flex-col items-center justify-center relative overflow-hidden">
       {/* Full-page SVG grid background, pointer-events-none on the absolute container */}
@@ -65,6 +63,7 @@ const Landing: React.FC = () => {
           <button
             className="px-4 py-2 rounded-md bg-(--fluxa-accent) hover:bg-(--fluxa-accent-600) hover:text-white cursor-pointer text-white font-[audiowide] "
             aria-label="Connect wallet "
+            onClick={login}
           >
             Connect Wallet
           </button>
