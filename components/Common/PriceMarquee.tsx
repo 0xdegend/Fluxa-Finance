@@ -1,28 +1,8 @@
 // components/PriceMarquee.tsx
 "use client";
 import React, { useEffect, useRef, useState } from "react";
-
-type Ticker = {
-  id: string;
-  symbol: string;
-  price?: number;
-  change24h?: number;
-  updatedAt?: number;
-};
-
-const DEFAULT_ASSETS = [
-  { id: "bitcoin", symbol: "BTC" },
-  { id: "ethereum", symbol: "ETH" },
-  { id: "tether", symbol: "USDT" },
-  { id: "binancecoin", symbol: "BNB" },
-  { id: "solana", symbol: "SOL" },
-  { id: "cardano", symbol: "ADA" },
-  { id: "pudgy-penguins", symbol: "PENGU" },
-  { id: "hyperliquid", symbol: "HYPE" },
-  { id: "aster-2", symbol: "ASTER" },
-  { id: "ripple", symbol: "XRP" },
-  { id: "dogecoin", symbol: "DOGE" },
-];
+import type { Ticker } from "@/types";
+import { DEFAULT_ASSETS } from "@/data";
 
 function formatPrice(n?: number) {
   if (n === undefined || n === null) return "—";
