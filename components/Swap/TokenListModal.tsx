@@ -1,31 +1,6 @@
 import Image from "next/image";
 import React from "react";
-
-interface Token {
-  symbol: string;
-  name: string;
-  balance: number;
-  icon?: string;
-}
-
-interface Preview {
-  estOut: number;
-  priceImpact: number;
-  fee: number;
-  minReceived: number;
-}
-
-interface SwapParams {
-  fromToken: Token;
-  toToken: Token;
-  amount: number;
-  slippage: number;
-}
-
-interface SwapResult {
-  txHash: string;
-  status: "success" | "error";
-}
+import { Token, Preview, SwapParams, SwapResult } from "@/types";
 
 // TODO: Replace with real modal and token icon logic
 const TokenListModal = ({

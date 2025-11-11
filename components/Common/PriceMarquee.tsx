@@ -1,4 +1,3 @@
-// components/PriceMarquee.tsx
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import type { Ticker } from "@/types";

@@ -1,51 +1,8 @@
 import React, { useState } from "react";
 import TokenListModal from "./TokenListModal";
 import Image from "next/image";
-// Types
-export interface Token {
-  symbol: string;
-  name: string;
-  balance: number;
-  icon?: string;
-}
-export interface Preview {
-  estOut: number;
-  priceImpact: number;
-  fee: number;
-  minReceived: number;
-}
-export interface SwapParams {
-  fromToken: Token;
-  toToken: Token;
-  amount: number;
-  slippage: number;
-}
-export interface SwapResult {
-  txHash: string;
-  status: "success" | "error";
-}
-
-// Example tokens
-const TOKENS: Token[] = [
-  {
-    symbol: "ETH",
-    name: "Ethereum",
-    balance: 5.123,
-    icon: "/logos/eth-logo.png",
-  },
-  {
-    symbol: "USDC",
-    name: "USD Coin",
-    balance: 2500,
-    icon: "/logos/usdc-logo.png",
-  },
-  {
-    symbol: "DAI",
-    name: "Dai",
-    balance: 1800,
-    icon: "/logos/dai-logo.png",
-  },
-];
+import { Token, Preview, SwapParams, SwapResult } from "@/types";
+import { TOKENS } from "@/data";
 
 // TODO: Replace with real wallet connection logic
 const isWalletConnected = false;
