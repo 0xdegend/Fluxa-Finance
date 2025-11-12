@@ -200,7 +200,7 @@ export default function PriceMarquee({
                 className={`ml-2 text-xs font-semibold font-[audiowide] ${
                   it.change && it.change >= 0
                     ? "text-[#00c7ff]"
-                    : "text-[#ffd166]"
+                    : "text-(--fluxa-danger)"
                 }`}
               >
                 {it.change == null
