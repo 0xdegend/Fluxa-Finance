@@ -222,10 +222,12 @@ export const Web3LoginButton: React.FC<Web3LoginButtonProps> = ({
                       )}
                       <span>{t.symbol}</span>
                       <div className="flex flex-col items-end">
-                        <span className="text-xs text-fluxa-muted">
+                        <span className="text-[17px] text-fluxa-muted">
                           {formatUsd(t.usd)}
                         </span>
-                        <span>{formatSignificant(t.balance)}</span>
+                        <span className="text-xs">
+                          {formatSignificant(t.balance)}
+                        </span>
                       </div>
                     </li>
                   </div>
