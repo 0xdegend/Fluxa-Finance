@@ -23,6 +23,7 @@ export const Web3LoginButton: React.FC<Web3LoginButtonProps> = ({
 
   const sidebarRef = useRef<HTMLDivElement>(null);
   const [balances, setBalances] = useState<TokenBalance[]>([]);
+  const [walletBalance, setWalletBalance] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const address =
     wallets && wallets.length > 0 ? wallets[0].address : undefined;
@@ -46,8 +47,7 @@ export const Web3LoginButton: React.FC<Web3LoginButtonProps> = ({
       try {
         if (address) {
           const data = await fetchTokenBalances(address as string);
-          const walletBalance = await fetchWalletBalance(address as string);
-          console.log("Wallet Balance:", walletBalance);
+
           setBalances(data);
           console.log("Fetched balances:", data);
         }
@@ -85,6 +85,24 @@ export const Web3LoginButton: React.FC<Web3LoginButtonProps> = ({
     document.addEventListener("keydown", handleKey);
     return () => document.removeEventListener("keydown", handleKey);
   }, [sidebarOpen]);
+
+  useEffect(() => {
+    if (!address) {
+      return;
+    }
+    async function loadWalletBalance() {
+      try {
+        const walletBalance = await fetchWalletBalance(address as string);
+        setWalletBalance(walletBalance);
+      } catch (err) {
+        console.error("Error fetching wallet balance:", err);
+        setWalletBalance(null);
+      }
+    }
+    if (address) {
+      loadWalletBalance();
+    }
+  }, [address]);
 
   // Truncate address
   const truncate = (addr?: string) =>
@@ -133,7 +151,8 @@ export const Web3LoginButton: React.FC<Web3LoginButtonProps> = ({
             <>
               <span className="font-mono">{truncate(address)}</span>
               <span className="ml-2 bg-fluxa-glass px-2 py-0.5 rounded text-xs flex gap-1">
-                <FaEthereum /> 0.00
+                <FaEthereum />
+                {walletBalance !== null ? walletBalance : "—"}
               </span>
             </>
           ) : (

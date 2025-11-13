@@ -59,7 +59,8 @@ export default async function handler(
         "X-API-Key": MORALIS_API_KEY,
       },
     });
-    return res.status(200).json(response.data);
+    const walletBalance = response.data?.total_networth_usd || 0;
+    return res.status(200).json(walletBalance);
   } catch (error) {
     if (axios.isAxiosError(error)) {
       console.error(
