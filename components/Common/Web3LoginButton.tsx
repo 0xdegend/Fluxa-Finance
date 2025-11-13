@@ -7,7 +7,7 @@ import type { TokenBalance } from "@/types";
 import { Web3LoginButtonProps } from "@/types";
 import { FaEthereum } from "react-icons/fa6";
 import Image from "next/image";
-
+import { formatSignificant, formatUsd } from "@/app/utils/numberFormat";
 export const Web3LoginButton: React.FC<Web3LoginButtonProps> = ({
   variant = "navbar",
   size = "md",
@@ -26,6 +26,8 @@ export const Web3LoginButton: React.FC<Web3LoginButtonProps> = ({
   const [loading, setLoading] = useState(true);
   const address =
     wallets && wallets.length > 0 ? wallets[0].address : undefined;
+
+  const network = wallets && wallets.length > 0 ? wallets[0]?.type : undefined;
   const { logout } = useLogout({
     onSuccess: () => {
       console.log("User successfully logged out");
@@ -161,8 +163,8 @@ export const Web3LoginButton: React.FC<Web3LoginButtonProps> = ({
                 <span className="text-xs text-(--fluxa-muted) font-[audiowide]">
                   Connected
                 </span>
-                <span className="bg-fluxa-accent/20 text-(--fluxa-accent) px-2 py-0.5 rounded text-xs font-[audiowide]">
-                  Ethereum
+                <span className="bg-fluxa-accent/20 text-(--fluxa-accent) px-2 py-0.5 rounded text-xs font-[audiowide] capitalize">
+                  {network}
                 </span>
               </div>
               <button
@@ -205,9 +207,8 @@ export const Web3LoginButton: React.FC<Web3LoginButtonProps> = ({
                   <div key={t.symbol}>
                     <li
                       key={t.symbol}
-                      className="flex gap-3 items-center justify-between font-[audiowide] mb-5"
+                      className="flex gap-3 items-start justify-between font-[audiowide] mb-5"
                     >
-                      <span>{t.symbol}</span>
                       {t.logo ? (
                         <Image
                           src={t.logo}
@@ -219,8 +220,13 @@ export const Web3LoginButton: React.FC<Web3LoginButtonProps> = ({
                       ) : (
                         <div className="w-8 h-8 rounded-full bg-gray-200" /> // placeholder
                       )}
-                      <span>{t.balance}</span>
-                      <span className="text-xs text-fluxa-muted">{t.usd}</span>
+                      <span>{t.symbol}</span>
+                      <div className="flex flex-col items-end">
+                        <span className="text-xs text-fluxa-muted">
+                          {formatUsd(t.usd)}
+                        </span>
+                        <span>{formatSignificant(t.balance)}</span>
+                      </div>
                     </li>
                   </div>
                 ))}

@@ -9,7 +9,7 @@ const GridBg = () => {
         height="800"
         fill="none"
       >
-        <g clip-path="url(#net-light_svg__a)">
+        <g clipPath="url(#net-light_svg__a)">
           <path
             fill="url(#net-light_svg__b)"
             d="M-450-124.834h1.151V924.668H-450z"
@@ -260,8 +260,8 @@ const GridBg = () => {
             gradientTransform="matrix(0 429.42 -423.721 0 400.534 401.08)"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#A3A3A3"></stop>
-            <stop offset="1" stop-color="#A3A3A3" stop-opacity="0"></stop>
+            <stop stopColor="#A3A3A3"></stop>
+            <stop offset="1" stopColor="#A3A3A3" stopOpacity="0"></stop>
           </radialGradient>
           <radialGradient
             id="net-light_svg__c"
@@ -271,8 +271,8 @@ const GridBg = () => {
             gradientTransform="matrix(0 429.42 -423.721 0 400.534 401.08)"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#A3A3A3"></stop>
-            <stop offset="1" stop-color="#A3A3A3" stop-opacity="0"></stop>
+            <stop stopColor="#A3A3A3"></stop>
+            <stop offset="1" stopColor="#A3A3A3" stopOpacity="0"></stop>
           </radialGradient>
           <radialGradient
             id="net-light_svg__d"
@@ -282,8 +282,8 @@ const GridBg = () => {
             gradientTransform="matrix(0 429.42 -423.721 0 400.534 401.08)"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#A3A3A3"></stop>
-            <stop offset="1" stop-color="#A3A3A3" stop-opacity="0"></stop>
+            <stop stopColor="#A3A3A3"></stop>
+            <stop offset="1" stopColor="#A3A3A3" stopOpacity="0"></stop>
           </radialGradient>
           <radialGradient
             id="net-light_svg__e"
@@ -293,8 +293,8 @@ const GridBg = () => {
             gradientTransform="matrix(0 429.42 -423.721 0 400.534 401.08)"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#A3A3A3"></stop>
-            <stop offset="1" stop-color="#A3A3A3" stop-opacity="0"></stop>
+            <stop stopColor="#A3A3A3"></stop>
+            <stop offset="1" stopColor="#A3A3A3" stopOpacity="0"></stop>
           </radialGradient>
           <radialGradient
             id="net-light_svg__f"
@@ -304,8 +304,8 @@ const GridBg = () => {
             gradientTransform="matrix(0 429.42 -423.721 0 400.534 401.08)"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#A3A3A3"></stop>
-            <stop offset="1" stop-color="#A3A3A3" stop-opacity="0"></stop>
+            <stop stopColor="#A3A3A3"></stop>
+            <stop offset="1" stopColor="#A3A3A3" stopOpacity="0"></stop>
           </radialGradient>
           <radialGradient
             id="net-light_svg__g"
@@ -315,8 +315,8 @@ const GridBg = () => {
             gradientTransform="matrix(0 429.42 -423.721 0 400.534 401.08)"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#A3A3A3"></stop>
-            <stop offset="1" stop-color="#A3A3A3" stop-opacity="0"></stop>
+            <stop stopColor="#A3A3A3"></stop>
+            <stop offset="1" stopColor="#A3A3A3" stopOpacity="0"></stop>
           </radialGradient>
           <radialGradient
             id="net-light_svg__h"
@@ -326,8 +326,8 @@ const GridBg = () => {
             gradientTransform="matrix(0 429.42 -423.721 0 400.534 401.08)"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#A3A3A3"></stop>
-            <stop offset="1" stop-color="#A3A3A3" stop-opacity="0"></stop>
+            <stop stopColor="#A3A3A3"></stop>
+            <stop offset="1" stopColor="#A3A3A3" stopOpacity="0"></stop>
           </radialGradient>
           <radialGradient
             id="net-light_svg__i"
@@ -337,8 +337,8 @@ const GridBg = () => {
             gradientTransform="matrix(0 429.42 -423.721 0 400.534 401.08)"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#A3A3A3"></stop>
-            <stop offset="1" stop-color="#A3A3A3" stop-opacity="0"></stop>
+            <stop stopColor="#A3A3A3"></stop>
+            <stop offset="1" stopColor="#A3A3A3" stopOpacity="0"></stop>
           </radialGradient>
           <radialGradient
             id="net-light_svg__j"
@@ -348,8 +348,8 @@ const GridBg = () => {
             gradientTransform="matrix(0 429.42 -423.721 0 400.534 401.08)"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#A3A3A3"></stop>
-            <stop offset="1" stop-color="#A3A3A3" stop-opacity="0"></stop>
+            <stop stopColor="#A3A3A3"></stop>
+            <stop offset="1" stopColor="#A3A3A3" stopOpacity="0"></stop>
           </radialGradient>
           <radialGradient
             id="net-light_svg__k"
@@ -359,8 +359,8 @@ const GridBg = () => {
             gradientTransform="matrix(0 429.42 -423.721 0 400.534 401.08)"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#A3A3A3"></stop>
-            <stop offset="1" stop-color="#A3A3A3" stop-opacity="0"></stop>
+            <stop stopColor="#A3A3A3"></stop>
+            <stop offset="1" stopColor="#A3A3A3" stopOpacity="0"></stop>
           </radialGradient>
           <radialGradient
             id="net-light_svg__l"
@@ -370,8 +370,8 @@ const GridBg = () => {
             gradientTransform="matrix(0 429.42 -423.721 0 400.534 401.08)"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#A3A3A3"></stop>
-            <stop offset="1" stop-color="#A3A3A3" stop-opacity="0"></stop>
+            <stop stopColor="#A3A3A3"></stop>
+            <stop offset="1" stopColor="#A3A3A3" stopOpacity="0"></stop>
           </radialGradient>
           <radialGradient
             id="net-light_svg__m"
@@ -381,8 +381,8 @@ const GridBg = () => {
             gradientTransform="matrix(0 429.42 -423.721 0 400.534 401.08)"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#A3A3A3"></stop>
-            <stop offset="1" stop-color="#A3A3A3" stop-opacity="0"></stop>
+            <stop stopColor="#A3A3A3"></stop>
+            <stop offset="1" stopColor="#A3A3A3" stopOpacity="0"></stop>
           </radialGradient>
           <radialGradient
             id="net-light_svg__n"
@@ -392,8 +392,8 @@ const GridBg = () => {
             gradientTransform="matrix(0 429.42 -423.721 0 400.534 401.08)"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#A3A3A3"></stop>
-            <stop offset="1" stop-color="#A3A3A3" stop-opacity="0"></stop>
+            <stop stopColor="#A3A3A3"></stop>
+            <stop offset="1" stopColor="#A3A3A3" stopOpacity="0"></stop>
           </radialGradient>
           <radialGradient
             id="net-light_svg__o"
@@ -403,8 +403,8 @@ const GridBg = () => {
             gradientTransform="matrix(0 429.42 -423.721 0 400.534 401.08)"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#A3A3A3"></stop>
-            <stop offset="1" stop-color="#A3A3A3" stop-opacity="0"></stop>
+            <stop stopColor="#A3A3A3"></stop>
+            <stop offset="1" stopColor="#A3A3A3" stopOpacity="0"></stop>
           </radialGradient>
           <radialGradient
             id="net-light_svg__p"
@@ -414,8 +414,8 @@ const GridBg = () => {
             gradientTransform="matrix(0 429.42 -423.721 0 400.534 401.08)"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#A3A3A3"></stop>
-            <stop offset="1" stop-color="#A3A3A3" stop-opacity="0"></stop>
+            <stop stopColor="#A3A3A3"></stop>
+            <stop offset="1" stopColor="#A3A3A3" stopOpacity="0"></stop>
           </radialGradient>
           <radialGradient
             id="net-light_svg__q"
@@ -425,8 +425,8 @@ const GridBg = () => {
             gradientTransform="matrix(0 429.42 -423.721 0 400.534 401.08)"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#A3A3A3"></stop>
-            <stop offset="1" stop-color="#A3A3A3" stop-opacity="0"></stop>
+            <stop stopColor="#A3A3A3"></stop>
+            <stop offset="1" stopColor="#A3A3A3" stopOpacity="0"></stop>
           </radialGradient>
           <radialGradient
             id="net-light_svg__r"
@@ -436,8 +436,8 @@ const GridBg = () => {
             gradientTransform="matrix(0 429.42 -423.721 0 400.534 401.08)"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#A3A3A3"></stop>
-            <stop offset="1" stop-color="#A3A3A3" stop-opacity="0"></stop>
+            <stop stopColor="#A3A3A3"></stop>
+            <stop offset="1" stopColor="#A3A3A3" stopOpacity="0"></stop>
           </radialGradient>
           <radialGradient
             id="net-light_svg__s"
@@ -447,8 +447,8 @@ const GridBg = () => {
             gradientTransform="matrix(0 429.42 -423.721 0 400.534 401.08)"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#A3A3A3"></stop>
-            <stop offset="1" stop-color="#A3A3A3" stop-opacity="0"></stop>
+            <stop stopColor="#A3A3A3"></stop>
+            <stop offset="1" stopColor="#A3A3A3" stopOpacity="0"></stop>
           </radialGradient>
           <radialGradient
             id="net-light_svg__t"
@@ -458,8 +458,8 @@ const GridBg = () => {
             gradientTransform="matrix(0 429.42 -423.721 0 400.534 401.08)"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#A3A3A3"></stop>
-            <stop offset="1" stop-color="#A3A3A3" stop-opacity="0"></stop>
+            <stop stopColor="#A3A3A3"></stop>
+            <stop offset="1" stopColor="#A3A3A3" stopOpacity="0"></stop>
           </radialGradient>
           <radialGradient
             id="net-light_svg__u"
@@ -469,8 +469,8 @@ const GridBg = () => {
             gradientTransform="matrix(0 429.42 -423.721 0 400.534 401.08)"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#A3A3A3"></stop>
-            <stop offset="1" stop-color="#A3A3A3" stop-opacity="0"></stop>
+            <stop stopColor="#A3A3A3"></stop>
+            <stop offset="1" stopColor="#A3A3A3" stopOpacity="0"></stop>
           </radialGradient>
           <radialGradient
             id="net-light_svg__v"
@@ -480,8 +480,8 @@ const GridBg = () => {
             gradientTransform="matrix(0 429.42 -423.721 0 400.534 401.08)"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#A3A3A3"></stop>
-            <stop offset="1" stop-color="#A3A3A3" stop-opacity="0"></stop>
+            <stop stopColor="#A3A3A3"></stop>
+            <stop offset="1" stopColor="#A3A3A3" stopOpacity="0"></stop>
           </radialGradient>
           <radialGradient
             id="net-light_svg__w"
@@ -491,8 +491,8 @@ const GridBg = () => {
             gradientTransform="matrix(0 429.42 -423.721 0 400.534 401.08)"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#A3A3A3"></stop>
-            <stop offset="1" stop-color="#A3A3A3" stop-opacity="0"></stop>
+            <stop stopColor="#A3A3A3"></stop>
+            <stop offset="1" stopColor="#A3A3A3" stopOpacity="0"></stop>
           </radialGradient>
           <radialGradient
             id="net-light_svg__x"
@@ -502,8 +502,8 @@ const GridBg = () => {
             gradientTransform="matrix(0 429.42 -423.721 0 400.534 401.08)"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#A3A3A3"></stop>
-            <stop offset="1" stop-color="#A3A3A3" stop-opacity="0"></stop>
+            <stop stopColor="#A3A3A3"></stop>
+            <stop offset="1" stopColor="#A3A3A3" stopOpacity="0"></stop>
           </radialGradient>
           <radialGradient
             id="net-light_svg__y"
@@ -513,8 +513,8 @@ const GridBg = () => {
             gradientTransform="matrix(0 429.42 -423.721 0 400.534 401.08)"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#A3A3A3"></stop>
-            <stop offset="1" stop-color="#A3A3A3" stop-opacity="0"></stop>
+            <stop stopColor="#A3A3A3"></stop>
+            <stop offset="1" stopColor="#A3A3A3" stopOpacity="0"></stop>
           </radialGradient>
           <radialGradient
             id="net-light_svg__z"
@@ -524,8 +524,8 @@ const GridBg = () => {
             gradientTransform="matrix(0 429.42 -423.721 0 400.534 401.08)"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#A3A3A3"></stop>
-            <stop offset="1" stop-color="#A3A3A3" stop-opacity="0"></stop>
+            <stop stopColor="#A3A3A3"></stop>
+            <stop offset="1" stopColor="#A3A3A3" stopOpacity="0"></stop>
           </radialGradient>
           <radialGradient
             id="net-light_svg__A"
@@ -535,8 +535,8 @@ const GridBg = () => {
             gradientTransform="matrix(0 429.42 -423.721 0 400.534 401.08)"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#A3A3A3"></stop>
-            <stop offset="1" stop-color="#A3A3A3" stop-opacity="0"></stop>
+            <stop stopColor="#A3A3A3"></stop>
+            <stop offset="1" stopColor="#A3A3A3" stopOpacity="0"></stop>
           </radialGradient>
           <radialGradient
             id="net-light_svg__B"
@@ -546,8 +546,8 @@ const GridBg = () => {
             gradientTransform="matrix(0 429.42 -423.721 0 400.534 401.08)"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#A3A3A3"></stop>
-            <stop offset="1" stop-color="#A3A3A3" stop-opacity="0"></stop>
+            <stop stopColor="#A3A3A3"></stop>
+            <stop offset="1" stopColor="#A3A3A3" stopOpacity="0"></stop>
           </radialGradient>
           <radialGradient
             id="net-light_svg__C"
@@ -557,8 +557,8 @@ const GridBg = () => {
             gradientTransform="matrix(0 429.42 -423.721 0 400.534 401.08)"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#A3A3A3"></stop>
-            <stop offset="1" stop-color="#A3A3A3" stop-opacity="0"></stop>
+            <stop stopColor="#A3A3A3"></stop>
+            <stop offset="1" stopColor="#A3A3A3" stopOpacity="0"></stop>
           </radialGradient>
           <radialGradient
             id="net-light_svg__D"
@@ -568,8 +568,8 @@ const GridBg = () => {
             gradientTransform="matrix(0 429.42 -423.721 0 400.534 401.08)"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#A3A3A3"></stop>
-            <stop offset="1" stop-color="#A3A3A3" stop-opacity="0"></stop>
+            <stop stopColor="#A3A3A3"></stop>
+            <stop offset="1" stopColor="#A3A3A3" stopOpacity="0"></stop>
           </radialGradient>
           <radialGradient
             id="net-light_svg__E"
@@ -579,8 +579,8 @@ const GridBg = () => {
             gradientTransform="matrix(0 429.42 -423.721 0 400.534 401.08)"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#A3A3A3"></stop>
-            <stop offset="1" stop-color="#A3A3A3" stop-opacity="0"></stop>
+            <stop stopColor="#A3A3A3"></stop>
+            <stop offset="1" stopColor="#A3A3A3" stopOpacity="0"></stop>
           </radialGradient>
           <radialGradient
             id="net-light_svg__F"
@@ -590,8 +590,8 @@ const GridBg = () => {
             gradientTransform="matrix(0 429.42 -423.721 0 400.534 401.08)"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#A3A3A3"></stop>
-            <stop offset="1" stop-color="#A3A3A3" stop-opacity="0"></stop>
+            <stop stopColor="#A3A3A3"></stop>
+            <stop offset="1" stopColor="#A3A3A3" stopOpacity="0"></stop>
           </radialGradient>
           <radialGradient
             id="net-light_svg__G"
@@ -601,8 +601,8 @@ const GridBg = () => {
             gradientTransform="matrix(0 429.42 -423.721 0 400.534 401.08)"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#A3A3A3"></stop>
-            <stop offset="1" stop-color="#A3A3A3" stop-opacity="0"></stop>
+            <stop stopColor="#A3A3A3"></stop>
+            <stop offset="1" stopColor="#A3A3A3" stopOpacity="0"></stop>
           </radialGradient>
           <radialGradient
             id="net-light_svg__H"
@@ -612,8 +612,8 @@ const GridBg = () => {
             gradientTransform="matrix(0 429.42 -423.721 0 400.534 401.08)"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#A3A3A3"></stop>
-            <stop offset="1" stop-color="#A3A3A3" stop-opacity="0"></stop>
+            <stop stopColor="#A3A3A3"></stop>
+            <stop offset="1" stopColor="#A3A3A3" stopOpacity="0"></stop>
           </radialGradient>
           <radialGradient
             id="net-light_svg__I"
@@ -623,8 +623,8 @@ const GridBg = () => {
             gradientTransform="matrix(0 429.42 -423.721 0 400.534 401.08)"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#A3A3A3"></stop>
-            <stop offset="1" stop-color="#A3A3A3" stop-opacity="0"></stop>
+            <stop stopColor="#A3A3A3"></stop>
+            <stop offset="1" stopColor="#A3A3A3" stopOpacity="0"></stop>
           </radialGradient>
           <radialGradient
             id="net-light_svg__J"
@@ -634,8 +634,8 @@ const GridBg = () => {
             gradientTransform="matrix(0 429.42 -423.721 0 400.534 401.08)"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#A3A3A3"></stop>
-            <stop offset="1" stop-color="#A3A3A3" stop-opacity="0"></stop>
+            <stop stopColor="#A3A3A3"></stop>
+            <stop offset="1" stopColor="#A3A3A3" stopOpacity="0"></stop>
           </radialGradient>
           <radialGradient
             id="net-light_svg__K"
@@ -645,8 +645,8 @@ const GridBg = () => {
             gradientTransform="matrix(0 429.42 -423.721 0 400.534 401.08)"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#A3A3A3"></stop>
-            <stop offset="1" stop-color="#A3A3A3" stop-opacity="0"></stop>
+            <stop stopColor="#A3A3A3"></stop>
+            <stop offset="1" stopColor="#A3A3A3" stopOpacity="0"></stop>
           </radialGradient>
           <radialGradient
             id="net-light_svg__L"
@@ -656,8 +656,8 @@ const GridBg = () => {
             gradientTransform="matrix(0 429.42 -423.721 0 400.534 401.08)"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#A3A3A3"></stop>
-            <stop offset="1" stop-color="#A3A3A3" stop-opacity="0"></stop>
+            <stop stopColor="#A3A3A3"></stop>
+            <stop offset="1" stopColor="#A3A3A3" stopOpacity="0"></stop>
           </radialGradient>
           <radialGradient
             id="net-light_svg__M"
@@ -667,8 +667,8 @@ const GridBg = () => {
             gradientTransform="matrix(0 429.42 -423.721 0 400.534 401.08)"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#A3A3A3"></stop>
-            <stop offset="1" stop-color="#A3A3A3" stop-opacity="0"></stop>
+            <stop stopColor="#A3A3A3"></stop>
+            <stop offset="1" stopColor="#A3A3A3" stopOpacity="0"></stop>
           </radialGradient>
           <radialGradient
             id="net-light_svg__N"
@@ -678,8 +678,8 @@ const GridBg = () => {
             gradientTransform="matrix(0 429.42 -423.721 0 400.534 401.08)"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#A3A3A3"></stop>
-            <stop offset="1" stop-color="#A3A3A3" stop-opacity="0"></stop>
+            <stop stopColor="#A3A3A3"></stop>
+            <stop offset="1" stopColor="#A3A3A3" stopOpacity="0"></stop>
           </radialGradient>
           <radialGradient
             id="net-light_svg__O"
@@ -689,8 +689,8 @@ const GridBg = () => {
             gradientTransform="matrix(0 429.42 -423.721 0 400.534 401.08)"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#A3A3A3"></stop>
-            <stop offset="1" stop-color="#A3A3A3" stop-opacity="0"></stop>
+            <stop stopColor="#A3A3A3"></stop>
+            <stop offset="1" stopColor="#A3A3A3" stopOpacity="0"></stop>
           </radialGradient>
           <radialGradient
             id="net-light_svg__P"
@@ -700,8 +700,8 @@ const GridBg = () => {
             gradientTransform="matrix(0 429.42 -423.721 0 400.534 401.08)"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#A3A3A3"></stop>
-            <stop offset="1" stop-color="#A3A3A3" stop-opacity="0"></stop>
+            <stop stopColor="#A3A3A3"></stop>
+            <stop offset="1" stopColor="#A3A3A3" stopOpacity="0"></stop>
           </radialGradient>
           <radialGradient
             id="net-light_svg__Q"
@@ -711,8 +711,8 @@ const GridBg = () => {
             gradientTransform="matrix(0 429.42 -423.721 0 400.534 401.08)"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#A3A3A3"></stop>
-            <stop offset="1" stop-color="#A3A3A3" stop-opacity="0"></stop>
+            <stop stopColor="#A3A3A3"></stop>
+            <stop offset="1" stopColor="#A3A3A3" stopOpacity="0"></stop>
           </radialGradient>
           <radialGradient
             id="net-light_svg__R"
@@ -722,8 +722,8 @@ const GridBg = () => {
             gradientTransform="matrix(0 429.42 -423.721 0 400.534 401.08)"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#A3A3A3"></stop>
-            <stop offset="1" stop-color="#A3A3A3" stop-opacity="0"></stop>
+            <stop stopColor="#A3A3A3"></stop>
+            <stop offset="1" stopColor="#A3A3A3" stopOpacity="0"></stop>
           </radialGradient>
           <radialGradient
             id="net-light_svg__S"
@@ -733,8 +733,8 @@ const GridBg = () => {
             gradientTransform="matrix(0 429.42 -423.721 0 400.534 401.08)"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#A3A3A3"></stop>
-            <stop offset="1" stop-color="#A3A3A3" stop-opacity="0"></stop>
+            <stop stopColor="#A3A3A3"></stop>
+            <stop offset="1" stopColor="#A3A3A3" stopOpacity="0"></stop>
           </radialGradient>
           <radialGradient
             id="net-light_svg__T"
@@ -744,8 +744,8 @@ const GridBg = () => {
             gradientTransform="matrix(0 429.42 -423.721 0 400.534 401.08)"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#A3A3A3"></stop>
-            <stop offset="1" stop-color="#A3A3A3" stop-opacity="0"></stop>
+            <stop stopColor="#A3A3A3"></stop>
+            <stop offset="1" stopColor="#A3A3A3" stopOpacity="0"></stop>
           </radialGradient>
           <radialGradient
             id="net-light_svg__U"
@@ -755,8 +755,8 @@ const GridBg = () => {
             gradientTransform="matrix(0 429.42 -423.721 0 400.534 401.08)"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#A3A3A3"></stop>
-            <stop offset="1" stop-color="#A3A3A3" stop-opacity="0"></stop>
+            <stop stopColor="#A3A3A3"></stop>
+            <stop offset="1" stopColor="#A3A3A3" stopOpacity="0"></stop>
           </radialGradient>
           <radialGradient
             id="net-light_svg__V"
@@ -766,8 +766,8 @@ const GridBg = () => {
             gradientTransform="matrix(0 429.42 -423.721 0 400.534 401.08)"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#A3A3A3"></stop>
-            <stop offset="1" stop-color="#A3A3A3" stop-opacity="0"></stop>
+            <stop stopColor="#A3A3A3"></stop>
+            <stop offset="1" stopColor="#A3A3A3" stopOpacity="0"></stop>
           </radialGradient>
           <radialGradient
             id="net-light_svg__W"
@@ -777,8 +777,8 @@ const GridBg = () => {
             gradientTransform="matrix(0 429.42 -423.721 0 400.534 401.08)"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#A3A3A3"></stop>
-            <stop offset="1" stop-color="#A3A3A3" stop-opacity="0"></stop>
+            <stop stopColor="#A3A3A3"></stop>
+            <stop offset="1" stopColor="#A3A3A3" stopOpacity="0"></stop>
           </radialGradient>
           <radialGradient
             id="net-light_svg__X"
@@ -788,8 +788,8 @@ const GridBg = () => {
             gradientTransform="matrix(0 429.42 -423.721 0 400.534 401.08)"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#A3A3A3"></stop>
-            <stop offset="1" stop-color="#A3A3A3" stop-opacity="0"></stop>
+            <stop stopColor="#A3A3A3"></stop>
+            <stop offset="1" stopColor="#A3A3A3" stopOpacity="0"></stop>
           </radialGradient>
           <radialGradient
             id="net-light_svg__Y"
@@ -799,8 +799,8 @@ const GridBg = () => {
             gradientTransform="matrix(0 429.42 -423.721 0 400.534 401.08)"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#A3A3A3"></stop>
-            <stop offset="1" stop-color="#A3A3A3" stop-opacity="0"></stop>
+            <stop stopColor="#A3A3A3"></stop>
+            <stop offset="1" stopColor="#A3A3A3" stopOpacity="0"></stop>
           </radialGradient>
           <radialGradient
             id="net-light_svg__Z"
@@ -810,8 +810,8 @@ const GridBg = () => {
             gradientTransform="matrix(0 429.42 -423.721 0 400.534 401.08)"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#A3A3A3"></stop>
-            <stop offset="1" stop-color="#A3A3A3" stop-opacity="0"></stop>
+            <stop stopColor="#A3A3A3"></stop>
+            <stop offset="1" stopColor="#A3A3A3" stopOpacity="0"></stop>
           </radialGradient>
           <radialGradient
             id="net-light_svg__aa"
@@ -821,8 +821,8 @@ const GridBg = () => {
             gradientTransform="matrix(0 429.42 -423.721 0 400.534 401.08)"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#A3A3A3"></stop>
-            <stop offset="1" stop-color="#A3A3A3" stop-opacity="0"></stop>
+            <stop stopColor="#A3A3A3"></stop>
+            <stop offset="1" stopColor="#A3A3A3" stopOpacity="0"></stop>
           </radialGradient>
           <radialGradient
             id="net-light_svg__ab"
@@ -832,8 +832,8 @@ const GridBg = () => {
             gradientTransform="matrix(0 429.42 -423.721 0 400.534 401.08)"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#A3A3A3"></stop>
-            <stop offset="1" stop-color="#A3A3A3" stop-opacity="0"></stop>
+            <stop stopColor="#A3A3A3"></stop>
+            <stop offset="1" stopColor="#A3A3A3" stopOpacity="0"></stop>
           </radialGradient>
           <radialGradient
             id="net-light_svg__ac"
@@ -843,8 +843,8 @@ const GridBg = () => {
             gradientTransform="matrix(0 429.42 -423.721 0 400.534 401.08)"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#A3A3A3"></stop>
-            <stop offset="1" stop-color="#A3A3A3" stop-opacity="0"></stop>
+            <stop stopColor="#A3A3A3"></stop>
+            <stop offset="1" stopColor="#A3A3A3" stopOpacity="0"></stop>
           </radialGradient>
           <radialGradient
             id="net-light_svg__ad"
@@ -854,8 +854,8 @@ const GridBg = () => {
             gradientTransform="matrix(0 429.42 -423.721 0 400.534 401.08)"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#A3A3A3"></stop>
-            <stop offset="1" stop-color="#A3A3A3" stop-opacity="0"></stop>
+            <stop stopColor="#A3A3A3"></stop>
+            <stop offset="1" stopColor="#A3A3A3" stopOpacity="0"></stop>
           </radialGradient>
           <radialGradient
             id="net-light_svg__ae"
@@ -865,8 +865,8 @@ const GridBg = () => {
             gradientTransform="matrix(0 429.42 -423.721 0 400.534 401.08)"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#A3A3A3"></stop>
-            <stop offset="1" stop-color="#A3A3A3" stop-opacity="0"></stop>
+            <stop stopColor="#A3A3A3"></stop>
+            <stop offset="1" stopColor="#A3A3A3" stopOpacity="0"></stop>
           </radialGradient>
           <radialGradient
             id="net-light_svg__af"
@@ -876,8 +876,8 @@ const GridBg = () => {
             gradientTransform="matrix(0 429.42 -423.721 0 400.534 401.08)"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#A3A3A3"></stop>
-            <stop offset="1" stop-color="#A3A3A3" stop-opacity="0"></stop>
+            <stop stopColor="#A3A3A3"></stop>
+            <stop offset="1" stopColor="#A3A3A3" stopOpacity="0"></stop>
           </radialGradient>
           <radialGradient
             id="net-light_svg__ag"
@@ -887,8 +887,8 @@ const GridBg = () => {
             gradientTransform="matrix(0 429.42 -423.721 0 400.534 401.08)"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#A3A3A3"></stop>
-            <stop offset="1" stop-color="#A3A3A3" stop-opacity="0"></stop>
+            <stop stopColor="#A3A3A3"></stop>
+            <stop offset="1" stopColor="#A3A3A3" stopOpacity="0"></stop>
           </radialGradient>
           <radialGradient
             id="net-light_svg__ah"
@@ -898,8 +898,8 @@ const GridBg = () => {
             gradientTransform="matrix(0 429.42 -423.721 0 400.534 401.08)"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#A3A3A3"></stop>
-            <stop offset="1" stop-color="#A3A3A3" stop-opacity="0"></stop>
+            <stop stopColor="#A3A3A3"></stop>
+            <stop offset="1" stopColor="#A3A3A3" stopOpacity="0"></stop>
           </radialGradient>
           <radialGradient
             id="net-light_svg__ai"
@@ -909,8 +909,8 @@ const GridBg = () => {
             gradientTransform="matrix(0 429.42 -423.721 0 400.534 401.08)"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#A3A3A3"></stop>
-            <stop offset="1" stop-color="#A3A3A3" stop-opacity="0"></stop>
+            <stop stopColor="#A3A3A3"></stop>
+            <stop offset="1" stopColor="#A3A3A3" stopOpacity="0"></stop>
           </radialGradient>
           <clipPath id="net-light_svg__a">
             <path fill="#fff" d="M0 0h800v800H0z"></path>
