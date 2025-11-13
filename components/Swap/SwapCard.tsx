@@ -1,15 +1,14 @@
 import React, { useState } from "react";
 import TokenListModal from "./TokenListModal";
 import Image from "next/image";
-import { Token, Preview, SwapParams, SwapResult } from "@/types";
+import { Token, Preview, SwapResult } from "@/types";
 import { TOKENS } from "@/data";
-import { useLogin, usePrivy } from "@privy-io/react-auth";
-import { useAccount } from "wagmi";
+import { usePrivy } from "@privy-io/react-auth";
 
 // TODO: Replace with real wallet connection logic
 
 const SwapCard: React.FC = () => {
-  const { ready, authenticated, user } = usePrivy();
+  const { authenticated } = usePrivy();
   const isWalletConnected = authenticated;
   const [fromToken, setFromToken] = useState<Token>(TOKENS[0]);
   const [toToken, setToToken] = useState<Token>(TOKENS[1]);
@@ -22,9 +21,7 @@ const SwapCard: React.FC = () => {
   const [amountTouched, setAmountTouched] = useState(false);
   const [swapping, setSwapping] = useState(false);
   const [success, setSuccess] = useState<SwapResult | null>(null);
-  const { address } = useAccount();
 
-  // TODO: Replace with real USD price lookup
   const getUsdValue = (token: Token, amt: string | number) => {
     const n = typeof amt === "string" ? parseFloat(amt) : amt;
     if (token.symbol === "ETH") return n * 2000;
@@ -101,12 +98,10 @@ const SwapCard: React.FC = () => {
 
   return (
     <div className="max-w-md w-full mx-auto">
-      {/* Swap container content only, no grid background here */}
       <div
         className="rounded-xl shadow-md bg-white p-6 relative border border-gray-100 w-full"
         style={{ boxShadow: "0 4px 24px 0 rgba(0,0,0,0.04)" }}
       >
-        {/* Sell row */}
         <div className="flex items-center justify-between mb-2 ">
           <label
             htmlFor="sell-amount"

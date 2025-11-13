@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
+import axios from "axios";
 
 export default async function handler(
   req: NextApiRequest,
@@ -18,37 +19,39 @@ export default async function handler(
 
   const url = `https://deep-index.moralis.io/api/v2.2/wallets/${address}/tokens?chain=eth&limit=25`;
   try {
-    const response = await fetch(url, {
-      method: "GET",
+    const response = await axios.get(url, {
       headers: {
         accept: "application/json",
         "X-API-Key": MORALIS_API_KEY,
       },
     });
-    if (!response.ok) {
-      return res
-        .status(response.status)
-        .json({ error: "Failed to fetch token balances" });
-    }
-    const data = await response.json();
+    const data = response.data;
     // Map Moralis response to expected format
     const balances = (data.result || []).map(
       (token: {
         symbol: string;
-        balance: string;
-        decimals: number;
-        usdPrice?: number;
+        balance_formatted: string;
+        usd_value: number;
+        logo: string;
       }) => ({
         symbol: token.symbol,
-        balance: Number(token.balance) / Math.pow(10, token.decimals),
-        usd: token.usdPrice
-          ? (Number(token.balance) / Math.pow(10, token.decimals)) *
-            token.usdPrice
-          : 0,
+        balance: Number(token.balance_formatted),
+        usd: token.usd_value,
+        logo: token.logo,
       })
     );
     return res.status(200).json(balances);
-  } catch {
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error(
+        "Moralis API error:",
+        error.response?.data || error.message
+      );
+    } else if (error instanceof Error) {
+      console.error("Moralis API error:", error.message);
+    } else {
+      console.error("Moralis API error:", error);
+    }
     return res.status(500).json({ error: "Internal server error" });
   }
 }

@@ -47,6 +47,7 @@ export type TokenBalance = {
   symbol: string;
   balance: number;
   usd: number;
+  logo?: string;
 };
 
 export interface Web3LoginButtonProps {

@@ -6,6 +6,7 @@ import { IoCopy } from "react-icons/io5";
 import type { TokenBalance } from "@/types";
 import { Web3LoginButtonProps } from "@/types";
 import { FaEthereum } from "react-icons/fa6";
+import Image from "next/image";
 
 export const Web3LoginButton: React.FC<Web3LoginButtonProps> = ({
   variant = "navbar",
@@ -17,31 +18,14 @@ export const Web3LoginButton: React.FC<Web3LoginButtonProps> = ({
 }) => {
   const { ready, authenticated, login, user } = usePrivy();
   const { wallets } = useWallets();
-  const { address, isConnected } = useAccount();
+  const { isConnected } = useAccount();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const sidebarRef = useRef<HTMLDivElement>(null);
   const [balances, setBalances] = useState<TokenBalance[]>([]);
   const [loading, setLoading] = useState(true);
-
-  function TokenBalances({ address }: { address: string }) {
-    useEffect(() => {
-      async function loadBalances() {
-        setLoading(true);
-        try {
-          const data = await fetchTokenBalances(address);
-          setBalances(data);
-        } catch (err) {
-          // handle error
-        }
-        setLoading(false);
-      }
-      if (address) loadBalances();
-    }, [address]);
-
-    if (loading) return <div>Loading...</div>;
-  }
-
+  const address =
+    wallets && wallets.length > 0 ? wallets[0].address : undefined;
   const { logout } = useLogout({
     onSuccess: () => {
       console.log("User successfully logged out");
@@ -58,10 +42,14 @@ export const Web3LoginButton: React.FC<Web3LoginButtonProps> = ({
     async function loadBalances() {
       setLoading(true);
       try {
-        const data = await fetchTokenBalances(address as string);
-        setBalances(data);
+        if (address) {
+          const data = await fetchTokenBalances(address as string);
+          setBalances(data);
+          console.log("Fetched balances:", data);
+        }
       } catch (err) {
-        // handle error
+        console.error("Error fetching balances:", err);
+        setBalances([]);
       }
       setLoading(false);
     }
@@ -214,16 +202,27 @@ export const Web3LoginButton: React.FC<Web3LoginButtonProps> = ({
               <div className="font-semibold mb-2 font-[audiowide]">Tokens</div>
               <ul className="space-y-1">
                 {balances.map((t) => (
-                  <li
-                    key={t.symbol}
-                    className="flex items-center justify-between font-[audiowide] mb-5"
-                  >
-                    <span>{t.symbol}</span>
-                    <span>{t.balance}</span>
-                    <span className="text-xs text-fluxa-muted">
-                      {getUsd(t.usd)}
-                    </span>
-                  </li>
+                  <div key={t.symbol}>
+                    <li
+                      key={t.symbol}
+                      className="flex gap-3 items-center justify-between font-[audiowide] mb-5"
+                    >
+                      <span>{t.symbol}</span>
+                      {t.logo ? (
+                        <Image
+                          src={t.logo}
+                          width={30}
+                          height={30}
+                          alt="Image Logo"
+                          className="rounded-full"
+                        />
+                      ) : (
+                        <div className="w-8 h-8 rounded-full bg-gray-200" /> // placeholder
+                      )}
+                      <span>{t.balance}</span>
+                      <span className="text-xs text-fluxa-muted">{t.usd}</span>
+                    </li>
+                  </div>
                 ))}
               </ul>
             </div>
