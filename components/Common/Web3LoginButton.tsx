@@ -207,7 +207,7 @@ export const Web3LoginButton: React.FC<Web3LoginButtonProps> = ({
                   <div key={t.symbol}>
                     <li
                       key={t.symbol}
-                      className="flex gap-3 items-start justify-between font-[audiowide] mb-5"
+                      className="flex gap-3 items-center justify-between font-[audiowide] mb-5"
                     >
                       {t.logo ? (
                         <Image
