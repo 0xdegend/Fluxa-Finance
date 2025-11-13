@@ -1,7 +1,7 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { usePrivy, useWallets, useLogout } from "@privy-io/react-auth";
 import { useAccount } from "wagmi";
-import { getTokenBalances } from "../../lib/web3Service";
+import { fetchTokenBalances } from "../../lib/web3Service";
 import { IoCopy } from "react-icons/io5";
 import type { TokenBalance } from "@/types";
 import { Web3LoginButtonProps } from "@/types";
@@ -19,8 +19,28 @@ export const Web3LoginButton: React.FC<Web3LoginButtonProps> = ({
   const { wallets } = useWallets();
   const { address, isConnected } = useAccount();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [tokenBalances, setTokenBalances] = useState<TokenBalance[]>([]);
+
   const sidebarRef = useRef<HTMLDivElement>(null);
+  const [balances, setBalances] = useState<TokenBalance[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  function TokenBalances({ address }: { address: string }) {
+    useEffect(() => {
+      async function loadBalances() {
+        setLoading(true);
+        try {
+          const data = await fetchTokenBalances(address);
+          setBalances(data);
+        } catch (err) {
+          // handle error
+        }
+        setLoading(false);
+      }
+      if (address) loadBalances();
+    }, [address]);
+
+    if (loading) return <div>Loading...</div>;
+  }
 
   const { logout } = useLogout({
     onSuccess: () => {
@@ -35,8 +55,18 @@ export const Web3LoginButton: React.FC<Web3LoginButtonProps> = ({
 
   // Fetch token balances when sidebar opens
   React.useEffect(() => {
+    async function loadBalances() {
+      setLoading(true);
+      try {
+        const data = await fetchTokenBalances(address as string);
+        setBalances(data);
+      } catch (err) {
+        // handle error
+      }
+      setLoading(false);
+    }
     if (sidebarOpen && address) {
-      getTokenBalances(address).then(setTokenBalances);
+      loadBalances();
     }
   }, [sidebarOpen, address]);
 
@@ -183,7 +213,7 @@ export const Web3LoginButton: React.FC<Web3LoginButtonProps> = ({
             <div className="mb-4 mt-5">
               <div className="font-semibold mb-2 font-[audiowide]">Tokens</div>
               <ul className="space-y-1">
-                {tokenBalances.map((t) => (
+                {balances.map((t) => (
                   <li
                     key={t.symbol}
                     className="flex items-center justify-between font-[audiowide] mb-5"
