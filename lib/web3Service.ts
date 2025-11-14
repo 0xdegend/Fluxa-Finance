@@ -18,6 +18,10 @@ export async function swap({
   };
 }
 
+export const truncate = (addr?: string) =>
+  addr ? `${addr.slice(0, 6)}...${addr.slice(-4)}` : "";
+
+export const getUsd = (amount: number) => `$${(amount * 2).toFixed(2)}`;
 export async function fetchTokenBalances(address: string) {
   const res = await fetch(`/api/token-balances?address=${address}`);
   if (!res.ok) throw new Error("Failed to fetch token balances");

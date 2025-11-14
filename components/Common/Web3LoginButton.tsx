@@ -1,7 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
 import { usePrivy, useWallets, useLogout } from "@privy-io/react-auth";
 import { useAccount } from "wagmi";
-import { fetchTokenBalances, fetchWalletBalance } from "../../lib/web3Service";
+import {
+  fetchTokenBalances,
+  fetchWalletBalance,
+  truncate,
+  getUsd,
+} from "../../lib/web3Service";
 import { IoCopy } from "react-icons/io5";
 import type { TokenBalance } from "@/types";
 import { Web3LoginButtonProps } from "@/types";
@@ -62,30 +67,6 @@ export const Web3LoginButton: React.FC<Web3LoginButtonProps> = ({
     }
   }, [sidebarOpen, address]);
 
-  // Accessibility: focus trap
-  React.useEffect(() => {
-    if (!sidebarOpen) return;
-    const focusable = sidebarRef.current?.querySelectorAll<HTMLElement>(
-      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-    );
-    const first = focusable?.[0];
-    const last = focusable?.[focusable.length - 1];
-    function handleKey(e: KeyboardEvent) {
-      if (e.key === "Escape") setSidebarOpen(false);
-      if (e.key === "Tab" && focusable && focusable.length > 0) {
-        if (e.shiftKey && document.activeElement === first) {
-          e.preventDefault();
-          last?.focus();
-        } else if (!e.shiftKey && document.activeElement === last) {
-          e.preventDefault();
-          first?.focus();
-        }
-      }
-    }
-    document.addEventListener("keydown", handleKey);
-    return () => document.removeEventListener("keydown", handleKey);
-  }, [sidebarOpen]);
-
   useEffect(() => {
     if (!address) {
       return;
@@ -104,17 +85,10 @@ export const Web3LoginButton: React.FC<Web3LoginButtonProps> = ({
     }
   }, [address]);
 
-  // Truncate address
-  const truncate = (addr?: string) =>
-    addr ? `${addr.slice(0, 6)}...${addr.slice(-4)}` : "";
-
   // Copy address
   const copyAddress = () => {
     if (address) navigator.clipboard.writeText(address);
   };
-
-  // USD estimate stub
-  const getUsd = (amount: number) => `$${(amount * 2).toFixed(2)}`;
 
   // Button classes
   const base =
@@ -218,7 +192,7 @@ export const Web3LoginButton: React.FC<Web3LoginButtonProps> = ({
                 </a>
               </div>
               <div className="mt-2 text-sm text-(--fluxa-muted) font-[audiowide]">
-                Ξ 0.00 <span className="ml-2">{getUsd(0)}</span>
+                Ξ 0.00 <span className="ml-2">{`$ ${walletBalance}`}</span>
               </div>
             </div>
             <div className="mb-4 mt-5">
