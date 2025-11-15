@@ -68,7 +68,7 @@ export const Web3LoginButton: React.FC<Web3LoginButtonProps> = ({
   }, [sidebarOpen, address]);
 
   useEffect(() => {
-    if (!address) {
+    if (!address && !sidebarOpen) {
       return;
     }
     async function loadWalletBalance() {
@@ -83,7 +83,7 @@ export const Web3LoginButton: React.FC<Web3LoginButtonProps> = ({
     if (address) {
       loadWalletBalance();
     }
-  }, [address]);
+  }, [address, sidebarOpen]);
 
   // Copy address
   const copyAddress = () => {
