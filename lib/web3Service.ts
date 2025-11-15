@@ -23,3 +23,9 @@ export async function fetchTokenBalances(address: string) {
   if (!res.ok) throw new Error("Failed to fetch token balances");
   return await res.json();
 }
+
+export async function fetchWalletBalance(address: string) {
+  const res = await fetch(`/api/wallet-balance?address=${address}`);
+  if (!res.ok) throw new Error("Failed to fetch Wallet balances");
+  return await res.json();
+}

@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { usePrivy, useWallets, useLogout } from "@privy-io/react-auth";
 import { useAccount } from "wagmi";
-import { fetchTokenBalances } from "../../lib/web3Service";
+import { fetchTokenBalances, fetchWalletBalance } from "../../lib/web3Service";
 import { IoCopy } from "react-icons/io5";
 import type { TokenBalance } from "@/types";
 import { Web3LoginButtonProps } from "@/types";
@@ -46,6 +46,8 @@ export const Web3LoginButton: React.FC<Web3LoginButtonProps> = ({
       try {
         if (address) {
           const data = await fetchTokenBalances(address as string);
+          const walletBalance = await fetchWalletBalance(address as string);
+          console.log("Wallet Balance:", walletBalance);
           setBalances(data);
           console.log("Fetched balances:", data);
         }

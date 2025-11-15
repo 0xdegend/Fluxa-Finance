@@ -16,11 +16,7 @@ export function formatSignificant(
   const abs = Math.abs(n);
   const magnitude = Math.floor(Math.log10(abs));
   const decimals = Math.max(0, sig - magnitude - 1);
-
-  // Use toFixed to get the right number of decimals, then drop useless trailing zeros
   const fixed = Number(n.toFixed(decimals));
-
-  // toString preserves small numbers and avoids scientific notation in many cases
   return fixed.toString();
 }
 
@@ -28,13 +24,21 @@ export function formatUsd(value: number | string | null | undefined): string {
   const n = toNumberOrNull(value);
   if (n === null) return "-";
 
-  // Round to 1 decimal
-  const rounded = Math.round(n * 10) / 10;
+  // Round to 2 decimals (cents)
+  const rounded2 = Math.round(n * 100) / 100;
+  const isInt = Number.isInteger(rounded2);
+  let fractionDigits: number;
+  if (isInt) {
+    fractionDigits = 0;
+  } else {
+    const cents = Math.round(Math.abs(rounded2) * 100) % 100;
+    fractionDigits = cents % 10 === 0 ? 1 : 2;
+  }
 
-  const isInt = Number.isInteger(rounded);
-  const opts: Intl.NumberFormatOptions = isInt
-    ? { minimumFractionDigits: 0, maximumFractionDigits: 0 }
-    : { minimumFractionDigits: 1, maximumFractionDigits: 1 };
+  const opts: Intl.NumberFormatOptions = {
+    minimumFractionDigits: fractionDigits,
+    maximumFractionDigits: fractionDigits,
+  };
 
-  return "$" + rounded.toLocaleString(undefined, opts);
+  return "$" + rounded2.toLocaleString(undefined, opts);
 }
