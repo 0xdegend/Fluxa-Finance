@@ -6,12 +6,10 @@ import {
   fetchWalletBalance,
   truncate,
 } from "../../lib/web3Service";
-import { IoCopy } from "react-icons/io5";
 import type { TokenBalance } from "@/types";
 import { Web3LoginButtonProps } from "@/types";
 import { FaEthereum } from "react-icons/fa6";
-import Image from "next/image";
-import { formatSignificant, formatUsd } from "@/app/utils/numberFormat";
+import { formatSignificant } from "@/app/utils/numberFormat";
 import WalletSidebar from "./WalletSideBar";
 
 export const Web3LoginButton: React.FC<Web3LoginButtonProps> = ({
@@ -22,12 +20,11 @@ export const Web3LoginButton: React.FC<Web3LoginButtonProps> = ({
   label,
   className = "",
 }) => {
-  const { ready, authenticated, login, user } = usePrivy();
+  const { login, user } = usePrivy();
   const { wallets } = useWallets();
+  const wallet = wallets[0];
   const { isConnected } = useAccount();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-
-  const sidebarRef = useRef<HTMLDivElement>(null);
   const [balances, setBalances] = useState<TokenBalance[] | null>([]);
   const [walletBalance, setWalletBalance] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -40,6 +37,10 @@ export const Web3LoginButton: React.FC<Web3LoginButtonProps> = ({
       console.log("User successfully logged out");
     },
   });
+  const handleLogin = async () => {
+    login();
+    await wallet.switchChain(8453);
+  };
 
   const handleLogout = () => {
     logout();
@@ -109,8 +110,6 @@ export const Web3LoginButton: React.FC<Web3LoginButtonProps> = ({
   const btnClass = `${base} ${sizeMap[size]} ${
     variantMap[variant === "navbar" ? "primary" : "outline"]
   } ${className}`;
-
-  // Navbar variant: sidebar logic
   if (variant === "navbar") {
     return (
       <>
@@ -119,7 +118,7 @@ export const Web3LoginButton: React.FC<Web3LoginButtonProps> = ({
           aria-expanded={sidebarOpen}
           aria-label={user ? `Wallet: ${truncate(address)}` : "Connect Wallet"}
           className={btnClass}
-          onClick={() => (user ? setSidebarOpen(true) : login())}
+          onClick={() => (user ? setSidebarOpen(true) : handleLogin())}
           type="button"
         >
           {user ? (
@@ -174,7 +173,7 @@ export const Web3LoginButton: React.FC<Web3LoginButtonProps> = ({
       }
       className={btnClass}
       onClick={async () => {
-        if (!isConnected) return login();
+        if (!isConnected) return handleLogin();
         if (onAction) await onAction();
       }}
       type="button"
