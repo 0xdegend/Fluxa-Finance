@@ -7,7 +7,7 @@ export function toNumberOrNull(
 }
 export function formatSignificant(
   value: number | string | null | undefined,
-  sig = 5
+  sig: number
 ): string {
   const n = toNumberOrNull(value);
   if (n === null) return "-";
