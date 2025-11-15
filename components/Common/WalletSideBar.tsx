@@ -119,7 +119,7 @@ export default function WalletSidebar({
             balances.map((t) => (
               <li
                 key={t.symbol}
-                className="flex gap-3 items-center justify-between font-[audiowide] mb-5"
+                className="flex gap-3 items-start justify-between font-[audiowide] mb-5"
               >
                 {t.logo ? (
                   <Image
