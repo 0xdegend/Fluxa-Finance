@@ -19,7 +19,7 @@ export async function swap({
 }
 
 export const truncate = (addr?: string) =>
-  addr ? `${addr.slice(0, 6)}...${addr.slice(-4)}` : "";
+  addr ? `${addr.slice(0, 4)}...${addr.slice(-4)}` : "";
 
 export const getUsd = (amount: number) => `$${(amount * 2).toFixed(2)}`;
 export async function fetchTokenBalances(address: string) {
