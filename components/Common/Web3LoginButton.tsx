@@ -39,7 +39,6 @@ export const Web3LoginButton: React.FC<Web3LoginButtonProps> = ({
   });
   const handleLogin = async () => {
     login();
-    await wallet.switchChain(8453);
   };
 
   const handleLogout = () => {
