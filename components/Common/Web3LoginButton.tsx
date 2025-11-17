@@ -53,9 +53,7 @@ export const Web3LoginButton: React.FC<Web3LoginButtonProps> = ({
       try {
         if (address) {
           const data = await fetchTokenBalances(address as string);
-
           setBalances(data);
-          console.log("Fetched balances:", data);
         }
       } catch (err) {
         console.error("Error fetching balances:", err);
@@ -64,6 +62,7 @@ export const Web3LoginButton: React.FC<Web3LoginButtonProps> = ({
       setLoading(false);
     }
     if (address) {
+      console.log(wallets);
       loadBalances();
     }
   }, [sidebarOpen, address]);
