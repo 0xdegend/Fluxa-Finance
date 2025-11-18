@@ -70,7 +70,7 @@ export const Web3LoginButton: React.FC<Web3LoginButtonProps> = ({
       console.log(wallets);
       loadBalances();
     }
-  }, [sidebarOpen, address]);
+  }, [sidebarOpen, address, networkName]);
 
   useEffect(() => {
     if (!address && !sidebarOpen) {

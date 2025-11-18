@@ -3,6 +3,7 @@ import Image, { StaticImageData } from "next/image";
 import { FaEthereum } from "react-icons/fa";
 import { IoCopy } from "react-icons/io5";
 import { formatSignificant, formatUsd } from "@/app/utils/numberFormat";
+import NetworkDropdown from "./NetworkDropdown";
 
 export type Token = {
   symbol: string;
@@ -43,6 +44,9 @@ export default function WalletSidebar({
 }: WalletSidebarProps) {
   const firstBalance =
     balances && balances.length > 0 ? balances[0] : undefined;
+  const [networkName, setNetworkName] = React.useState<string>("base");
+
+  React.useEffect(() => {}, [network]);
 
   return (
     <aside
@@ -54,13 +58,13 @@ export default function WalletSidebar({
     >
       <header className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <span className="text-xs text-(--fluxa-muted) font-[audiowide]">
-            Connected
-          </span>
-          <span className="bg-fluxa-accent/20 text-(--fluxa-accent) px-2 py-0.5 rounded text-xs font-[audiowide] capitalize">
-            {network}
-          </span>
+          <NetworkDropdown
+            current={networkName}
+            onChange={(key) => setNetworkName(key)}
+            size="sm"
+          />
         </div>
+
         <button
           aria-label="Close sidebar"
           onClick={() => setSidebarOpen(false)}

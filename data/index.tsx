@@ -1,5 +1,5 @@
 import { Token } from "@/types";
-
+import { NetworkOption } from "@/types";
 export const DEFAULT_ASSETS = [
   { id: "bitcoin", symbol: "BTC" },
   { id: "ethereum", symbol: "ETH" },
@@ -48,4 +48,25 @@ export const tokens = [
     change: 0.01,
     priceSeries: [1, 1, 1, 1, 1, 1, 1],
   },
+];
+
+export const DEFAULT_NETWORKS: NetworkOption[] = [
+  { key: "base", label: "Base", moralisKey: "base", chainId: 8453 },
+  { key: "eth", label: "Ethereum", moralisKey: "eth", chainId: 1 },
+  { key: "polygon", label: "Polygon", moralisKey: "polygon", chainId: 137 },
+  { key: "bsc", label: "BSC", moralisKey: "bsc", chainId: 56 },
+  {
+    key: "avalanche",
+    label: "Avalanche",
+    moralisKey: "avalanche",
+    chainId: 43114,
+  },
+  { key: "optimism", label: "Optimism", moralisKey: "optimism", chainId: 10 },
+  {
+    key: "arbitrum",
+    label: "Arbitrum",
+    moralisKey: "arbitrum",
+    chainId: 42161,
+  },
+  { key: "fantom", label: "Fantom", moralisKey: "fantom", chainId: 250 },
 ];
