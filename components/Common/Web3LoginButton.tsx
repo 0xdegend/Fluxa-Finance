@@ -25,6 +25,7 @@ export const Web3LoginButton: React.FC<Web3LoginButtonProps> = ({
   const wallet = wallets[0];
   const { isConnected } = useAccount();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [networkName, setNetworkName] = useState<string | null>("base");
   const [balances, setBalances] = useState<TokenBalance[] | null>([]);
   const [walletBalance, setWalletBalance] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -52,7 +53,11 @@ export const Web3LoginButton: React.FC<Web3LoginButtonProps> = ({
       setLoading(true);
       try {
         if (address) {
-          const data = await fetchTokenBalances(address as string);
+          const data = await fetchTokenBalances(
+            address as string,
+            networkName as string,
+            25
+          );
           setBalances(data);
         }
       } catch (err) {

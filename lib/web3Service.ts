@@ -20,10 +20,20 @@ export const truncate = (addr?: string) =>
   addr ? `${addr.slice(0, 4)}...${addr.slice(-4)}` : "";
 
 export const getUsd = (amount: number) => `$${(amount * 2).toFixed(2)}`;
-export async function fetchTokenBalances(address: string) {
-  const res = await fetch(`/api/token-balances?address=${address}`);
-  if (!res.ok) throw new Error("Failed to fetch token balances");
-  return await res.json();
+export async function fetchTokenBalances(
+  address: string,
+  network: string = "",
+  limit: number = 25
+) {
+  const res = await fetch(
+    `/api/token-balances?address=${address}&chain=${network}&limit=${limit}`
+  );
+  if (!res.ok) {
+    const text = await res.text().catch(() => "");
+    throw new Error(`Failed to fetch token balances: ${res.status} ${text}`);
+  }
+  const payload = await res.json();
+  return payload.balances ?? [];
 }
 
 export async function fetchWalletBalance(address: string) {
