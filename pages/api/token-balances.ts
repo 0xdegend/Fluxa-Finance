@@ -130,7 +130,9 @@ export default async function handler(
 
   const url = `https://deep-index.moralis.io/api/v2.2/wallets/${encodeURIComponent(
     address
-  )}/tokens?chain=${encodeURIComponent(chain)}&limit=${limit}`;
+  )}/tokens?chain=${encodeURIComponent(
+    chain
+  )}&limit=${limit}&exclude_spam=true`;
 
   try {
     const response = await axios.get(url, {

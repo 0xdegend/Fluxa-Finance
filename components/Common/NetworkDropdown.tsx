@@ -14,7 +14,6 @@ export default function NetworkDropdown({
   const [open, setOpen] = useState(false);
   const btnRef = useRef<HTMLButtonElement | null>(null);
   const menuRef = useRef<HTMLUListElement | null>(null);
-  const [networkName, setNetworkName] = useState<string>(current);
 
   useEffect(() => {
     function onDoc(e: MouseEvent) {
@@ -48,10 +47,9 @@ export default function NetworkDropdown({
       ? "text-sm px-3 py-1 rounded-md"
       : "text-xs px-2 py-0.5 rounded";
 
-  async function handleSelect(opt: NetworkOption) {
+  function handleSelect(opt: NetworkOption) {
     setOpen(false);
     onChange(opt.key);
-    setNetworkName(opt?.label);
   }
 
   return (
@@ -70,7 +68,7 @@ export default function NetworkDropdown({
         <span className="text-(--fluxa-muted) font-[audiowide]">Connected</span>
         <span className="inline-flex items-center gap-2">
           <span className="px-2 py-0.5 rounded bg-[var(--fluxa-accent)/20] text-(--fluxa-accent) text-[0.8rem] font-[audiowide] capitalize">
-            {networkName}
+            {currentOption.label}
           </span>
           <svg
             className="w-3 h-3 text-(--fluxa-muted)"

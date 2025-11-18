@@ -15,6 +15,7 @@ export type Token = {
 export interface WalletSidebarProps {
   address: string | undefined;
   network?: string;
+  setNetwork?: (k: string) => void;
   balances?: Token[] | null;
   walletBalance?: number | string | null;
   sidebarOpen: boolean;
@@ -32,6 +33,7 @@ const DEFAULT_TRUNCATE = (a: string) =>
 export default function WalletSidebar({
   address,
   network = "unknown",
+  setNetwork,
   balances = null,
   walletBalance = null,
   sidebarOpen,
@@ -44,9 +46,6 @@ export default function WalletSidebar({
 }: WalletSidebarProps) {
   const firstBalance =
     balances && balances.length > 0 ? balances[0] : undefined;
-  const [networkName, setNetworkName] = React.useState<string>("base");
-
-  React.useEffect(() => {}, [network]);
 
   return (
     <aside
@@ -59,8 +58,8 @@ export default function WalletSidebar({
       <header className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <NetworkDropdown
-            current={networkName}
-            onChange={(key) => setNetworkName(key)}
+            current={network}
+            onChange={(k) => setNetwork?.(k)}
             size="sm"
           />
         </div>

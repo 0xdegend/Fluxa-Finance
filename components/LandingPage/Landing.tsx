@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import TokenSummaryCard from "../Swap/TokenSummaryCard";
 import SwapCard from "../Swap/SwapCard";
 import GridBg from "../Common/GridBg";
@@ -10,18 +10,8 @@ import { useAccount } from "wagmi";
 import Web3LoginButton from "../Common/Web3LoginButton";
 
 const Landing: React.FC = () => {
-  const { ready, authenticated, user } = usePrivy();
-  const { address } = useAccount();
-  const { login } = useLogin({
-    onComplete: ({ user }) => {
-      console.log("User logged in successfully", user);
-      // Navigate to dashboard, show welcome message, etc.
-    },
-    onError: (error) => {
-      console.error("Login failed", error);
-      // Show error message
-    },
-  });
+  const [network, setNetwork] = useState<string>("base");
+
   return (
     <div className="min-h-screen w-full flex flex-col items-center justify-center relative overflow-hidden">
       {/* Full-page SVG grid background, pointer-events-none on the absolute container */}
@@ -61,7 +51,12 @@ const Landing: React.FC = () => {
           </ul>
         </div>
         <div className="flex items-center gap-3">
-          <Web3LoginButton variant="navbar" size="md" />
+          <Web3LoginButton
+            variant="navbar"
+            size="md"
+            network={network}
+            setNetwork={setNetwork}
+          />
           <button
             className="p-2 rounded hover:bg-gray-200 focus:outline-none cursor-pointer"
             aria-label="Open menu"

@@ -12,13 +12,17 @@ import { FaEthereum } from "react-icons/fa6";
 import { formatSignificant } from "@/app/utils/numberFormat";
 import WalletSidebar from "./WalletSideBar";
 
-export const Web3LoginButton: React.FC<Web3LoginButtonProps> = ({
+export const Web3LoginButton: React.FC<
+  Web3LoginButtonProps & { network?: string; setNetwork?: (n: string) => void }
+> = ({
   variant = "navbar",
   size = "md",
   onAction,
   showSmallWhenConnected = false,
   label,
   className = "",
+  network = "base",
+  setNetwork,
 }) => {
   const { login, user } = usePrivy();
   const { wallets } = useWallets();
@@ -32,7 +36,6 @@ export const Web3LoginButton: React.FC<Web3LoginButtonProps> = ({
   const address =
     wallets && wallets.length > 0 ? wallets[0].address : undefined;
 
-  const network = wallets && wallets.length > 0 ? wallets[0]?.type : undefined;
   const { logout } = useLogout({
     onSuccess: () => {
       console.log("User successfully logged out");
@@ -47,30 +50,45 @@ export const Web3LoginButton: React.FC<Web3LoginButtonProps> = ({
     setSidebarOpen(false);
   };
 
-  // Fetch token balances when sidebar opens
-  React.useEffect(() => {
+  const NETWORK_KEY_TO_CHAIN: Record<string, string> = {
+    base: "base",
+    eth: "eth",
+    polygon: "polygon",
+    bsc: "bsc",
+    avalanche: "avalanche",
+    fantom: "fantom",
+    optimism: "optimism",
+    arbitrum: "arbitrum",
+  };
+  const apiChain = NETWORK_KEY_TO_CHAIN[network ?? "base"] ?? "eth";
+
+  useEffect(() => {
+    let mounted = true;
     async function loadBalances() {
       setLoading(true);
       try {
-        if (address) {
-          const data = await fetchTokenBalances(
-            address as string,
-            networkName as string,
-            25
-          );
-          setBalances(data);
+        if (!address) {
+          setBalances(null);
+          return;
         }
+        const data = await fetchTokenBalances(address, apiChain, 25);
+        if (!mounted) return;
+        setBalances(Array.isArray(data) ? data : data?.balances ?? []);
       } catch (err) {
         console.error("Error fetching balances:", err);
-        setBalances([]);
+        if (mounted) setBalances([]);
+      } finally {
+        if (mounted) setLoading(false);
       }
-      setLoading(false);
     }
+
     if (address) {
-      console.log(wallets);
       loadBalances();
     }
-  }, [sidebarOpen, address, networkName]);
+    return () => {
+      mounted = false;
+    };
+  }, [sidebarOpen, address, apiChain]);
 
   useEffect(() => {
     if (!address && !sidebarOpen) {
@@ -159,6 +177,7 @@ export const Web3LoginButton: React.FC<Web3LoginButtonProps> = ({
                 setSidebarOpen={setSidebarOpen}
                 copyAddress={copyAddress}
                 handleLogout={handleLogout}
+                setNetwork={setNetwork}
               />
             </div>
           )}
