@@ -14,6 +14,7 @@ export default function NetworkDropdown({
   const [open, setOpen] = useState(false);
   const btnRef = useRef<HTMLButtonElement | null>(null);
   const menuRef = useRef<HTMLUListElement | null>(null);
+  const [networkName, setNetworkName] = useState<string>(current);
 
   useEffect(() => {
     function onDoc(e: MouseEvent) {
@@ -50,6 +51,7 @@ export default function NetworkDropdown({
   async function handleSelect(opt: NetworkOption) {
     setOpen(false);
     onChange(opt.key);
+    setNetworkName(opt?.label);
   }
 
   return (
@@ -67,8 +69,8 @@ export default function NetworkDropdown({
       >
         <span className="text-(--fluxa-muted) font-[audiowide]">Connected</span>
         <span className="inline-flex items-center gap-2">
-          <span className="px-2 py-0.5 rounded bg-[var(--fluxa-accent)/20] text-[var(--fluxa-accent)] text-[0.8rem] font-[audiowide] capitalize">
-            {currentOption.label}
+          <span className="px-2 py-0.5 rounded bg-[var(--fluxa-accent)/20] text-(--fluxa-accent) text-[0.8rem] font-[audiowide] capitalize">
+            {networkName}
           </span>
           <svg
             className="w-3 h-3 text-(--fluxa-muted)"
@@ -108,21 +110,21 @@ export default function NetworkDropdown({
                   }
                 }}
                 onClick={() => handleSelect(opt)}
-                className={`flex items-center justify-between gap-3 px-3 py-2 rounded hover:bg-[var(--fluxa-glass-frost)] cursor-pointer ${
+                className={`flex items-center justify-between gap-3 px-3 py-2 rounded hover:bg-(--fluxa-glass-frost) cursor-pointer ${
                   active
                     ? "bg-[var(--fluxa-accent)/10] font-semibold"
-                    : "text-[var(--fluxa-text)]"
+                    : "text-(--fluxa-text)"
                 }`}
               >
                 <div className="flex items-center gap-3">
                   <span
-                    className="w-3 h-3 rounded-full bg-[var(--fluxa-accent)]/70"
+                    className="w-3 h-3 rounded-full bg-(--fluxa-accent)/70"
                     aria-hidden
                   />
-                  <span className="text-sm">{opt.label}</span>
+                  <span className="text-sm font-[audiowide]">{opt.label}</span>
                 </div>
                 {active && (
-                  <span className="text-xs text-[var(--fluxa-accent)]">
+                  <span className="text-xs text-(--fluxa-accent)] font-[audiowide]">
                     Active
                   </span>
                 )}
