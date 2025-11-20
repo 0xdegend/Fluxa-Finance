@@ -36,8 +36,20 @@ export async function fetchTokenBalances(
   return payload.balances ?? [];
 }
 
-export async function fetchWalletBalance(address: string) {
-  const res = await fetch(`/api/wallet-balance?address=${address}`);
-  if (!res.ok) throw new Error("Failed to fetch Wallet balances");
-  return await res.json();
+// export async function fetchWalletBalance(address: string) {
+//   const res = await fetch(`/api/wallet-balance?address=${address}`);
+//   if (!res.ok) throw new Error("Failed to fetch Wallet balances");
+//   return await res.json();
+// }
+
+export async function fetchWalletBalance(address: string, chain = "eth") {
+  const url = `/api/wallet-balance?address=${encodeURIComponent(
+    address
+  )}&chain=${encodeURIComponent(chain)}`;
+  const res = await fetch(url);
+  if (!res.ok) {
+    const text = await res.text().catch(() => "");
+    throw new Error(`Failed to fetch wallet net worth: ${res.status} ${text}`);
+  }
+  return res.json(); // { total_networth_usd, breakdown }
 }
