@@ -96,8 +96,11 @@ export const Web3LoginButton: React.FC<
     }
     async function loadWalletBalance() {
       try {
-        const walletBalance = await fetchWalletBalance(address as string);
-        setWalletBalance(walletBalance);
+        const walletBalance = await fetchWalletBalance(
+          address as string,
+          apiChain
+        );
+        setWalletBalance(walletBalance.total_networth_usd ?? 0);
       } catch (err) {
         console.error("Error fetching wallet balance:", err);
         setWalletBalance(null);
