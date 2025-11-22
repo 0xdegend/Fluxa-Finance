@@ -36,13 +36,7 @@ export async function fetchTokenBalances(
   return payload.balances ?? [];
 }
 
-// export async function fetchWalletBalance(address: string) {
-//   const res = await fetch(`/api/wallet-balance?address=${address}`);
-//   if (!res.ok) throw new Error("Failed to fetch Wallet balances");
-//   return await res.json();
-// }
-
-export async function fetchWalletBalance(address: string, chain = "eth") {
+export async function fetchWalletBalance(address: string, chain: string) {
   const url = `/api/wallet-balance?address=${encodeURIComponent(
     address
   )}&chain=${encodeURIComponent(chain)}`;
