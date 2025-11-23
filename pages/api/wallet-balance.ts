@@ -3,9 +3,9 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import axios from "axios";
 
 const DEFAULT_CHAINS = ["eth", "base", "arbitrum"];
+
 function parseChainsParam(raw: unknown): string[] {
   if (!raw) return DEFAULT_CHAINS;
-
   if (Array.isArray(raw)) {
     return raw.flatMap((r) =>
       String(r)
@@ -20,9 +20,13 @@ function parseChainsParam(raw: unknown): string[] {
     .filter(Boolean);
 }
 
-type MoralisNetworthResponse = {
-  total_networth_usd?: number;
-  // Moralis may return other fields — we only care about total_networth_usd
+type ChainEntry = {
+  chain: string;
+  native_balance?: string;
+  native_balance_formatted?: string;
+  native_balance_usd?: string;
+  token_balance_usd?: string;
+  networth_usd?: string;
   [k: string]: unknown;
 };
 
@@ -32,14 +36,20 @@ export default async function handler(
 ) {
   const { address } = req.query;
 
-  // address validation
-  if (!address || typeof address !== "string") {
+  if (!address) {
     return res
       .status(400)
       .json({ error: "Missing or invalid address parameter" });
   }
+  const addrStr = Array.isArray(address) ? address[0] : address;
+  if (typeof addrStr !== "string") {
+    return res.status(400).json({ error: "Address must be a string" });
+  }
 
-  const chainsFromQuery = parseChainsParam(req.query.chain ?? req.query.chains);
+  // prefer request body chains (for POST) else query params
+  const chainsFromQuery = parseChainsParam(
+    req.query.chain ?? req.query.chains ?? req.query["chains[]"]
+  );
   const bodyChains = req.body
     ? parseChainsParam((req.body.chain ?? req.body.chains) as unknown)
     : undefined;
@@ -55,64 +65,107 @@ export default async function handler(
 
   try {
     const base = "https://deep-index.moralis.io/api/v2.2/wallets/";
-    // common params for net-worth endpoint
-    const commonParams = {
+    const commonParams: Record<string, string> = {
       exclude_spam: "true",
       exclude_unverified_contracts: "true",
       max_token_inactivity: "1",
       min_pair_side_liquidity_usd: "1000",
     };
 
-    // If single chain requested, single request; if multiple, request per chain and combine
-    if (chains.length === 1) {
-      const chain = chains[0];
-      const url = new URL(`${encodeURIComponent(address)}/net-worth`, base);
-      const params = new URLSearchParams({ ...commonParams, chain });
+    async function callMoralisWithChain(chainKey: string) {
+      // Build params but use chains[0]=<chainKey> to force single-chain on Moralis
+      const url = new URL(`${encodeURIComponent(addrStr)}/net-worth`, base);
+      const params = new URLSearchParams(commonParams);
+      // Use chains[0] style — Moralis accepts this and it avoids multi-chain aggregation
+      params.append("chains[0]", chainKey);
       url.search = params.toString();
 
-      const response = await axios.get<MoralisNetworthResponse>(
-        url.toString(),
-        {
-          headers: { accept: "application/json", "X-API-Key": MORALIS_API_KEY },
-          timeout: 10000,
-        }
-      );
+      // DEBUG: if you want to log the exact request URL uncomment:
+      // console.log("Moralis URL:", url.toString());
 
-      const total = Number(response.data?.total_networth_usd ?? 0);
-      return res.status(200).json({
-        total_networth_usd: total,
-        breakdown: { [chain]: total },
-      });
-    } else {
-      // multiple chains: call per chain in parallel and sum results
-      const calls = chains.map(async (chain) => {
-        const url = new URL(`${encodeURIComponent(address)}/net-worth`, base);
-        const params = new URLSearchParams({ ...commonParams, chain });
-        url.search = params.toString();
-
-        const response = await axios.get<MoralisNetworthResponse>(
-          url.toString(),
-          {
-            headers: {
-              accept: "application/json",
-              "X-API-Key": MORALIS_API_KEY,
-            },
-            timeout: 10000,
-          }
-        );
-
-        const value = Number(response.data?.total_networth_usd ?? 0);
-        return { chain, value };
+      const response = await axios.get(url.toString(), {
+        headers: { accept: "application/json", "X-API-Key": MORALIS_API_KEY },
+        timeout: 10000,
       });
 
-      const results = await Promise.all(calls);
-      const breakdown = results.reduce<Record<string, number>>((acc, r) => {
-        acc[r.chain] = r.value;
-        return acc;
-      }, {});
-      const total = results.reduce((s, r) => s + r.value, 0);
-      return res.status(200).json({ total_networth_usd: total, breakdown });
+      const data = response.data ?? {};
+      // normalize a ChainEntry from the returned shape
+      let entry: ChainEntry;
+      if (Array.isArray(data.chains) && data.chains.length > 0) {
+        const first = data.chains[0] as Record<string, unknown>;
+        entry = {
+          chain: chainKey,
+          native_balance: String(
+            first.native_balance ?? first.nativeBalance ?? ""
+          ),
+          native_balance_formatted: String(
+            first.native_balance_formatted ?? first.nativeBalanceFormatted ?? ""
+          ),
+          native_balance_usd: String(
+            first.native_balance_usd ?? first.nativeBalanceUsd ?? ""
+          ),
+          token_balance_usd: String(
+            first.token_balance_usd ?? first.tokenBalanceUsd ?? ""
+          ),
+          networth_usd: String(
+            first.networth_usd ?? first.networthUsd ?? first.networth ?? ""
+          ),
+          ...first,
+        };
+      } else {
+        entry = {
+          chain: chainKey,
+          native_balance: String(data.native_balance ?? ""),
+          native_balance_formatted: String(data.native_balance_formatted ?? ""),
+          native_balance_usd: String(data.native_balance_usd ?? ""),
+          token_balance_usd: String(data.token_balance_usd ?? ""),
+          networth_usd: String(
+            data.networth_usd ?? data.networth ?? data.total_networth_usd ?? "0"
+          ),
+          ...data,
+        };
+      }
+
+      const parsed = parseFloat(String(entry.networth_usd ?? "0"));
+      const totalNum = Number.isFinite(parsed) ? parsed : 0;
+      return { chain: chainKey, entry, totalNum };
     }
+
+    // If the client explicitly selected a single chain, return just that chain's net worth
+    if (chains.length === 1) {
+      const chainKey = chains[0];
+      const { entry, totalNum } = await callMoralisWithChain(chainKey);
+      const totalStr = totalNum.toFixed(2);
+      const normalizedEntry: ChainEntry = {
+        ...entry,
+        networth_usd:
+          entry.networth_usd && !Number.isNaN(Number(entry.networth_usd))
+            ? Number(entry.networth_usd).toFixed(2)
+            : totalStr,
+      };
+
+      return res.status(200).json({
+        total_networth_usd: totalStr,
+        chains: [normalizedEntry],
+      });
+    }
+
+    // Otherwise, if multiple chains requested (or default), call each chain and combine
+    const calls = chains.map((c) => callMoralisWithChain(c));
+    const results = await Promise.all(calls);
+    const chainsArray: ChainEntry[] = results.map((r) => ({
+      ...r.entry,
+      chain: r.chain,
+      networth_usd: Number.isFinite(r.totalNum)
+        ? r.totalNum.toFixed(2)
+        : String(r.entry.networth_usd ?? "0"),
+    }));
+    const total = results.reduce((s, r) => s + r.totalNum, 0);
+    const totalStr = total.toFixed(2);
+
+    return res
+      .status(200)
+      .json({ total_networth_usd: totalStr, chains: chainsArray });
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       console.error(
@@ -125,14 +178,8 @@ export default async function handler(
       return res
         .status(status)
         .json({ error: "Moralis API error", details: message });
-    } else if (error instanceof Error) {
-      console.error("Moralis API error:", error.message);
-      return res
-        .status(500)
-        .json({ error: "Internal server error", details: error.message });
-    } else {
-      console.error("Moralis API error:", error);
-      return res.status(500).json({ error: "Internal server error" });
     }
+    console.error("Unknown error:", error);
+    return res.status(500).json({ error: "Internal server error" });
   }
 }

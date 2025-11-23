@@ -36,14 +36,16 @@ export async function fetchTokenBalances(
   return payload.balances ?? [];
 }
 
+// lib/web3Service.ts (updated)
 export async function fetchWalletBalance(address: string, chain: string) {
-  const url = `/api/wallet-balance?address=${encodeURIComponent(
-    address
-  )}&chain=${encodeURIComponent(chain)}`;
+  const params = new URLSearchParams();
+  params.append("address", address);
+  params.append("chain", chain);
+  const url = `/api/wallet-balance?${params.toString()}`;
   const res = await fetch(url);
   if (!res.ok) {
     const text = await res.text().catch(() => "");
     throw new Error(`Failed to fetch wallet net worth: ${res.status} ${text}`);
   }
-  return res.json(); // { total_networth_usd, breakdown }
+  return res.json(); // { total_networth_usd, chains: [...] }
 }

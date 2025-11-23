@@ -31,7 +31,7 @@ export const Web3LoginButton: React.FC<
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [networkName, setNetworkName] = useState<string | null>("base");
   const [balances, setBalances] = useState<TokenBalance[] | null>([]);
-  const [walletBalance, setWalletBalance] = useState<string | null>(null);
+  const [walletBalance, setWalletBalance] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const address =
     wallets && wallets.length > 0 ? wallets[0].address : undefined;
@@ -100,7 +100,9 @@ export const Web3LoginButton: React.FC<
           address as string,
           apiChain
         );
-        setWalletBalance(walletBalance.total_networth_usd ?? 0);
+        const value = Number(walletBalance?.total_networth_usd ?? 0);
+
+        setWalletBalance(Number.isFinite(value) ? value : 0);
       } catch (err) {
         console.error("Error fetching wallet balance:", err);
         setWalletBalance(null);
@@ -109,7 +111,7 @@ export const Web3LoginButton: React.FC<
     if (address) {
       loadWalletBalance();
     }
-  }, [address, sidebarOpen]);
+  }, [address, sidebarOpen, apiChain]);
 
   // Copy address
   const copyAddress = () => {
