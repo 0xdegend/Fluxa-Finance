@@ -71,7 +71,7 @@ export const Web3LoginButton: React.FC<
           setBalances(null);
           return;
         }
-        const data = await fetchTokenBalances(address, apiChain, 25);
+        const data = await fetchTokenBalances(address, apiChain, 10);
         if (!mounted) return;
         setBalances(Array.isArray(data) ? data : data?.balances ?? []);
       } catch (err) {
