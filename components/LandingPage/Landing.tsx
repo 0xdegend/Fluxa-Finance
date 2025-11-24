@@ -9,13 +9,14 @@ import { useTokenPrices } from "@/app/hooks/useTokenPrices";
 const Landing: React.FC = () => {
   const tokenConfigs = [
     { token: "ETH", coingeckoId: "ethereum" },
-    { token: "USDC", coingeckoId: "usd-coin" },
+    { token: "USDT", coingeckoId: "tether" },
   ];
   const [network, setNetwork] = useState<string>("base");
   const { tokens, loading } = useTokenPrices(tokenConfigs, {
     pollIntervalMs: 60_000,
     historyDays: 7,
   });
+  console.log("Token prices loading:", loading, tokens);
 
   return (
     <div className="min-h-screen w-full flex flex-col items-center justify-center relative overflow-hidden">

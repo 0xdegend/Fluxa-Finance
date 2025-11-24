@@ -45,8 +45,6 @@ export function useTokenPrices(
       mountedRef.current = false;
     };
   }, []);
-
-  // fetch historical series (daily) on mount / when configs change
   useEffect(() => {
     let cancelled = false;
     async function fetchHistoryForAll() {
@@ -118,8 +116,6 @@ export function useTokenPrices(
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(configs), historyDays]);
-
-  // polling for current price + 24h change using single /simple/price call
   useEffect(() => {
     let cancelled = false;
 
@@ -158,11 +154,7 @@ export function useTokenPrices(
         console.error("Poll price error", err);
       }
     }
-
-    // initial immediate poll (don't wait 60s)
     pollOnce();
-
-    // set interval
     pollRef.current = window.setInterval(() => {
       pollOnce();
     }, opts?.pollIntervalMs ?? pollIntervalMs) as unknown as number;

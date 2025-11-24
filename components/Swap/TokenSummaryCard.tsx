@@ -1,6 +1,12 @@
 "use client";
 import React from "react";
 import type { TokenSummaryCardProps } from "@/types";
+function formatPrice(n?: number) {
+  if (n === undefined || n === null) return "—";
+  if (n >= 1) return n.toLocaleString(undefined, { maximumFractionDigits: 2 });
+  return n.toPrecision(4);
+}
+
 function Sparkline({ series }: { series: number[] }) {
   const width = 180;
   const height = 48;
@@ -29,7 +35,7 @@ const TokenSummaryCard: React.FC<TokenSummaryCardProps> = ({
   <div className="flex flex-col items-center bg-white rounded-lg shadow p-3 min-w-[220px]">
     <div className="font-semibold text-lg font-[audiowide]">{token}</div>
     <div className="text-sm text-gray-500 font-[audiowide]">
-      ${price.toFixed(2)}
+      ${formatPrice(price)}
     </div>
     <div
       className={`text-xs ${
