@@ -45,8 +45,6 @@ export default async function handler(
   if (typeof addrStr !== "string") {
     return res.status(400).json({ error: "Address must be a string" });
   }
-
-  // prefer request body chains (for POST) else query params
   const chainsFromQuery = parseChainsParam(
     req.query.chain ?? req.query.chains ?? req.query["chains[]"]
   );
@@ -73,23 +71,16 @@ export default async function handler(
     };
 
     async function callMoralisWithChain(chainKey: string) {
-      // Build params but use chains[0]=<chainKey> to force single-chain on Moralis
       const url = new URL(`${encodeURIComponent(addrStr)}/net-worth`, base);
       const params = new URLSearchParams(commonParams);
-      // Use chains[0] style — Moralis accepts this and it avoids multi-chain aggregation
       params.append("chains[0]", chainKey);
       url.search = params.toString();
-
-      // DEBUG: if you want to log the exact request URL uncomment:
-      // console.log("Moralis URL:", url.toString());
-
       const response = await axios.get(url.toString(), {
         headers: { accept: "application/json", "X-API-Key": MORALIS_API_KEY },
         timeout: 10000,
       });
 
       const data = response.data ?? {};
-      // normalize a ChainEntry from the returned shape
       let entry: ChainEntry;
       if (Array.isArray(data.chains) && data.chains.length > 0) {
         const first = data.chains[0] as Record<string, unknown>;
@@ -130,8 +121,6 @@ export default async function handler(
       const totalNum = Number.isFinite(parsed) ? parsed : 0;
       return { chain: chainKey, entry, totalNum };
     }
-
-    // If the client explicitly selected a single chain, return just that chain's net worth
     if (chains.length === 1) {
       const chainKey = chains[0];
       const { entry, totalNum } = await callMoralisWithChain(chainKey);
