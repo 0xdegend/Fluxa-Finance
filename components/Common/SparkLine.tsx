@@ -18,34 +18,27 @@ export default function SparkLine({
   neutralColor = "#6b7280", // gray-500
 }: SparklineProps) {
   if (!Array.isArray(series) || series.length === 0) {
-    // nothing to render — return an empty SVG for layout stability
     return <svg width={width} height={height} aria-hidden="true" />;
   }
 
-  // determine color based on last change
+  const first = series[0];
   const last = series[series.length - 1];
-  const prev = series.length >= 2 ? series[series.length - 2] : undefined;
-  const isUp = typeof prev === "number" ? last >= prev : null;
-  const strokeColor = isUp === null ? neutralColor : isUp ? upColor : downColor;
-
-  // compute min/max safely
+  const delta = last - first;
+  const strokeColor =
+    delta > 0 ? downColor : delta < 0 ? upColor : neutralColor;
   const max = Math.max(...series);
   const min = Math.min(...series);
   const range = max - min || 1; // avoid divide by zero
 
-  // build points
   const pts = series.map((v, i) => {
-    // x: distribute across width with small padding
     const x = (i / (series.length - 1)) * (width - 4) + 2;
-    // y: invert so larger values are higher up
+
     const y = height - 6 - ((v - min) / range) * (height - 12);
     return `${x},${y}`;
   });
   const points = pts.join(" ");
-
-  // accessible label
   const trendLabel =
-    isUp === null ? `${last}` : isUp ? `up — ${last}` : `down — ${last}`;
+    delta > 0 ? `up — ${last}` : delta < 0 ? `down — ${last}` : `${last}`;
 
   return (
     <svg
