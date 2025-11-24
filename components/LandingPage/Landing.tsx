@@ -4,13 +4,18 @@ import TokenSummaryCard from "../Swap/TokenSummaryCard";
 import SwapCard from "../Swap/SwapCard";
 import GridBg from "../Common/GridBg";
 import PriceMarquee from "../Common/PriceMarquee";
-import { tokens } from "@/data";
-import { useLogin, usePrivy } from "@privy-io/react-auth";
-import { useAccount } from "wagmi";
 import Web3LoginButton from "../Common/Web3LoginButton";
-
+import { useTokenPrices } from "@/app/hooks/useTokenPrices";
 const Landing: React.FC = () => {
+  const tokenConfigs = [
+    { token: "ETH", coingeckoId: "ethereum" },
+    { token: "USDC", coingeckoId: "usd-coin" },
+  ];
   const [network, setNetwork] = useState<string>("base");
+  const { tokens, loading } = useTokenPrices(tokenConfigs, {
+    pollIntervalMs: 60_000,
+    historyDays: 7,
+  });
 
   return (
     <div className="min-h-screen w-full flex flex-col items-center justify-center relative overflow-hidden">
@@ -91,9 +96,14 @@ const Landing: React.FC = () => {
           className="w-full max-w-md flex  justify-center items-stretch md:flex-row flex-col md:gap-4 gap-2"
           aria-label="Token summaries"
         >
-          {/* TokenSummaryCards: replace placeholder data with real web3 data */}
           {tokens.map((t) => (
-            <TokenSummaryCard key={t.token} {...t} />
+            <TokenSummaryCard
+              key={t.token}
+              token={t.token}
+              price={t.price}
+              change={t.change}
+              priceSeries={t.priceSeries}
+            />
           ))}
         </section>
         <div className="mt-8">
