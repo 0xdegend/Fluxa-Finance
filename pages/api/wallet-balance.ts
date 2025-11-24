@@ -138,8 +138,6 @@ export default async function handler(
         chains: [normalizedEntry],
       });
     }
-
-    // Otherwise, if multiple chains requested (or default), call each chain and combine
     const calls = chains.map((c) => callMoralisWithChain(c));
     const results = await Promise.all(calls);
     const chainsArray: ChainEntry[] = results.map((r) => ({
