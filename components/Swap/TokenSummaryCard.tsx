@@ -1,29 +1,12 @@
 "use client";
 import React from "react";
 import type { TokenSummaryCardProps } from "@/types";
+import Sparkline from "../Common/SparkLine";
+import SparkLine from "../Common/SparkLine";
 function formatPrice(n?: number) {
   if (n === undefined || n === null) return "—";
   if (n >= 1) return n.toLocaleString(undefined, { maximumFractionDigits: 2 });
   return n.toPrecision(4);
-}
-
-function Sparkline({ series }: { series: number[] }) {
-  const width = 180;
-  const height = 48;
-  const max = Math.max(...series);
-  const min = Math.min(...series);
-  const points = series
-    .map((v, i) => {
-      const x = (i / (series.length - 1)) * (width - 4) + 2;
-      const y = height - 6 - ((v - min) / (max - min || 1)) * (height - 12);
-      return `${x},${y}`;
-    })
-    .join(" ");
-  return (
-    <svg width={width} height={height} aria-hidden="true">
-      <polyline fill="none" stroke="#4f46e5" strokeWidth="2" points={points} />
-    </svg>
-  );
 }
 
 const TokenSummaryCard: React.FC<TokenSummaryCardProps> = ({
@@ -47,7 +30,7 @@ const TokenSummaryCard: React.FC<TokenSummaryCardProps> = ({
       {change >= 0 ? "+" : ""}
       {change.toFixed(2)}%
     </div>
-    <Sparkline series={priceSeries} />
+    <SparkLine series={priceSeries} />
   </div>
 );
 

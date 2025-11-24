@@ -16,7 +16,6 @@ const Landing: React.FC = () => {
     pollIntervalMs: 60_000,
     historyDays: 7,
   });
-  console.log("Token prices loading:", loading, tokens);
 
   return (
     <div className="min-h-screen w-full flex flex-col items-center justify-center relative overflow-hidden">
