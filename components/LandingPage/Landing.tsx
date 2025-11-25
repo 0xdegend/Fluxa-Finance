@@ -14,7 +14,7 @@ const Landing: React.FC = () => {
   const [network, setNetwork] = useState<string>("base");
   const { tokens } = useTokenPrices(tokenConfigs, {
     pollIntervalMs: 60_000,
-    historyDays: 7,
+    historyHours: 24,
   });
 
   return (

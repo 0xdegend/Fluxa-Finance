@@ -11,8 +11,6 @@ import {
   CartesianGrid,
 } from "recharts";
 
-import type { TooltipProps } from "recharts";
-
 type SparklineRechartsProps = {
   series: number[];
   labels?: string[];
@@ -101,7 +99,10 @@ export default function SparklineRecharts({
   }));
 
   return (
-    <div style={{ width: "100%", height }}>
+    <div
+      style={{ width: "100%", height }}
+      onMouseDown={(e) => e.preventDefault()}
+    >
       <ResponsiveContainer width="100%" height="100%">
         <LineChart
           data={data}
