@@ -2,6 +2,7 @@
 import React from "react";
 import type { TokenSummaryCardProps } from "@/types";
 import SparkLine from "../Common/SparkLine";
+import SparklineRecharts from "../Common/SparklineRecharts";
 function formatPrice(n?: number) {
   if (n === undefined || n === null) return "—";
   if (n >= 1) return n.toLocaleString(undefined, { maximumFractionDigits: 2 });
@@ -29,7 +30,8 @@ const TokenSummaryCard: React.FC<TokenSummaryCardProps> = ({
       {change >= 0 ? "+" : ""}
       {change.toFixed(2)}%
     </div>
-    <SparkLine series={priceSeries} />
+    <SparklineRecharts series={priceSeries} height={70} change={change} />
+    {/* <SparkLine series={priceSeries} /> */}
   </div>
 );
 

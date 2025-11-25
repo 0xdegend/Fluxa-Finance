@@ -41,22 +41,24 @@ export default function SparkLine({
     delta > 0 ? `up — ${last}` : delta < 0 ? `down — ${last}` : `${last}`;
 
   return (
-    <svg
-      width={width}
-      height={height}
-      viewBox={`0 0 ${width} ${height}`}
-      role="img"
-      aria-label={`Sparkline: ${trendLabel}`}
-      preserveAspectRatio="none"
-    >
-      <polyline
-        fill="none"
-        stroke={strokeColor}
-        strokeWidth={2}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        points={points}
-      />
-    </svg>
+    <>
+      <svg
+        width={width}
+        height={height}
+        viewBox={`0 0 ${width} ${height}`}
+        role="img"
+        aria-label={`Sparkline: ${trendLabel}`}
+        preserveAspectRatio="none"
+      >
+        <polyline
+          fill="none"
+          stroke={strokeColor}
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          points={points}
+        />
+      </svg>
+    </>
   );
 }
