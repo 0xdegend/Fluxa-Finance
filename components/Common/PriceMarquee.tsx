@@ -202,7 +202,7 @@ export default function PriceMarquee({
         {items.concat(items).map((it, i) => (
           <div
             key={`${it.id}-${i}`}
-            className="flex items-center gap-3 min-w-[240px]"
+            className="flex items-center gap-3 min-w-60"
           >
             {it.logo ? (
               <Image

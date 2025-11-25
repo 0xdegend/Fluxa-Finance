@@ -19,7 +19,6 @@ const Landing: React.FC = () => {
 
   return (
     <div className="min-h-screen w-full flex flex-col items-center justify-center relative overflow-hidden">
-      {/* Full-page SVG grid background, pointer-events-none on the absolute container */}
       <div className="absolute inset-0 w-full h-full flex items-center justify-center z-0 pointer-events-none">
         <div className="w-[900px] h-[900px] opacity-60">
           <GridBg />
@@ -106,19 +105,10 @@ const Landing: React.FC = () => {
             />
           ))}
         </section>
-        <div className="mt-8">
+        <div className="mt-20">
           <PriceMarquee />
         </div>
       </main>
-      {/* Responsive: stack TokenSummaryCards vertically on small screens */}
-      <style jsx>{`
-        @media (max-width: 640px) {
-          section[aria-label="Token summaries"] {
-            flex-direction: column !important;
-            gap: 0.5rem !important;
-          }
-        }
-      `}</style>
     </div>
   );
 };
