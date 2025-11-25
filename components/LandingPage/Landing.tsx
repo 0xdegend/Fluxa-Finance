@@ -12,7 +12,7 @@ const Landing: React.FC = () => {
     { token: "USDT", coingeckoId: "tether" },
   ];
   const [network, setNetwork] = useState<string>("base");
-  const { tokens, loading } = useTokenPrices(tokenConfigs, {
+  const { tokens } = useTokenPrices(tokenConfigs, {
     pollIntervalMs: 60_000,
     historyDays: 7,
   });
