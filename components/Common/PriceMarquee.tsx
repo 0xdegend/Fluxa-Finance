@@ -265,21 +265,6 @@ export default function PriceMarquee({
           </div>
         ))}
       </div>
-
-      <style jsx>{`
-        @keyframes marquee {
-          0% {
-            transform: translateX(0%);
-          }
-          100% {
-            transform: translateX(-50%);
-          } /* because items duplicated */
-        }
-        /* pause on hover for the marquee container */
-        div:hover > div {
-          animation-play-state: paused;
-        }
-      `}</style>
     </div>
   );
 }

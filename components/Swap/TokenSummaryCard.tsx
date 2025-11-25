@@ -31,7 +31,6 @@ const TokenSummaryCard: React.FC<TokenSummaryCardProps> = ({
       {change.toFixed(2)}%
     </div>
     <SparklineRecharts series={priceSeries} height={70} change={change} />
-    {/* <SparkLine series={priceSeries} /> */}
   </div>
 );
 
