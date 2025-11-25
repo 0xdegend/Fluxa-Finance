@@ -97,7 +97,7 @@ const SwapCard: React.FC = () => {
   }, [preview]);
 
   return (
-    <div className="max-w-md w-full mx-auto">
+    <div className="max-w-lg w-full mx-auto">
       <div
         className="rounded-xl shadow-md bg-white p-6 relative border border-gray-100 w-full"
         style={{ boxShadow: "0 4px 24px 0 rgba(0,0,0,0.04)" }}
