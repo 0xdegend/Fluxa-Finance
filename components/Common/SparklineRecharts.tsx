@@ -49,7 +49,6 @@ const CustomTooltip: React.FC<CustomTooltipProps> = ({
   if (!active || !payload || payload.length === 0) return null;
   const point = payload[0].payload!;
   if (!point) return null;
-  console.log("Tooltip point:", point);
   return (
     <div
       className="bg-white/95 rounded-md p-2 text-sm shadow"

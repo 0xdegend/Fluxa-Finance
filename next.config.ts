@@ -12,12 +12,17 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "cdn.moralis.io",
-        pathname: "/**", // or restrict to "/eth/**" if appropriate
+        pathname: "/**",
       },
       {
         protocol: "https",
         hostname: "logo.moralis.io",
-        pathname: "/**", // or restrict to "/eth/**" if appropriate
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "coin-images.coingecko.com",
+        pathname: "/**",
       },
     ],
   },

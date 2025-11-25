@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
-import type { Ticker } from "@/types";
 import { DEFAULT_ASSETS } from "@/data";
+import Image from "next/image";
 
 function formatPrice(n?: number) {
   if (n === undefined || n === null) return "—";
@@ -9,14 +9,36 @@ function formatPrice(n?: number) {
   return n.toPrecision(4);
 }
 
+type Asset = { id: string; symbol: string };
+
 export default function PriceMarquee({
   assets = DEFAULT_ASSETS,
 }: {
-  assets?: { id: string; symbol: string }[];
+  assets?: Asset[];
 }) {
-  const [tickers, setTickers] = useState<Record<string, Ticker>>(() =>
+  const [tickers, setTickers] = useState<
+    Record<
+      string,
+      {
+        id: string;
+        symbol: string;
+        price?: number;
+        change24h?: number;
+        logo?: string;
+      }
+    >
+  >(() =>
     Object.fromEntries(
-      assets.map((a) => [a.id, { id: a.id, symbol: a.symbol }])
+      assets.map((a) => [
+        a.id,
+        {
+          id: a.id,
+          symbol: a.symbol,
+          price: undefined,
+          change24h: undefined,
+          logo: undefined,
+        },
+      ])
     )
   );
 
@@ -24,18 +46,16 @@ export default function PriceMarquee({
   const pendingRef = useRef<Record<string, number>>({});
   const rafRef = useRef<number | null>(null);
 
-  // Tick: batch UI updates to once-per-animation-frame
   const flushPending = () => {
     const pending = pendingRef.current;
     if (Object.keys(pending).length === 0) return;
     setTickers((prev) => {
       const copy = { ...prev };
-      const now = Date.now();
       for (const id in pending) {
         copy[id] = {
           ...(copy[id] || { id, symbol: id.toUpperCase() }),
           price: pending[id],
-          updatedAt: now,
+          logo: copy[id]?.logo,
           change24h: copy[id]?.change24h,
         };
       }
@@ -45,28 +65,25 @@ export default function PriceMarquee({
   };
 
   useEffect(() => {
-    // Build CoinCap ws endpoint - assets comma separated by symbol name (coincap uses asset *names* e.g. bitcoin,ethereum)
     const assetStr = assets.map((a) => a.id).join(",");
     const url = `wss://ws.coincap.io/prices?assets=${assetStr}`;
     const ws = new WebSocket(url);
     wsRef.current = ws;
 
     ws.onopen = () => {
-      // nothing required for CoinCap, it sends on connect
       console.log("CoinCap WS open", url);
     };
 
     ws.onmessage = (ev) => {
-      // CoinCap sends payload like: {"bitcoin":"61000.23"} or {"ethereum":"4200.1"}
       try {
         const data = JSON.parse(ev.data);
-        // batch updates
+
         for (const [key, val] of Object.entries<number>(
           data as Record<string, number>
         )) {
           pendingRef.current[key] = Number(val);
         }
-        // schedule flush
+
         if (rafRef.current == null) {
           rafRef.current = requestAnimationFrame(() => {
             flushPending();
@@ -80,71 +97,74 @@ export default function PriceMarquee({
 
     ws.onclose = (e) => {
       console.warn("CoinCap WS closed", e);
-      // try reconnect in 2s - simple retry (improve with backoff in prod)
       setTimeout(() => {
         if (wsRef.current === ws) {
           wsRef.current = null;
-          // re-run effect by creating new WebSocket - easiest is to reload component or implement backoff loop
-          // (here we'll just log; you can add a reconnect function)
         }
       }, 2000);
     };
 
     ws.onerror = (err) => {
       console.error("CoinCap WS error", err);
-      ws.close();
+      try {
+        ws.close();
+      } catch {}
     };
 
     return () => {
-      ws.close();
+      try {
+        ws.close();
+      } catch {}
       if (rafRef.current != null) cancelAnimationFrame(rafRef.current);
     };
   }, [assets]);
 
-  // Periodically fetch metadata (24h change) via CoinGecko REST
   useEffect(() => {
     let active = true;
-    const fetchMeta = async () => {
+    async function fetchMarketMeta() {
       try {
         const ids = assets.map((a) => a.id).join(",");
-        const url = `https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd&include_24hr_change=true`;
+        if (!ids) return;
+        const url = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${encodeURIComponent(
+          ids
+        )}&order=market_cap_desc&per_page=${
+          assets.length
+        }&page=1&sparkline=false&price_change_percentage=24h`;
         const res = await fetch(url);
-        if (!res.ok) throw new Error("CoinGecko fetch failed");
-        const json = await res.json();
-
+        if (!res.ok) throw new Error(`CoinGecko metadata ${res.status}`);
+        const arr = (await res.json()) as Array<{
+          id: string;
+          image?: string;
+          current_price?: number;
+          price_change_percentage_24h?: number;
+        }>;
         if (!active) return;
         setTickers((prev) => {
           const copy = { ...prev };
-          for (const id of Object.keys(json)) {
-            const entry = json[id];
-            const change =
-              entry?.usd_24h_change ?? entry?.usd_24h_change_percent ?? null;
-            // Set price (usd) and change24h
-            if (copy[id])
-              copy[id] = {
-                ...copy[id],
-                price:
-                  typeof entry?.usd === "number" ? entry.usd : copy[id].price,
-                change24h:
-                  typeof change === "number" ? change : copy[id].change24h,
-              };
-            else
-              copy[id] = {
-                id,
-                symbol: id.toUpperCase(),
-                price: typeof entry?.usd === "number" ? entry.usd : undefined,
-                change24h: typeof change === "number" ? change : undefined,
-              };
+          for (const entry of arr) {
+            const id = entry.id;
+            copy[id] = {
+              ...(copy[id] || { id, symbol: id.toUpperCase() }),
+              logo: entry.image ?? copy[id]?.logo,
+              price:
+                typeof entry.current_price === "number"
+                  ? entry.current_price
+                  : copy[id]?.price,
+              change24h:
+                typeof entry.price_change_percentage_24h === "number"
+                  ? entry.price_change_percentage_24h
+                  : copy[id]?.change24h,
+            };
           }
           return copy;
         });
-      } catch (e) {
-        console.warn("CoinGecko metadata error", e);
+      } catch (err) {
+        console.warn("CoinGecko metadata error", err);
       }
-    };
-    fetchMeta();
-    // refresh every 30s (tune as appropriate)
-    const id = setInterval(fetchMeta, 30_000);
+    }
+
+    fetchMarketMeta();
+    const id = setInterval(fetchMarketMeta, 60_000);
     return () => {
       active = false;
       clearInterval(id);
@@ -158,6 +178,7 @@ export default function PriceMarquee({
       symbol: a.symbol,
       price: t.price,
       change: t.change24h,
+      logo: t.logo,
     };
   });
 
@@ -170,46 +191,79 @@ export default function PriceMarquee({
         style={{
           display: "inline-flex",
           whiteSpace: "nowrap",
-          gap: "10px",
+          gap: 12,
           padding: "12px 16px",
-          animation: "marquee 18s linear infinite",
+          animation: "marquee 60s linear infinite",
+          alignItems: "center",
         }}
-        // pause on hover / focus using CSS :hover is more robust; you can add JS pause if you prefer
         className="text-sm font-medium"
+        onMouseDown={(e) => e.preventDefault()}
       >
-        {items.concat(items).map(
-          (
-            it,
-            i // duplicate list so marquee loops
-          ) => (
-            <div
-              key={`${it.id}-${i}`}
-              className="flex items-center gap-3 min-w-[220px]"
-            >
-              <div className="font-semibold mr-1 font-[audiowide]">
-                {it.symbol}
-              </div>
-              <div className="text-[(--fluxa-muted)] font-[audiowide]">
-                {it.price === undefined ? (
-                  <span className="animate-pulse">...</span>
-                ) : (
-                  formatPrice(it.price)
-                )}
-              </div>
+        {items.concat(items).map((it, i) => (
+          <div
+            key={`${it.id}-${i}`}
+            className="flex items-center gap-3 min-w-[240px]"
+          >
+            {it.logo ? (
+              <Image
+                src={it.logo}
+                alt={`${it.symbol} logo`}
+                width={20}
+                height={20}
+                style={{
+                  width: 20,
+                  height: 20,
+                  borderRadius: 6,
+                  objectFit: "cover",
+                }}
+              />
+            ) : (
               <div
-                className={`ml-2 text-xs font-semibold font-[audiowide] ${
-                  it.change && it.change >= 0
-                    ? "text-[#00c7ff]"
-                    : "text-(--fluxa-danger)"
-                }`}
+                style={{
+                  width: 20,
+                  height: 20,
+                  borderRadius: 6,
+                  display: "grid",
+                  placeItems: "center",
+                  background: "#111827",
+                  color: "white",
+                  fontSize: 10,
+                  fontWeight: 700,
+                }}
               >
-                {it.change == null
-                  ? "—"
-                  : `${it.change >= 0 ? "+" : ""}${it.change.toFixed(2)}%`}
+                {it.symbol?.slice(0, 2).toUpperCase()}
               </div>
+            )}
+
+            <div className="font-semibold mr-1 font-[audiowide]">
+              {it.symbol}
             </div>
-          )
-        )}
+
+            <div className="text-[(--fluxa-muted)] font-[audiowide]">
+              {it.price === undefined ? (
+                <span className="animate-pulse">...</span>
+              ) : (
+                formatPrice(it.price)
+              )}
+            </div>
+
+            <div
+              className={`ml-2 text-xs font-semibold font-[audiowide]`}
+              style={{
+                color:
+                  it.change == null
+                    ? undefined
+                    : it.change >= 0
+                    ? "#00c7ff"
+                    : "var(--fluxa-danger)",
+              }}
+            >
+              {it.change == null
+                ? "—"
+                : `${it.change >= 0 ? "+" : ""}${it.change.toFixed(2)}%`}
+            </div>
+          </div>
+        ))}
       </div>
 
       <style jsx>{`
@@ -221,7 +275,7 @@ export default function PriceMarquee({
             transform: translateX(-50%);
           } /* because items duplicated */
         }
-        /* pause on hover */
+        /* pause on hover for the marquee container */
         div:hover > div {
           animation-play-state: paused;
         }
