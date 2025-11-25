@@ -83,7 +83,7 @@ const Landing: React.FC = () => {
         </div>
       </nav>
 
-      <main className="flex flex-col items-center justify-center w-full flex-1 pt-7 pb-8 relative">
+      <main className="flex flex-col items-center justify-center w-full flex-1 pt-4 pb-4 relative">
         <h1 className="sr-only">Fluxa Finance - Swap</h1>
         <section
           className="w-full max-w-md bg-white/90 rounded-2xl shadow-xl p-6 flex flex-col items-center mb-6"
@@ -105,7 +105,7 @@ const Landing: React.FC = () => {
             />
           ))}
         </section>
-        <div className="mt-20">
+        <div className="mt-10">
           <PriceMarquee />
         </div>
       </main>

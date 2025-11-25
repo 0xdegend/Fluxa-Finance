@@ -15,7 +15,11 @@ const TokenSummaryCard: React.FC<TokenSummaryCardProps> = ({
   change,
   priceSeries,
 }) => (
-  <div className="flex flex-col items-center bg-white rounded-lg shadow p-3 min-w-[220px]">
+  <div
+    className={`flex flex-col items-center rounded-lg shadow p-3 min-w-[220px] ${
+      change >= 0 ? "bg-[#e9f1e980]" : "bg-[#f4e8e96f]"
+    }`}
+  >
     <div className="font-semibold text-lg font-[audiowide]">{token}</div>
     <div className="text-sm text-gray-500 font-[audiowide]">
       ${formatPrice(price)}

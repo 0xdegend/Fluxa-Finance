@@ -254,7 +254,7 @@ export default function PriceMarquee({
                   it.change == null
                     ? undefined
                     : it.change >= 0
-                    ? "#00c7ff"
+                    ? "#16a34a"
                     : "var(--fluxa-danger)",
               }}
             >
