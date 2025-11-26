@@ -69,7 +69,6 @@ export default function PriceMarquee({
     const url = `wss://ws.coincap.io/prices?assets=${assetStr}`;
     const ws = new WebSocket(url);
     wsRef.current = ws;
-
     ws.onopen = () => {
       console.log("CoinCap WS open", url);
     };

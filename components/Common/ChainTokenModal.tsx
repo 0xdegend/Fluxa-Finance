@@ -51,18 +51,18 @@ export default function ChainTokenModal({
   const [selectedTokens, setSelectedTokens] = useState<TokenInfo[]>(
     initialSelected ?? []
   );
-
-  // keep internal selection in sync when modal opens/initialSelected changes (deferred)
   useEffect(() => {
     if (!open) return;
     const init = initialSelected ?? [];
     const newActive = (init[0]?.chain ?? "eth") as ChainKey;
+
     let cancelled = false;
     Promise.resolve().then(() => {
       if (cancelled) return;
       setSelectedTokens((prev) => (tokensEqual(prev, init) ? prev : init));
       setActiveChain((prev) => (prev === newActive ? prev : newActive));
     });
+
     return () => {
       cancelled = true;
     };
@@ -72,11 +72,6 @@ export default function ChainTokenModal({
     setActiveChain(key);
   }
 
-  /**
-   * Handle a token selection from TokenSearch.
-   * - If singleSelect: immediately confirm and close the modal (auto-close behavior).
-   * - Otherwise: add to selectedTokens (deduped).
-   */
   function handleSelectToken(t: TokenInfo) {
     const tokenWithChain = { ...t, chain: activeChain };
     const tAddr = (tokenWithChain.address ?? "").toLowerCase();
@@ -115,35 +110,38 @@ export default function ChainTokenModal({
   return open ? (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
-      <div className="relative bg-white rounded-lg shadow max-w-2xl w-full p-4">
-        <h3 className="text-lg font-semibold mb-3">Select Chains & Tokens</h3>
-
+      <div className="relative bg-white rounded-lg shadow max-w-2xl w-full p-9 font-[audiowide]">
+        <h3 className="text-lg font-semibold mb-3 mt-3">
+          Select Chains & Tokens
+        </h3>
         <div className="mb-3">
           <div className="flex flex-wrap gap-2">
             {ALL_CHAINS.map((c) => (
-              <button
-                key={c.key}
-                onClick={() => chooseChain(c.key)}
-                className={`px-3 py-1 rounded ${
-                  activeChain === c.key
-                    ? "bg-indigo-600 text-white"
-                    : "bg-slate-100"
-                }`}
-                aria-pressed={activeChain === c.key}
-              >
-                {c.label}
-              </button>
+              <>
+                <button
+                  key={c.key}
+                  onClick={() => chooseChain(c.key)}
+                  className={`px-3 py-1 rounded ${
+                    activeChain === c.key
+                      ? "bg-indigo-600 text-white"
+                      : "bg-slate-100"
+                  }`}
+                  aria-pressed={activeChain === c.key}
+                >
+                  {c.label}
+                </button>
+              </>
             ))}
           </div>
         </div>
 
         {/* singleSelect => full-width search, hide selected tokens UI */}
-        <div className={singleSelect ? "mb-4" : "grid grid-cols-2 gap-4"}>
+        <div className={singleSelect ? "mb-8" : "grid grid-cols-2 gap-4"}>
           <div className={singleSelect ? "" : ""}>
-            <div className="text-sm text-gray-600 mb-2">Search tokens</div>
+            <div className="text-sm text-gray-600 mb-2 mt-5">Search tokens</div>
 
             <div className="mb-4">
-              <div className="font-semibold mb-2">{activeChain}</div>
+              <div className="font-semibold mb-2 capitalize">{activeChain}</div>
 
               <TokenSearch
                 chain={activeChain}

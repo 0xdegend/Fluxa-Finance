@@ -1,5 +1,6 @@
 import { Token } from "@/types";
 import { NetworkOption } from "@/types";
+
 export const DEFAULT_ASSETS = [
   { id: "bitcoin", symbol: "BTC" },
   { id: "ethereum", symbol: "ETH" },
