@@ -30,6 +30,10 @@ export interface WalletSidebarProps {
 const DEFAULT_TRUNCATE = (a: string) =>
   a && a.length > 12 ? `${a.slice(0, 6)}...${a.slice(-6)}` : a;
 
+function getInitial(symbol?: string) {
+  if (!symbol || symbol.length === 0) return "?";
+  return symbol.charAt(0); // preserves original casing (use .toUpperCase() if you want uppercase)
+}
 export default function WalletSidebar({
   address,
   network = "unknown",
@@ -50,7 +54,7 @@ export default function WalletSidebar({
   return (
     <aside
       aria-hidden={!sidebarOpen}
-      className={`fixed right-0 top-0 overflow-y-scroll h-screen w-[350px] bg-white shadow-xl p-6 flex flex-col focus:outline-none transform transition-transform duration-300 ease-in-out pointer-events-auto
+      className={`fixed right-5 top-4  h-[96vh] w-[400px] bg-white shadow-xl p-6 flex flex-col focus:outline-none transform transition-transform duration-300 ease-in-out pointer-events-auto rounded-xl
         ${sidebarOpen ? "translate-x-0" : "translate-x-full"}`}
       tabIndex={0}
       style={{ willChange: "transform" }}
@@ -133,7 +137,15 @@ export default function WalletSidebar({
                     className="rounded-full"
                   />
                 ) : (
-                  <div className="w-8 h-8 rounded-full bg-gray-200" />
+                  <div
+                    className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-700 font-[audiowide]"
+                    aria-hidden="true"
+                    title={t.symbol}
+                  >
+                    <span className="select-none text-sm capitalize font-semibold">
+                      {getInitial(t.symbol)}
+                    </span>
+                  </div>
                 )}
 
                 <span>{t.symbol}</span>
@@ -151,10 +163,8 @@ export default function WalletSidebar({
           ) : (
             <div className="px-2 py-3 text-(--fluxa-muted) font-[audiowide]">
               {balances === null ? (
-                // not fetched yet
                 <span>Loading tokens…</span>
               ) : (
-                // fetched but empty
                 <span>No tokens found.</span>
               )}
             </div>
