@@ -121,8 +121,6 @@ export default async function handler(
       return res.status(500).json({ error: "token address lookup failed" });
     }
   }
-
-  // ---------- Fuzzy search (CoinGecko fallback) ----------
   try {
     const cgUrl = `https://api.coingecko.com/api/v3/search?query=${encodeURIComponent(
       q
@@ -163,7 +161,7 @@ export default async function handler(
         const name = typeof coin.name === "string" ? coin.name : undefined;
         const image =
           typeof coin.large === "string"
-            ? `https://assets.coingecko.com/coins/images/${coin.large}`
+            ? `${coin.large}`
             : typeof coin.thumb === "string"
             ? coin.thumb
             : typeof coin.small === "string"

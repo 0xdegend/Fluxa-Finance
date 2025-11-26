@@ -1,17 +1,21 @@
 import React, { useState } from "react";
-import TokenListModal from "./TokenListModal";
 import Image from "next/image";
-import { Token, Preview, SwapResult } from "@/types";
+import { Preview, SwapResult, TokenInfo } from "@/types";
 import { TOKENS } from "@/data";
 import { usePrivy } from "@privy-io/react-auth";
+import ChainTokenModal from "../Common/ChainTokenModal";
+import { adaptToTokenInfo } from "@/app/utils/tokenAdapter";
 
-// TODO: Replace with real wallet connection logic
+const adapted = adaptToTokenInfo(TOKENS); // converts whole list
+
+const isNumber = (v: number) => typeof v === "number" && !isNaN(v);
 
 const SwapCard: React.FC = () => {
   const { authenticated } = usePrivy();
   const isWalletConnected = authenticated;
-  const [fromToken, setFromToken] = useState<Token>(TOKENS[0]);
-  const [toToken, setToToken] = useState<Token>(TOKENS[1]);
+  const [fromToken, setFromToken] = useState<TokenInfo | undefined>(adapted[0]);
+  const [toToken, setToToken] = useState<TokenInfo | undefined>(adapted[1]);
+
   const [amount, setAmount] = useState<string>("");
   const [slippage, setSlippage] = useState<number>(0.5);
   const [showFromModal, setShowFromModal] = useState(false);
@@ -22,29 +26,32 @@ const SwapCard: React.FC = () => {
   const [swapping, setSwapping] = useState(false);
   const [success, setSuccess] = useState<SwapResult | null>(null);
 
-  const getUsdValue = (token: Token, amt: string | number) => {
-    const n = typeof amt === "string" ? parseFloat(amt) : amt;
+  const getUsdValue = (token: TokenInfo | undefined, amt: string | number) => {
+    const n = typeof amt === "string" ? parseFloat(amt) || 0 : (amt as number);
+    if (!token) return 0;
     if (token.symbol === "ETH") return n * 2000;
     if (token.symbol === "USDC" || token.symbol === "DAI") return n * 1;
     return 0;
   };
 
-  const parsedAmount = parseFloat(amount);
+  const parsedAmount = parseFloat(amount || "0");
 
   function validate() {
+    if (!fromToken || !toToken) return "Select tokens.";
     if (!amount || isNaN(parsedAmount) || parsedAmount <= 0)
       return "Enter a valid amount.";
-    if (parsedAmount > fromToken.balance)
-      return `Amount exceeds wallet balance (${fromToken.balance} ${fromToken.symbol})`;
+    const balance = Number(fromToken.balance) || 0;
+    if (parsedAmount > balance)
+      return `Amount exceeds wallet balance (${balance} ${fromToken.symbol})`;
     if (fromToken.symbol === toToken.symbol) return "Select different tokens.";
     return "";
   }
 
   function handleQuick(percent: number) {
-    setAmount((fromToken.balance * percent).toFixed(4));
+    if (!fromToken) return;
+    const balance = Number(fromToken.balance) || 0;
+    setAmount((balance * percent).toFixed(4));
   }
-
-  // Auto-preview calculation as user types
   React.useEffect(() => {
     const err = validate();
     setError(err);
@@ -52,24 +59,26 @@ const SwapCard: React.FC = () => {
       setPreview(null);
       return;
     }
-    // TODO: Replace with real price/fee/impact logic
+
     const priceImpact = 0.2 + Math.random() * 0.3; // 0.2-0.5%
     const fee = parsedAmount * 0.001; // 0.1%
     let estOut = 0;
-    if (fromToken.symbol === "ETH" && toToken.symbol === "USDC") {
-      estOut = parsedAmount * 2000;
-    } else if (fromToken.symbol === "USDC" && toToken.symbol === "ETH") {
-      estOut = parsedAmount / 2000;
-    } else if (fromToken.symbol === "ETH" && toToken.symbol === "DAI") {
-      estOut = parsedAmount * 2000; // treat DAI like USDC for demo
-    } else if (fromToken.symbol === "DAI" && toToken.symbol === "ETH") {
-      estOut = parsedAmount / 2000;
-    } else {
-      estOut = parsedAmount; // same token or unknown pair
+    if (fromToken && toToken) {
+      if (fromToken.symbol === "ETH" && toToken.symbol === "USDC") {
+        estOut = parsedAmount * 2000;
+      } else if (fromToken.symbol === "USDC" && toToken.symbol === "ETH") {
+        estOut = parsedAmount / 2000;
+      } else if (fromToken.symbol === "ETH" && toToken.symbol === "DAI") {
+        estOut = parsedAmount * 2000;
+      } else if (fromToken.symbol === "DAI" && toToken.symbol === "ETH") {
+        estOut = parsedAmount / 2000;
+      } else {
+        estOut = parsedAmount; // same token or unknown pair -> pass-through
+      }
     }
     const minReceived = estOut * (1 - slippage / 100);
     setPreview({ estOut, priceImpact, fee, minReceived });
-  }, [amount, slippage, fromToken, toToken]);
+  }, [amount, slippage, fromToken, toToken]); // parsedAmount derived from amount
 
   async function handleSwap() {
     setSwapping(true);
@@ -85,7 +94,6 @@ const SwapCard: React.FC = () => {
     setAmount("");
   }
 
-  // Animation fallback for preview
   const [showAnim, setShowAnim] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   React.useEffect(() => {
@@ -126,25 +134,40 @@ const SwapCard: React.FC = () => {
             </button>
           </div>
         </div>
+
         <div className="flex items-center gap-3 mb-2">
           <button
             className="flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-200 bg-gray-50 hover:bg-gray-100 focus:outline-none text-black font-[audiowide]"
             onClick={() => setShowFromModal(true)}
             aria-label="Select sell token"
           >
-            {/* TODO: Token icon */}
-            <div className="w-7 h-7 rounded-full  flex items-center justify-center font-bold text-xs">
-              <Image
-                src={fromToken.icon || ""}
-                alt={fromToken.symbol}
-                width={24}
-                height={24}
-                className="rounded-full"
-                unoptimized
-              />
+            <div className="w-7 h-7 rounded-full flex items-center justify-center font-bold text-xs overflow-hidden">
+              {fromToken?.icon ? (
+                <Image
+                  src={fromToken.icon}
+                  alt={fromToken.symbol}
+                  width={24}
+                  height={24}
+                  className="rounded-full"
+                  unoptimized
+                />
+              ) : fromToken?.logo ? (
+                <Image
+                  src={fromToken.logo}
+                  alt={fromToken.symbol}
+                  width={24}
+                  height={24}
+                  className="rounded-full"
+                  unoptimized
+                />
+              ) : (
+                <div className="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center text-xs">
+                  {fromToken?.symbol?.[0] ?? "—"}
+                </div>
+              )}
             </div>
             <span className="font-semibold font-[audiowide]">
-              {fromToken.symbol}
+              {fromToken?.symbol ?? "Select"}
             </span>
             <svg
               width="16"
@@ -158,6 +181,7 @@ const SwapCard: React.FC = () => {
               <path d="M6 9l6 6 6-6" />
             </svg>
           </button>
+
           <div className="flex-1 flex flex-col items-end">
             <input
               id="sell-amount"
@@ -186,11 +210,13 @@ const SwapCard: React.FC = () => {
             </span>
           </div>
         </div>
+
         <div className="flex items-center justify-between mb-2">
-          <span className="text-xs font-[audiowide] text-[--fluxa-muted)">
-            Bal: {fromToken.balance}
+          <span className="text-xs font-[audiowide] text-gray-500">
+            Bal: {fromToken ? Number(fromToken.balance || 0) : "—"}
           </span>
         </div>
+
         {/* Swap arrow */}
         <div className="flex justify-center my-2">
           <button
@@ -216,12 +242,10 @@ const SwapCard: React.FC = () => {
             </svg>
           </button>
         </div>
+
         {/* Buy row */}
         <div>
-          <label
-            htmlFor="sell-amount"
-            className="text-xs font-semibold text-gray-600 font-[audiowide]"
-          >
+          <label className="text-xs font-semibold text-gray-600 font-[audiowide]">
             Buy
           </label>
 
@@ -231,19 +255,33 @@ const SwapCard: React.FC = () => {
               onClick={() => setShowToModal(true)}
               aria-label="Select buy token"
             >
-              {/* TODO: Token icon */}
-              <div className="w-7 h-7 rounded-full  flex items-center justify-center font-bold text-xs">
-                <Image
-                  src={toToken.icon || ""}
-                  alt={toToken.symbol}
-                  width={24}
-                  height={24}
-                  className="rounded-full"
-                  unoptimized
-                />
+              <div className="w-7 h-7 rounded-full flex items-center justify-center overflow-hidden">
+                {toToken?.icon ? (
+                  <Image
+                    src={toToken.icon}
+                    alt={toToken.symbol}
+                    width={24}
+                    height={24}
+                    className="rounded-full"
+                    unoptimized
+                  />
+                ) : toToken?.logo ? (
+                  <Image
+                    src={toToken.logo}
+                    alt={toToken.symbol}
+                    width={24}
+                    height={24}
+                    className="rounded-full"
+                    unoptimized
+                  />
+                ) : (
+                  <div className="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center text-xs">
+                    {toToken?.symbol?.[0] ?? "—"}
+                  </div>
+                )}
               </div>
               <span className="font-semibold text-black font-[audiowide]">
-                {toToken.symbol}
+                {toToken?.symbol ?? "Select"}
               </span>
               <svg
                 width="16"
@@ -257,6 +295,7 @@ const SwapCard: React.FC = () => {
                 <path d="M6 9l6 6 6-6" />
               </svg>
             </button>
+
             <div className="flex-1 flex flex-col items-end">
               <span className="text-2xl text-right text-gray-700 font-[audiowide]">
                 {preview ? preview.estOut.toFixed(0) : "0"}
@@ -293,6 +332,7 @@ const SwapCard: React.FC = () => {
           />
           <span className="text-xs text-gray-400">%</span>
         </div>
+
         {/* Preview dropdown toggle */}
         <div className="flex justify-center mb-2">
           <button
@@ -317,6 +357,7 @@ const SwapCard: React.FC = () => {
             </svg>
           </button>
         </div>
+
         {/* Error */}
         {amountTouched && error && (
           <div className="text-red-500 text-xs mb-2 font-[audiowide]">
@@ -324,7 +365,7 @@ const SwapCard: React.FC = () => {
           </div>
         )}
 
-        {/* Preview info shown in toToken input area, toggled by dropdown */}
+        {/* Preview info */}
         {preview && showPreview && (
           <div
             className={`transition-opacity duration-300 ${
@@ -335,7 +376,7 @@ const SwapCard: React.FC = () => {
             <div className="mb-2 text-black font-[audiowide]">
               Estimated Output:{" "}
               <b>
-                {preview.estOut.toFixed(1)} {toToken.symbol}
+                {preview.estOut.toFixed(1)} {toToken?.symbol ?? ""}
               </b>
             </div>
             <div className="mb-2 text-black font-[audiowide]">
@@ -344,23 +385,24 @@ const SwapCard: React.FC = () => {
             <div className="mb-2 text-black font-[audiowide]">
               Fee:{" "}
               <b>
-                {preview.fee.toFixed(4)} {fromToken.symbol}
+                {preview.fee.toFixed(4)} {fromToken?.symbol ?? ""}
               </b>
             </div>
             <div className="text-black font-[audiowide]">
               Minimum Received:{" "}
               <b>
-                {preview.minReceived.toFixed(1)} {toToken.symbol}
+                {preview.minReceived.toFixed(1)} {toToken?.symbol ?? ""}
               </b>
             </div>
           </div>
         )}
+
         {/* CTA button */}
         <button
           className={`w-full mt-2 py-3 rounded-md font-bold text-lg uppercase tracking-wide shadow-inner font-[audiowide] ${
             isWalletConnected
               ? "bg-green-500 text-white hover:bg-green-600"
-              : "bg-(--fluxa-accent) hover:bg-(--fluxa-accent-600) text-white shadow-(--fluxa-glow)"
+              : "bg-gray-700 text-white"
           } transition-colors cursor-pointer`}
           style={{ boxShadow: "inset 0 2px 8px 0 rgba(0,0,0,0.08)" }}
           aria-label={isWalletConnected ? "Swap" : "Connect wallet"}
@@ -373,6 +415,7 @@ const SwapCard: React.FC = () => {
               : "Swap"
             : "Connect Wallet"}
         </button>
+
         {/* Success modal */}
         {success && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
@@ -387,7 +430,6 @@ const SwapCard: React.FC = () => {
               <button
                 className="mt-2 px-4 py-2 bg-blue-600 text-white rounded font-[audiowide]"
                 onClick={() => setSuccess(null)}
-                aria-label="Close success modal"
               >
                 Close
               </button>
@@ -395,24 +437,40 @@ const SwapCard: React.FC = () => {
           </div>
         )}
         {/* Token modals */}
-        <TokenListModal
+        <ChainTokenModal
           open={showFromModal}
-          onSelect={(t) => {
-            setFromToken(t);
-            setPreview(null);
-            setAmount("");
+          singleSelect
+          initialSelected={fromToken ? [fromToken] : []}
+          allowedTokens={adaptToTokenInfo(
+            TOKENS.filter((t) => t.symbol !== toToken?.symbol)
+          )}
+          onConfirm={(tokens) => {
+            const picked = tokens && tokens.length > 0 ? tokens[0] : undefined;
+            if (picked) {
+              setFromToken(picked);
+              setPreview(null);
+              setAmount("");
+            }
+            setShowFromModal(false);
           }}
           onClose={() => setShowFromModal(false)}
-          tokens={TOKENS.filter((t) => t.symbol !== toToken.symbol)}
         />
-        <TokenListModal
+        <ChainTokenModal
           open={showToModal}
-          onSelect={(t) => {
-            setToToken(t);
-            setPreview(null);
+          singleSelect
+          initialSelected={toToken ? [toToken] : []}
+          allowedTokens={adaptToTokenInfo(
+            TOKENS.filter((t) => t.symbol !== fromToken?.symbol)
+          )}
+          onConfirm={(tokens) => {
+            const picked = tokens && tokens.length > 0 ? tokens[0] : undefined;
+            if (picked) {
+              setToToken(picked);
+              setPreview(null);
+            }
+            setShowToModal(false);
           }}
           onClose={() => setShowToModal(false)}
-          tokens={TOKENS.filter((t) => t.symbol !== fromToken.symbol)}
         />
       </div>
     </div>

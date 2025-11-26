@@ -87,12 +87,14 @@ export type ChainKey =
   | string;
 
 export type TokenInfo = {
-  chain: ChainKey;
-  address: string;
+  chain?: string;
+  address?: string;
   symbol: string;
   name?: string;
   decimals?: number;
   logo?: string | null;
+  balance?: number;
+  icon?: string | null;
 };
 
 export type TokenSearchResult = TokenInfo & {
