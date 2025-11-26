@@ -60,17 +60,41 @@ export interface Web3LoginButtonProps {
 }
 
 export type NetworkOption = {
-  key: string; // internal key you use in your app (e.g. 'base', 'polygon')
-  label: string; // human label (e.g. 'Base', 'Polygon')
-  moralisKey?: string; // string to pass to Moralis / API (if different), fallback to key
-  chainId?: number; // optional numeric chainId used to trigger provider switch
+  key: string;
+  label: string;
+  moralisKey?: string;
+  chainId?: number;
 };
 
 export type NetworkDropdownProps = {
-  current: string; // current network key
+  current: string;
   onChange: (networkKey: string) => void;
   networks?: NetworkOption[];
   size?: "sm" | "md" | "lg";
-  switchOnSelect?: boolean; // if true will attempt to call wallet_switchEthereumChain
+  switchOnSelect?: boolean;
   className?: string;
+};
+
+// Testing Network Switch and Token Search
+
+export type ChainKey =
+  | "eth"
+  | "polygon"
+  | "base"
+  | "arbitrum"
+  | "bsc"
+  | "optimism"
+  | string;
+
+export type TokenInfo = {
+  chain: ChainKey;
+  address: string;
+  symbol: string;
+  name?: string;
+  decimals?: number;
+  logo?: string | null;
+};
+
+export type TokenSearchResult = TokenInfo & {
+  score?: number;
 };
