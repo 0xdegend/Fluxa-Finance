@@ -11,17 +11,36 @@ const CHAIN_META: {
   localPath?: string;
   label?: string;
 }[] = [
-  { key: "eth", coinGeckoId: "ethereum", label: "Ethereum" },
+  {
+    key: "eth",
+    coinGeckoId: undefined,
+    localPath: "/logos/ethereum-icon.png",
+    label: "Ethereum",
+  },
   {
     key: "base",
     coinGeckoId: undefined,
     localPath: "/logos/base-icon.svg",
     label: "Base",
   },
-  { key: "solana", coinGeckoId: "solana", label: "Solana" },
-  { key: "arbitrum", coinGeckoId: "arbitrum", label: "Arbitrum" },
-  { key: "bsc", coinGeckoId: "binancecoin", label: "BSC" },
-  { key: "optimism", coinGeckoId: "optimism", label: "Optimism" },
+  {
+    key: "solana",
+    coinGeckoId: undefined,
+    localPath: "/logos/solana-icon.png",
+    label: "Solana",
+  },
+  {
+    key: "arbitrum",
+    coinGeckoId: undefined,
+    localPath: "/logos/arbitrum-icon.png",
+    label: "Arbitrum",
+  },
+  {
+    key: "bsc",
+    coinGeckoId: undefined,
+    localPath: "/logos/bnb-icon.png",
+    label: "BSC",
+  },
 ];
 
 let cache: { logos: Record<string, LogoEntry>; expires: number } | null = null;

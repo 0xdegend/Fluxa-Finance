@@ -4,13 +4,12 @@ import TokenSearch from "./TokenSearch";
 import { TokenInfo, ChainKey } from "@/types";
 import Image from "next/image";
 
-const CHAIN_META: { key: ChainKey; label: string }[] = [
-  { key: "eth", label: "Ethereum" },
-  { key: "base", label: "Base" },
-  { key: "solana", label: "Solana" },
-  { key: "arbitrum", label: "Arbitrum" },
-  { key: "bsc", label: "BSC" },
-  { key: "optimism", label: "Optimism" },
+const CHAIN_META: { key: ChainKey; label: string; icon?: string }[] = [
+  { key: "eth", label: "Ethereum", icon: "/logos/ethereum-icon.png" },
+  { key: "base", label: "Base", icon: "/logos/base-icon.svg" },
+  { key: "solana", label: "Solana", icon: "/logos/solana-icon.png" },
+  { key: "arbitrum", label: "Arbitrum", icon: "/logos/arbitrum-icon.png" },
+  { key: "bsc", label: "BSC", icon: "/logos/bnb-icon.png" },
 ];
 
 type LogoEntry =
@@ -189,8 +188,6 @@ export default function ChainTokenModal({
   );
   const [logos, setLogos] = useState<Record<string, LogoEntry | undefined>>({});
   const [loadingLogos, setLoadingLogos] = useState(false);
-
-  // fetch logos from server-side cached endpoint
   useEffect(() => {
     if (!open) return;
 
@@ -213,9 +210,6 @@ export default function ChainTokenModal({
         }
 
         const json = await r.json();
-        // json.logos might be:
-        // { key: "url string" } or { key: { type:'url'|'svg', value: '...' } }
-        // normalize into LogoEntry typed form
         const mapped: Record<string, LogoEntry | undefined> = {};
         for (const k of Object.keys(json.logos ?? {})) {
           const raw = json.logos[k];
@@ -247,6 +241,7 @@ export default function ChainTokenModal({
     Promise.resolve().then(() => {
       if (cancelled) return;
       setSelectedTokens((prev) => (tokensEqual(prev, init) ? prev : init));
+      console.log(selectedTokens);
       setActiveChain((prev) => (prev === newActive ? prev : newActive));
     });
     return () => {

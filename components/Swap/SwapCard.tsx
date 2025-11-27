@@ -200,6 +200,14 @@ const SwapCard: React.FC = () => {
               placeholder="0"
               aria-label="Sell amount"
             />
+            {/* <Image
+              src={`${fromToken?.logo}`}
+              alt="Testing Logo"
+              width={10}
+              height={10}
+              className="rounded-full"
+            /> */}
+
             <span className="text-xs font-[audiowide] text-gray-400">
               $
               {amount
@@ -249,6 +257,13 @@ const SwapCard: React.FC = () => {
             Buy
           </label>
 
+          {/* <Image
+            src={`${toToken?.logo}`}
+            alt="Testing Logo"
+            width={10}
+            height={10}
+            className="rounded-full"
+          /> */}
           <div className="flex items-center gap-3 mb-2">
             <button
               className="flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-200 bg-gray-50 hover:bg-gray-100 focus:outline-none font-[audiowide]"
@@ -449,6 +464,7 @@ const SwapCard: React.FC = () => {
             if (picked) {
               setFromToken(picked);
               setPreview(null);
+              console.log(picked);
               setAmount("");
             }
             setShowFromModal(false);
@@ -467,6 +483,7 @@ const SwapCard: React.FC = () => {
             if (picked) {
               setToToken(picked);
               setPreview(null);
+              console.log(picked);
             }
             setShowToModal(false);
           }}
