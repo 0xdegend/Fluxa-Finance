@@ -6,7 +6,15 @@ import { usePrivy } from "@privy-io/react-auth";
 import ChainTokenModal from "../Common/ChainTokenModal";
 import { adaptToTokenInfo } from "@/app/utils/tokenAdapter";
 
-const adapted = adaptToTokenInfo(TOKENS); // converts whole list
+const adapted = adaptToTokenInfo(TOKENS);
+
+const CHAIN_LOGOS: Record<string, string | undefined> = {
+  base: "/logos/base-icon.svg",
+  eth: "/logos/eth-icon.png",
+  arbitrum: "/logos/arbitrum-icon.png",
+  solana: "/logos/solana-icon.png",
+  bsc: "/logos/bnb-icon.png",
+};
 
 const isNumber = (v: number) => typeof v === "number" && !isNaN(v);
 
@@ -152,14 +160,28 @@ const SwapCard: React.FC = () => {
                   unoptimized
                 />
               ) : fromToken?.logo ? (
-                <Image
-                  src={fromToken.logo}
-                  alt={fromToken.symbol}
-                  width={24}
-                  height={24}
-                  className="rounded-full"
-                  unoptimized
-                />
+                <div className="relative">
+                  <Image
+                    src={fromToken.logo}
+                    alt={fromToken.symbol}
+                    width={24}
+                    height={24}
+                    className="rounded-full"
+                    unoptimized
+                  />
+                  <div className="absolute bottom-0 right-0">
+                    {fromToken?.chain && CHAIN_LOGOS[fromToken.chain] ? (
+                      <Image
+                        src={CHAIN_LOGOS[fromToken.chain]!}
+                        alt={`${fromToken?.chain ?? ""} logo`}
+                        width={12}
+                        height={12}
+                        className="rounded-full"
+                        unoptimized
+                      />
+                    ) : null}
+                  </div>
+                </div>
               ) : (
                 <div className="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center text-xs">
                   {fromToken?.symbol?.[0] ?? "—"}
@@ -200,14 +222,6 @@ const SwapCard: React.FC = () => {
               placeholder="0"
               aria-label="Sell amount"
             />
-            {/* <Image
-              src={`${fromToken?.logo}`}
-              alt="Testing Logo"
-              width={10}
-              height={10}
-              className="rounded-full"
-            /> */}
-
             <span className="text-xs font-[audiowide] text-gray-400">
               $
               {amount
@@ -256,14 +270,6 @@ const SwapCard: React.FC = () => {
           <label className="text-xs font-semibold text-gray-600 font-[audiowide]">
             Buy
           </label>
-
-          {/* <Image
-            src={`${toToken?.logo}`}
-            alt="Testing Logo"
-            width={10}
-            height={10}
-            className="rounded-full"
-          /> */}
           <div className="flex items-center gap-3 mb-2">
             <button
               className="flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-200 bg-gray-50 hover:bg-gray-100 focus:outline-none font-[audiowide]"
@@ -281,14 +287,18 @@ const SwapCard: React.FC = () => {
                     unoptimized
                   />
                 ) : toToken?.logo ? (
-                  <Image
-                    src={toToken.logo}
-                    alt={toToken.symbol}
-                    width={24}
-                    height={24}
-                    className="rounded-full"
-                    unoptimized
-                  />
+                  <div className="absolute bottom-0 right-0">
+                    {toToken?.chain && CHAIN_LOGOS[toToken.chain] ? (
+                      <Image
+                        src={CHAIN_LOGOS[toToken.chain]!}
+                        alt={`${fromToken?.chain ?? ""} logo`}
+                        width={12}
+                        height={12}
+                        className="rounded-full"
+                        unoptimized
+                      />
+                    ) : null}
+                  </div>
                 ) : (
                   <div className="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center text-xs">
                     {toToken?.symbol?.[0] ?? "—"}
