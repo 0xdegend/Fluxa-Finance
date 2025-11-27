@@ -10,7 +10,7 @@ const adapted = adaptToTokenInfo(TOKENS);
 
 const CHAIN_LOGOS: Record<string, string | undefined> = {
   base: "/logos/base-icon.svg",
-  eth: "/logos/eth-icon.png",
+  eth: "/logos/ethereum-icon.png",
   arbitrum: "/logos/arbitrum-icon.png",
   solana: "/logos/solana-icon.png",
   bsc: "/logos/bnb-icon.png",
@@ -174,9 +174,9 @@ const SwapCard: React.FC = () => {
                       <Image
                         src={CHAIN_LOGOS[fromToken.chain]!}
                         alt={`${fromToken?.chain ?? ""} logo`}
-                        width={12}
-                        height={12}
-                        className="rounded-full"
+                        width={15}
+                        height={15}
+                        className="rounded-full border border-white"
                         unoptimized
                       />
                     ) : null}
@@ -276,7 +276,7 @@ const SwapCard: React.FC = () => {
               onClick={() => setShowToModal(true)}
               aria-label="Select buy token"
             >
-              <div className="w-7 h-7 rounded-full flex items-center justify-center overflow-hidden">
+              <div className="w-7 h-7 rounded-full flex items-center justify-center font-bold text-xs overflow-hidden">
                 {toToken?.icon ? (
                   <Image
                     src={toToken.icon}
@@ -287,17 +287,27 @@ const SwapCard: React.FC = () => {
                     unoptimized
                   />
                 ) : toToken?.logo ? (
-                  <div className="absolute bottom-0 right-0">
-                    {toToken?.chain && CHAIN_LOGOS[toToken.chain] ? (
-                      <Image
-                        src={CHAIN_LOGOS[toToken.chain]!}
-                        alt={`${fromToken?.chain ?? ""} logo`}
-                        width={12}
-                        height={12}
-                        className="rounded-full"
-                        unoptimized
-                      />
-                    ) : null}
+                  <div className="relative">
+                    <Image
+                      src={toToken.logo}
+                      alt={toToken.symbol}
+                      width={24}
+                      height={24}
+                      className="rounded-full"
+                      unoptimized
+                    />
+                    <div className="absolute -bottom-px right-0">
+                      {toToken?.chain && CHAIN_LOGOS[toToken.chain] ? (
+                        <Image
+                          src={CHAIN_LOGOS[toToken.chain]!}
+                          alt={`${fromToken?.chain ?? ""} logo`}
+                          width={15}
+                          height={15}
+                          className="rounded-full border border-white"
+                          unoptimized
+                        />
+                      ) : null}
+                    </div>
                   </div>
                 ) : (
                   <div className="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center text-xs">

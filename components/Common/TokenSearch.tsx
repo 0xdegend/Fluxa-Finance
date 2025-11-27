@@ -1,4 +1,3 @@
-// components/TokenSearch.tsx
 "use client";
 import React, { useEffect, useState } from "react";
 import { debounce } from "lodash";
@@ -15,30 +14,103 @@ export default function TokenSearch({
   const [q, setQ] = useState("");
   const [results, setResults] = useState<TokenInfo[]>([]);
   const [loading, setLoading] = useState(false);
+  const [rateLimited, setRateLimited] = useState(false);
+  const [errMsg, setErrMsg] = useState<string | null>(null);
 
   useEffect(() => {
-    const fn = debounce(async (value: string) => {
-      if (!value) {
+    setQ("");
+    setResults([]);
+    setRateLimited(false);
+    setErrMsg(null);
+  }, [chain]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const signal = controller.signal;
+
+    const run = debounce(async (value: string) => {
+      // clear previous error states
+      setErrMsg(null);
+      setRateLimited(false);
+
+      if (!value || value.trim().length === 0) {
         setResults([]);
+        setLoading(false);
         return;
       }
+
       setLoading(true);
       try {
         const url = `/api/relay/token-search?chain=${encodeURIComponent(
           chain
         )}&q=${encodeURIComponent(value)}`;
-        const r = await fetch(url);
-        const json = await r.json();
-        setResults(json || []);
-      } catch (err) {
+        const res = await fetch(url, { signal });
+        if (!res.ok) {
+          if (res.status === 429) {
+            setRateLimited(true);
+            setResults([]);
+            return;
+          }
+
+          let text: string | null = null;
+          try {
+            const j = await res.json();
+            text = j?.message ?? JSON.stringify(j);
+          } catch {
+            try {
+              text = await res.text();
+            } catch {
+              text = `HTTP ${res.status}`;
+            }
+          }
+          setErrMsg(`Search failed: ${text}`);
+          setResults([]);
+          return;
+        }
+
+        const json = await res.json();
+
+        // Normalize response into an array of TokenInfo
+        let arr: TokenInfo[] = [];
+        if (Array.isArray(json)) {
+          arr = json;
+        } else if (Array.isArray(json.tokens)) {
+          arr = json.tokens;
+        } else if (Array.isArray(json.results)) {
+          arr = json.results;
+        } else if (Array.isArray(json.data)) {
+          arr = json.data;
+        } else if (json && typeof json === "object") {
+          // Last-ditch: some APIs return object keyed by addresses
+          // convert values to array where possible
+          const maybeArray = Object.values(json).filter(
+            (v) => v && typeof v === "object"
+          );
+          if (maybeArray.length > 0) arr = maybeArray as TokenInfo[];
+        }
+
+        // Ensure results is always an array
+        setResults(Array.isArray(arr) ? arr : []);
+      } catch (err: unknown) {
+        //@ts-expect-error Just simple type
+        if (err.name === "AbortError") {
+          // expected during rapid typing — ignore
+          return;
+        }
         console.error("search error", err);
+        setErrMsg("Network error");
+        setResults([]);
       } finally {
         setLoading(false);
       }
     }, 300);
 
-    fn(q);
-    return () => fn.cancel();
+    run(q);
+
+    return () => {
+      run.cancel();
+      controller.abort();
+    };
   }, [q, chain]);
 
   return (
@@ -49,29 +121,38 @@ export default function TokenSearch({
         onChange={(e) => setQ(e.target.value)}
         className="w-full p-2 border rounded"
       />
+
       <div className="mt-2 max-h-56 overflow-auto">
         {loading ? (
-          <div>Searching…</div>
+          <div className="p-2 text-sm">Searching…</div>
+        ) : rateLimited ? (
+          <div className="p-2 text-sm text-yellow-600">
+            Rate limited. Please wait a moment and try again.
+          </div>
+        ) : errMsg ? (
+          <div className="p-2 text-sm text-red-600">Error: {errMsg}</div>
         ) : results.length === 0 ? (
-          <div>No results</div>
+          <div className="p-2 text-sm text-gray-500">No results</div>
         ) : (
-          results?.map((r) => (
+          results.map((r, idx) => (
             <div
-              key={`${r.logo}-${r.symbol}`}
+              key={`${r.chain ?? "unknown"}-${r.address ?? r.symbol ?? idx}`}
               className="flex items-center gap-3 p-2 cursor-pointer hover:bg-slate-50"
               onClick={() => onSelect(r)}
             >
               {r.logo ? (
+                // unoptimized avoids Next image domain config issues
                 <Image
                   src={r.logo}
                   width={28}
                   height={28}
                   className="rounded-full"
                   alt={r.symbol}
+                  unoptimized
                 />
               ) : (
                 <div className="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center">
-                  {r.symbol?.[0]}
+                  {r.symbol?.[0] ?? "—"}
                 </div>
               )}
               <div>

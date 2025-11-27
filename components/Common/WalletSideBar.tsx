@@ -54,7 +54,7 @@ export default function WalletSidebar({
   return (
     <aside
       aria-hidden={!sidebarOpen}
-      className={`fixed right-5 top-4  h-[96vh] w-[400px] bg-white shadow-xl p-6 flex flex-col focus:outline-none transform transition-transform duration-300 ease-in-out pointer-events-auto rounded-xl
+      className={`fixed right-5 top-4  h-[96vh] overflow-scroll w-[400px] bg-white shadow-xl p-6 flex flex-col focus:outline-none transform transition-transform duration-300 ease-in-out pointer-events-auto rounded-xl
         ${sidebarOpen ? "translate-x-0" : "translate-x-full"}`}
       tabIndex={0}
       style={{ willChange: "transform" }}
