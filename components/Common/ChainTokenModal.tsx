@@ -1,19 +1,16 @@
-// components/ChainTokenModal.tsx
 "use client";
 import React, { useEffect, useState } from "react";
 import TokenSearch from "./TokenSearch";
 import { TokenInfo, ChainKey } from "@/types";
 import Image from "next/image";
-// removed next/image to keep behavior consistent with remote/local <img>
 
 const CHAIN_META: { key: ChainKey; label: string }[] = [
   { key: "eth", label: "Ethereum" },
   { key: "base", label: "Base" },
-  { key: "abstract", label: "Abstract" },
   { key: "solana", label: "Solana" },
-  { key: "hyperliquid", label: "Hype" },
   { key: "arbitrum", label: "Arbitrum" },
   { key: "bsc", label: "BSC" },
+  { key: "optimism", label: "Optimism" },
 ];
 
 type LogoEntry =
@@ -40,11 +37,8 @@ function normalizeRawLogo(raw?: unknown): LogoEntry | undefined {
   if (typeof raw === "string") {
     const s = raw.trim();
     if (s.startsWith("<svg")) return { type: "svg", value: s };
-    // treat as url/local path
     return { type: "url", value: s };
   }
-
-  // if it's already object-shaped
   if (typeof raw === "object" && raw !== null) {
     const r = raw as Record<string, unknown>;
     if (typeof r.type === "string" && typeof r.value === "string") {
@@ -53,7 +47,7 @@ function normalizeRawLogo(raw?: unknown): LogoEntry | undefined {
       if (t === "svg") return { type: "svg", value: v };
       return { type: "url", value: v };
     }
-    // fallback: if .value is string
+
     if (typeof r.value === "string") {
       const s = r.value.trim();
       if (s.startsWith("<svg")) return { type: "svg", value: s };
@@ -68,7 +62,7 @@ function normalizeSvgForSizing(svg: string): string {
     const replaced = svg.replace(/<svg([^>]*)>/i, (match, attrs) => {
       let cleaned = String(attrs)
         .replace(/\s(width|height)=['"][^'"]*['"]/gi, "")
-        // keep xmlns attributes if present
+
         .replace(/\s+xmlns(:[a-z]+)?=['"][^'"]*['"]/gi, (m) => m);
 
       if (!/preserveAspectRatio=/i.test(cleaned)) {
@@ -78,7 +72,6 @@ function normalizeSvgForSizing(svg: string): string {
     });
     return replaced;
   } catch (e) {
-    // fallback: return original svg but wrapped (not ideal)
     return svg;
   }
 }
@@ -106,7 +99,6 @@ function renderLogoEntry(entryRaw: unknown, size = 18, alt = "") {
   }
 
   if (entry.type === "url") {
-    // Use plain <img> for local & remote images. object-fit maintains aspect ratio.
     return (
       <Image
         src={entry.value}
@@ -118,8 +110,6 @@ function renderLogoEntry(entryRaw: unknown, size = 18, alt = "") {
       />
     );
   }
-
-  // svg entry: patch to be responsive, then inject
   const safeSvg = normalizeSvgForSizing(entry.value);
   return (
     <span
@@ -131,7 +121,6 @@ function renderLogoEntry(entryRaw: unknown, size = 18, alt = "") {
   );
 }
 
-// Render token logo (bigger). Handles url or inline svg; shows first letter fallback otherwise.
 function renderTokenLogo(logo?: string | null, symbol?: string, size = 28) {
   const entry = normalizeRawLogo(logo ?? undefined);
   const style: React.CSSProperties = {
@@ -167,8 +156,6 @@ function renderTokenLogo(logo?: string | null, symbol?: string, size = 28) {
       />
     );
   }
-
-  // svg
   const safeSvg = normalizeSvgForSizing(entry.value);
   return (
     <span
@@ -179,11 +166,6 @@ function renderTokenLogo(logo?: string | null, symbol?: string, size = 28) {
     />
   );
 }
-
-/* -----------------------
-   Component
-   ----------------------- */
-
 export default function ChainTokenModal({
   open,
   onClose,
@@ -205,8 +187,6 @@ export default function ChainTokenModal({
   const [selectedTokens, setSelectedTokens] = useState<TokenInfo[]>(
     initialSelected ?? []
   );
-
-  // logos loaded from server API — typed as LogoEntry map (but server may currently return raw)
   const [logos, setLogos] = useState<Record<string, LogoEntry | undefined>>({});
   const [loadingLogos, setLoadingLogos] = useState(false);
 
@@ -317,7 +297,7 @@ export default function ChainTokenModal({
       <button
         key={c.key}
         onClick={() => chooseChain(c.key)}
-        className={`px-3 py-2 rounded flex items-center gap-2 focus:outline-none ${
+        className={`px-3 py-2  cursor-pointer rounded flex items-center gap-2 focus:outline-none ${
           isActive ? "bg-indigo-600 text-white" : "bg-slate-100 text-slate-800"
         }`}
         aria-pressed={isActive}
@@ -346,16 +326,15 @@ export default function ChainTokenModal({
         <h3 className="text-lg font-semibold mb-3">Select Chains & Tokens</h3>
 
         <div className="mb-3">
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2 ">
             {CHAIN_META.map((c) => renderChainButton(c))}
           </div>
         </div>
 
         <div className={singleSelect ? "mb-8" : "grid grid-cols-2 gap-4"}>
           <div>
-            <div className="text-sm text-gray-600 mb-2 mt-2">Search tokens</div>
+            <div className="text-sm text-gray-600 mb-2 mt-5">Search tokens</div>
             <div className="mb-4">
-              <div className="font-semibold mb-2 capitalize">{activeChain}</div>
               <TokenSearch
                 chain={activeChain}
                 onSelect={(t) => handleSelectToken(t)}

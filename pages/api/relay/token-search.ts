@@ -1,11 +1,8 @@
-// pages/api/relay/token-search.ts
 import type { NextApiRequest, NextApiResponse } from "next";
 import fetch from "node-fetch";
 import type { TokenSearchResult } from "@/types";
 
 const MORALIS_API_KEY = process.env.MORALIS_API_KEY;
-
-/** Narrowing / parsing helpers */
 function isObject(x: unknown): x is Record<string, unknown> {
   return !!x && typeof x === "object" && !Array.isArray(x);
 }
@@ -74,8 +71,6 @@ export default async function handler(
   if (!q) return res.status(400).json({ error: "Missing query `q`" });
 
   const isAddress = /^0x[0-9a-fA-F]{40}$/.test(q);
-
-  // ---------- Exact address lookup (Moralis ERC20 metadata) ----------
   if (isAddress) {
     if (!MORALIS_API_KEY) {
       console.error("Moralis API key missing");
@@ -99,8 +94,6 @@ export default async function handler(
       }
 
       const rawJson: unknown = await r.json();
-
-      // normalize potential shapes: array, { result: [...] }, single object
       let candidates: unknown[] = [];
       if (Array.isArray(rawJson)) candidates = rawJson;
       else if (
@@ -137,8 +130,6 @@ export default async function handler(
     const rawJson: unknown = await r.json();
     const coins =
       isObject(rawJson) && Array.isArray(rawJson.coins) ? rawJson.coins : [];
-
-    // map into TokenSearchResult[] conservatively (address unknown)
     const results: TokenSearchResult[] = (coins as unknown[])
       .slice(0, 12)
       .map((c) => {

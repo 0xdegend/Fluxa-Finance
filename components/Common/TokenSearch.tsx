@@ -55,9 +55,9 @@ export default function TokenSearch({
         ) : results.length === 0 ? (
           <div>No results</div>
         ) : (
-          results.map((r) => (
+          results?.map((r) => (
             <div
-              key={`${r.chain}-${r.address}-${r.symbol}-${r.name}`}
+              key={`${r.logo}-${r.symbol}`}
               className="flex items-center gap-3 p-2 cursor-pointer hover:bg-slate-50"
               onClick={() => onSelect(r)}
             >

@@ -1,4 +1,3 @@
-// hooks/useTokenPrices.ts
 "use client";
 import { useEffect, useRef, useState } from "react";
 
@@ -7,8 +6,7 @@ export type TokenPriceItem = {
   coingeckoId: string;
   price: number;
   change: number;
-  priceSeries: number[]; // one value per hour, oldest -> newest (length === historyHours)
-  lastUpdate: number | null;
+  priceSeries: number[];
 };
 
 type TokenConfig = { token: string; coingeckoId: string };
@@ -73,9 +71,7 @@ export function useTokenPrices(
               const rawPrices: [number, number][] = Array.isArray(json?.prices)
                 ? json.prices.map((p: number[]) => [Number(p[0]), Number(p[1])])
                 : [];
-
-              // normalize timestamps to ms (sometimes in seconds)
-              const normalized = rawPrices.map(([ts, price]) => {
+              const normalized = rawPrices?.map(([ts, price]) => {
                 const tsMs = ts < 1_000_000_000_000 ? ts * 1000 : ts;
                 return [tsMs, price] as [number, number];
               });
@@ -142,7 +138,7 @@ export function useTokenPrices(
         if (cancelled || !mountedRef.current) return;
 
         setTokens(
-          configs.map((c) => {
+          configs?.map((c) => {
             const hit = results.find(
               (r) => r.cfg.coingeckoId === c.coingeckoId
             );
@@ -188,7 +184,7 @@ export function useTokenPrices(
 
     async function pollOnce() {
       if (configs.length === 0) return;
-      const ids = configs.map((c) => c.coingeckoId).join(",");
+      const ids = configs?.map((c) => c.coingeckoId).join(",");
       const url = `https://api.coingecko.com/api/v3/simple/price?ids=${encodeURIComponent(
         ids
       )}&vs_currencies=usd&include_24hr_change=true`;
@@ -199,7 +195,7 @@ export function useTokenPrices(
         if (cancelled || !mountedRef.current) return;
 
         setTokens((prev) =>
-          prev.map((t) => {
+          prev?.map((t) => {
             const priceObj = json?.[t.coingeckoId];
             if (!priceObj) return t;
             const newPrice = Number(priceObj.usd ?? t.price ?? 0);

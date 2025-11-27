@@ -18,16 +18,10 @@ const CHAIN_META: {
     localPath: "/logos/base-icon.svg",
     label: "Base",
   },
-  {
-    key: "abstract",
-    coinGeckoId: undefined,
-    localPath: "/logos/base-icon.svg",
-    label: "Abstract",
-  },
   { key: "solana", coinGeckoId: "solana", label: "Solana" },
-  { key: "hyperliquid", coinGeckoId: "hyperliquid", label: "Hyperliquid" },
   { key: "arbitrum", coinGeckoId: "arbitrum", label: "Arbitrum" },
   { key: "bsc", coinGeckoId: "binancecoin", label: "BSC" },
+  { key: "optimism", coinGeckoId: "optimism", label: "Optimism" },
 ];
 
 let cache: { logos: Record<string, LogoEntry>; expires: number } | null = null;
@@ -171,8 +165,6 @@ export default async function handler(
 
     for (const m of CHAIN_META) {
       let entry: LogoEntry | null = null;
-
-      // 1) local path (public/)
       if (m.localPath) {
         try {
           const fsPath = path.join(
