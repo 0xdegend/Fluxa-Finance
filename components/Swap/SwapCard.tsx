@@ -174,8 +174,8 @@ const SwapCard: React.FC = () => {
                       <Image
                         src={CHAIN_LOGOS[fromToken.chain]!}
                         alt={`${fromToken?.chain ?? ""} logo`}
-                        width={15}
-                        height={15}
+                        width={12}
+                        height={12}
                         className="rounded-full border border-white"
                         unoptimized
                       />
@@ -301,8 +301,8 @@ const SwapCard: React.FC = () => {
                         <Image
                           src={CHAIN_LOGOS[toToken.chain]!}
                           alt={`${fromToken?.chain ?? ""} logo`}
-                          width={15}
-                          height={15}
+                          width={12}
+                          height={12}
                           className="rounded-full border border-white"
                           unoptimized
                         />
