@@ -11,6 +11,7 @@ import { Web3LoginButtonProps } from "@/types";
 import { FaEthereum } from "react-icons/fa6";
 import { formatSignificant } from "@/app/utils/numberFormat";
 import WalletSidebar from "./WalletSideBar";
+import WalletSidebarContainer from "./WalletSideBarContainer";
 
 export const Web3LoginButton: React.FC<
   Web3LoginButtonProps & { network?: string; setNetwork?: (n: string) => void }
@@ -177,15 +178,16 @@ export const Web3LoginButton: React.FC<
                 className="fixed inset-y-0 right-0 z-50 flex justify-end pointer-events-auto"
                 onClick={(e) => e.stopPropagation()}
               >
-                <WalletSidebar
-                  address={address}
-                  network={network}
-                  balances={balances}
-                  walletBalance={walletBalance}
+                <WalletSidebarContainer
+                  rawAddress={address}
+                  initialNetwork="eth"
                   sidebarOpen={sidebarOpen}
                   setSidebarOpen={setSidebarOpen}
                   copyAddress={copyAddress}
                   handleLogout={handleLogout}
+                  onClaimRewards={() => {
+                    console.log("claim rewards");
+                  }}
                 />
               </div>
             </>

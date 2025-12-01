@@ -198,7 +198,6 @@ export default async function handler(
             const norm = normalizeSvg(svgText);
             entry = { type: "url", value: svgToDataUrl(norm) };
           } else {
-            // non svg (png/jpg) -> read & base64 -> data URL
             const buf = await readFile(fsPath);
             const ext = path.extname(fsPath).slice(1);
             const mime =

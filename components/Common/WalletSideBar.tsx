@@ -10,7 +10,6 @@ export type Token = {
   balance?: number | string | null;
   usd?: number | string | null;
   logo?: string | StaticImageData | null;
-  // optional: chain if your token entries include it
   chain?: string;
   name?: string;
 };
@@ -28,6 +27,8 @@ export interface WalletSidebarProps {
   truncate?: (a: string) => string;
   onClaimRewards?: () => void;
   explorerBase?: string;
+  networks?: { key: string; label: string }[];
+  onRefreshBalances?: () => void;
 }
 
 const DEFAULT_TRUNCATE = (a: string) =>
@@ -51,21 +52,19 @@ export default function WalletSidebar({
   truncate = DEFAULT_TRUNCATE,
   onClaimRewards,
   explorerBase = "https://etherscan.io",
+  networks,
+  onRefreshBalances,
 }: WalletSidebarProps) {
-  const firstBalance =
-    balances && balances.length > 0 ? balances[0] : undefined;
-
-  // local UI state: tab
-  const [activeTab, setActiveTab] = React.useState<"tokens" | "activity">(
-    "tokens"
-  );
-
   const displayTotal =
     walletBalance == null
       ? "—"
       : typeof walletBalance === "number"
       ? walletBalance.toFixed(2)
       : String(walletBalance);
+
+  const [activeTab, setActiveTab] = React.useState<"tokens" | "activity">(
+    "tokens"
+  );
 
   return (
     <aside
@@ -77,14 +76,17 @@ export default function WalletSidebar({
       tabIndex={0}
       style={{ willChange: "transform" }}
     >
-      {/* header row */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
           <NetworkDropdown
             current={network}
-            onChange={(k) => setNetwork?.(k)}
+            networks={networks}
+            onChange={(k) => {
+              setNetwork?.(k);
+            }}
             size="sm"
           />
+
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-slate-100 rounded-full cursor-pointer">
             <span className="text-sm font-mono">{truncate(`${address}`)}</span>
             <button
@@ -108,7 +110,7 @@ export default function WalletSidebar({
         </div>
       </div>
 
-      {/* Net worth / refresh */}
+      {/* Header */}
       <div className="mb-4 px-2">
         <div className="flex items-center gap-3">
           <div>
@@ -121,17 +123,12 @@ export default function WalletSidebar({
           <button
             aria-label="Refresh balances"
             className="ml-auto p-2 rounded-full bg-slate-50 hover:bg-slate-100 cursor-pointer"
-            // You can hook this up to a passed prop refresh handler if you want:
-            onClick={() => {
-              // no-op refresh placeholder — parent should provide actual fetch if desired
-              // optional: setNetwork?.(network) to trigger fetch in parent
-            }}
+            onClick={() => onRefreshBalances?.()}
           >
             <IoRefresh />
           </button>
         </div>
 
-        {/* small tab nav */}
         <div className="mt-4 border-b border-slate-100">
           <nav
             className="-mb-px flex gap-4"
@@ -165,8 +162,6 @@ export default function WalletSidebar({
           </nav>
         </div>
       </div>
-
-      {/* content area */}
       <div className="flex-1 overflow-auto px-2">
         {activeTab === "tokens" ? (
           <>
@@ -176,60 +171,59 @@ export default function WalletSidebar({
               <div className="p-4 text-sm text-gray-500">No tokens found.</div>
             ) : (
               <ul className="space-y-4">
-                {balances.map((t) => {
-                  const usdDisplay = t.usd ?? null;
-                  const balDisplay = t.balance ?? null;
-                  return (
-                    <li
-                      key={`${t.symbol}-${t.logo ?? ""}`}
-                      className="flex items-center gap-3 justify-between"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="relative w-10 h-10 shrink-0">
-                          {t.logo ? (
-                            <Image
-                              src={t.logo}
-                              alt={`${t.symbol} logo`}
-                              width={40}
-                              height={40}
-                              className="rounded-full object-cover"
-                            />
-                          ) : (
-                            <div className="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center text-sm font-semibold text-slate-700">
-                              {getInitial(t.symbol)}
-                            </div>
-                          )}
-
-                          <span
-                            className="absolute -bottom-0.5 -left-0.5 w-3 h-3 rounded-sm border-2 border-white"
-                            style={{ backgroundColor: "#2563EB" }}
-                            aria-hidden
+                {balances.map((t, idx) => (
+                  <li
+                    key={`${t.symbol ?? "token"}-${
+                      t.chain ?? "unknown"
+                    }-${idx}`}
+                    className="flex items-center gap-3 justify-between"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="relative w-10 h-10 shrink-0">
+                        {t.logo ? (
+                          <Image
+                            src={t.logo as string}
+                            alt={`${t.symbol} logo`}
+                            width={40}
+                            height={40}
+                            className="rounded-full object-cover"
+                            unoptimized
                           />
-                        </div>
+                        ) : (
+                          <div className="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center text-sm font-semibold text-slate-700">
+                            {getInitial(t.symbol)}
+                          </div>
+                        )}
 
-                        <div>
-                          <div className="font-semibold text-sm text-slate-900">
-                            {t.symbol}
-                          </div>
-                          <div className="text-xs text-slate-400 capitalize">
-                            {t.name ?? t.chain ?? network}
-                          </div>
-                        </div>
+                        <span
+                          className="absolute -bottom-0.5 -left-0.5 w-3 h-3 rounded-sm border-2 border-white"
+                          style={{ backgroundColor: "#2563EB" }}
+                          aria-hidden
+                        />
                       </div>
 
-                      <div className="text-right">
+                      <div>
                         <div className="font-semibold text-sm text-slate-900">
-                          {usdDisplay ? formatUsd(usdDisplay) : "—"}
+                          {t.symbol}
                         </div>
-                        <div className="text-xs text-slate-400">
-                          {balDisplay != null
-                            ? formatSignificant(balDisplay, 6) + ` ${t.symbol}`
-                            : ""}
+                        <div className="text-xs text-slate-400 capitalize">
+                          {t.name ?? t.chain ?? network}
                         </div>
                       </div>
-                    </li>
-                  );
-                })}
+                    </div>
+
+                    <div className="text-right">
+                      <div className="font-semibold text-sm text-slate-900">
+                        {t.usd ? formatUsd(t.usd) : "—"}
+                      </div>
+                      <div className="text-xs text-slate-400">
+                        {t.balance != null
+                          ? formatSignificant(t.balance, 6) + ` ${t.symbol}`
+                          : ""}
+                      </div>
+                    </div>
+                  </li>
+                ))}
               </ul>
             )}
           </>
@@ -240,7 +234,7 @@ export default function WalletSidebar({
         )}
       </div>
 
-      {/* footer */}
+      {/* Footer */}
       <div className="mt-4">
         <div className="flex flex-col gap-2">
           <button
