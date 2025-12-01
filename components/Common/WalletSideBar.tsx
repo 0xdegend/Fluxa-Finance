@@ -1,7 +1,7 @@
+"use client";
 import React from "react";
 import Image, { StaticImageData } from "next/image";
-import { FaEthereum } from "react-icons/fa";
-import { IoCopy } from "react-icons/io5";
+import { IoCopy, IoRefresh } from "react-icons/io5";
 import { formatSignificant, formatUsd } from "@/app/utils/numberFormat";
 import NetworkDropdown from "./NetworkDropdown";
 
@@ -10,6 +10,9 @@ export type Token = {
   balance?: number | string | null;
   usd?: number | string | null;
   logo?: string | StaticImageData | null;
+  // optional: chain if your token entries include it
+  chain?: string;
+  name?: string;
 };
 
 export interface WalletSidebarProps {
@@ -32,8 +35,9 @@ const DEFAULT_TRUNCATE = (a: string) =>
 
 function getInitial(symbol?: string) {
   if (!symbol || symbol.length === 0) return "?";
-  return symbol.charAt(0); // preserves original casing (use .toUpperCase() if you want uppercase)
+  return symbol.charAt(0).toUpperCase();
 }
+
 export default function WalletSidebar({
   address,
   network = "unknown",
@@ -51,150 +55,216 @@ export default function WalletSidebar({
   const firstBalance =
     balances && balances.length > 0 ? balances[0] : undefined;
 
+  // local UI state: tab
+  const [activeTab, setActiveTab] = React.useState<"tokens" | "activity">(
+    "tokens"
+  );
+
+  const displayTotal =
+    walletBalance == null
+      ? "—"
+      : typeof walletBalance === "number"
+      ? walletBalance.toFixed(2)
+      : String(walletBalance);
+
   return (
     <aside
       aria-hidden={!sidebarOpen}
-      className={`fixed right-5 top-4  h-[96vh] overflow-scroll w-[400px] bg-white shadow-xl p-6 flex flex-col focus:outline-none transform transition-transform duration-300 ease-in-out pointer-events-auto rounded-xl
+      className={`fixed right-5 top-4 h-[92vh] overflow-hidden w-[420px] bg-white shadow-2xl p-4 flex flex-col transform transition-transform duration-300 ease-in-out rounded-2xl z-50
         ${sidebarOpen ? "translate-x-0" : "translate-x-full"}`}
+      role="dialog"
+      aria-modal="true"
       tabIndex={0}
       style={{ willChange: "transform" }}
     >
-      <header className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
+      {/* header row */}
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-3">
           <NetworkDropdown
             current={network}
             onChange={(k) => setNetwork?.(k)}
             size="sm"
           />
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-slate-100 rounded-full">
+            <span className="text-sm font-mono">{truncate(`${address}`)}</span>
+            <button
+              onClick={copyAddress}
+              aria-label="Copy address"
+              className="p-1 rounded hover:bg-slate-200"
+            >
+              <IoCopy className="text-sm" />
+            </button>
+          </div>
         </div>
 
-        <button
-          aria-label="Close sidebar"
-          onClick={() => setSidebarOpen(false)}
-          className="p-1 h-8 w-8 hover:bg-(--fluxa-accent) cursor-pointer rounded-full hover:text-white"
-        >
-          ×
-        </button>
-      </header>
+        <div className="flex items-center gap-2 ">
+          <button
+            aria-label="Close sidebar"
+            onClick={() => setSidebarOpen(false)}
+            className="p-2 rounded-full hover:bg-slate-100 focus:outline-none cursor-pointer"
+          >
+            ×
+          </button>
+        </div>
+      </div>
 
-      <div className="mb-4">
-        <div className="flex items-center gap-2">
-          <span className="text-lg font-[audiowide]">
-            {truncate(`${address}`)}
-          </span>
+      {/* Net worth / refresh */}
+      <div className="mb-4 px-2">
+        <div className="flex items-center gap-3">
+          <div>
+            <div className="text-3xl font-extrabold text-black">
+              ${displayTotal}
+            </div>
+            <div className="text-xs text-gray-500 mt-1">Total balance</div>
+          </div>
 
           <button
-            aria-label="Copy address"
-            onClick={copyAddress}
-            className="p-1 rounded hover:bg-(--fluxa-accent/10) cursor-pointer"
+            aria-label="Refresh balances"
+            className="ml-auto p-2 rounded-full bg-slate-50 hover:bg-slate-100 cursor-pointer"
+            // You can hook this up to a passed prop refresh handler if you want:
+            onClick={() => {
+              // no-op refresh placeholder — parent should provide actual fetch if desired
+              // optional: setNetwork?.(network) to trigger fetch in parent
+            }}
           >
-            <IoCopy />
+            <IoRefresh />
           </button>
+        </div>
 
+        {/* small tab nav */}
+        <div className="mt-4 border-b border-slate-100">
+          <nav
+            className="-mb-px flex gap-4"
+            role="tablist"
+            aria-label="Sidebar tabs"
+          >
+            <button
+              role="tab"
+              aria-selected={activeTab === "tokens"}
+              onClick={() => setActiveTab("tokens")}
+              className={`py-2 px-1 text-sm font-semibold ${
+                activeTab === "tokens"
+                  ? "text-slate-900 border-b-2 border-indigo-600"
+                  : "text-slate-500"
+              }`}
+            >
+              Tokens
+            </button>
+            <button
+              role="tab"
+              aria-selected={activeTab === "activity"}
+              onClick={() => setActiveTab("activity")}
+              className={`py-2 px-1 text-sm font-semibold ${
+                activeTab === "activity"
+                  ? "text-slate-900 border-b-2 border-indigo-600"
+                  : "text-slate-500"
+              }`}
+            >
+              Activity
+            </button>
+          </nav>
+        </div>
+      </div>
+
+      {/* content area */}
+      <div className="flex-1 overflow-auto px-2">
+        {activeTab === "tokens" ? (
+          <>
+            {balances === null ? (
+              <div className="p-4 text-sm text-gray-500">Loading tokens…</div>
+            ) : balances.length === 0 ? (
+              <div className="p-4 text-sm text-gray-500">No tokens found.</div>
+            ) : (
+              <ul className="space-y-4">
+                {balances.map((t) => {
+                  const usdDisplay = t.usd ?? null;
+                  const balDisplay = t.balance ?? null;
+                  return (
+                    <li
+                      key={`${t.symbol}-${t.logo ?? ""}`}
+                      className="flex items-center gap-3 justify-between"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="relative w-10 h-10 shrink-0">
+                          {t.logo ? (
+                            <Image
+                              src={t.logo}
+                              alt={`${t.symbol} logo`}
+                              width={40}
+                              height={40}
+                              className="rounded-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center text-sm font-semibold text-slate-700">
+                              {getInitial(t.symbol)}
+                            </div>
+                          )}
+
+                          {/* small blue square badge bottom-left to indicate chain (like screenshot) */}
+                          <span
+                            className="absolute -bottom-0.5 -left-0.5 w-3 h-3 rounded-sm border-2 border-white"
+                            style={{ backgroundColor: "#2563EB" }}
+                            aria-hidden
+                          />
+                        </div>
+
+                        <div>
+                          <div className="font-semibold text-sm text-slate-900">
+                            {t.symbol}
+                          </div>
+                          <div className="text-xs text-slate-400">
+                            {t.name ?? t.chain ?? network}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="text-right">
+                        <div className="font-semibold text-sm text-slate-900">
+                          {usdDisplay ? formatUsd(usdDisplay) : "—"}
+                        </div>
+                        <div className="text-xs text-slate-400">
+                          {balDisplay != null
+                            ? formatSignificant(balDisplay, 6) + ` ${t.symbol}`
+                            : ""}
+                        </div>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </>
+        ) : (
+          <div className="p-4 text-sm text-gray-600">
+            Recent activity not implemented — placeholder
+          </div>
+        )}
+      </div>
+
+      {/* footer */}
+      <div className="mt-4">
+        <div className="flex flex-col gap-2">
+          <button
+            onClick={handleLogout}
+            className="w-full py-2 rounded-md bg-indigo-600 text-white font-semibold"
+          >
+            Disconnect
+          </button>
+          <button
+            onClick={onClaimRewards}
+            className="w-full py-2 rounded-md border border-slate-200 bg-white text-slate-700"
+          >
+            Claim rewards
+          </button>
           <a
             href={`${explorerBase}/address/${address}`}
             target="_blank"
-            rel="noopener noreferrer"
-            className="text-(--fluxa-accent) underline text-xs font-[audiowide]"
+            rel="noreferrer"
+            className="w-full text-center block mt-2 py-2 rounded-md text-xs text-indigo-600 underline"
           >
-            Explorer
+            View on explorer
           </a>
         </div>
-
-        <div className="mt-2 flex items-center text-sm text-(--fluxa-muted) font-[audiowide]">
-          <FaEthereum />
-
-          {/* balance display: null = not fetched, [] = fetched but empty */}
-          <span className="ml-2">
-            {balances === null
-              ? "--"
-              : firstBalance
-              ? formatSignificant(firstBalance.balance, 5)
-              : "—"}
-          </span>
-
-          <span className="ml-2">
-            {walletBalance != null ? ` $${walletBalance}` : " $—"}
-          </span>
-        </div>
-      </div>
-
-      <div className="mb-4 mt-5">
-        <div className="font-semibold mb-2 font-[audiowide]">Tokens</div>
-        <ul className="space-y-1">
-          {balances && balances.length > 0 ? (
-            balances.map((t) => (
-              <li
-                key={t.symbol}
-                className="flex gap-3 items-start justify-between font-[audiowide] mb-5"
-              >
-                {t.logo ? (
-                  <Image
-                    src={t.logo as string}
-                    width={30}
-                    height={30}
-                    alt={`${t.symbol} logo`}
-                    className="rounded-full"
-                  />
-                ) : (
-                  <div
-                    className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-700 font-[audiowide]"
-                    aria-hidden="true"
-                    title={t.symbol}
-                  >
-                    <span className="select-none text-sm capitalize font-semibold">
-                      {getInitial(t.symbol)}
-                    </span>
-                  </div>
-                )}
-
-                <span>{t.symbol}</span>
-
-                <div className="flex flex-col items-end">
-                  <span className="text-[17px] text-fluxa-muted">
-                    {formatUsd(t.usd)}
-                  </span>
-                  <span className="text-xs">
-                    {formatSignificant(t.balance, 5)}
-                  </span>
-                </div>
-              </li>
-            ))
-          ) : (
-            <div className="px-2 py-3 text-(--fluxa-muted) font-[audiowide]">
-              {balances === null ? (
-                <span>Loading tokens…</span>
-              ) : (
-                <span>No tokens found.</span>
-              )}
-            </div>
-          )}
-        </ul>
-      </div>
-
-      <div className="mt-auto flex flex-col gap-2">
-        <button
-          onClick={handleLogout}
-          className="w-full bg-(--fluxa-violet) text-white py-2 rounded cursor-pointer font-[audiowide]"
-        >
-          Disconnect
-        </button>
-
-        <button
-          onClick={onClaimRewards}
-          className="w-full bg-(--fluxa-glass) py-2 rounded font-[audiowide] text-(--fluxa-text) cursor-pointer"
-        >
-          Claim Rewards
-        </button>
-
-        <a
-          href={`${explorerBase}/address/${address}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="w-full text-center bg-fluxa-glass py-2 rounded font-[audiowide] text-(--fluxa-accent) underline"
-        >
-          View on Explorer
-        </a>
       </div>
     </aside>
   );
