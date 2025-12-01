@@ -345,8 +345,6 @@ const SwapCard: React.FC = () => {
             </div>
           </div>
         </div>
-
-        {/* Slippage control */}
         <div className="flex items-center gap-2 mb-2">
           <label
             htmlFor="slippage"
