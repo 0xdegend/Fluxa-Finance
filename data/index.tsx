@@ -1,6 +1,6 @@
 import { Token } from "@/types";
 import { NetworkOption } from "@/types";
-
+import { ChainKey } from "@/types";
 export const DEFAULT_ASSETS = [
   { id: "bitcoin", symbol: "BTC" },
   { id: "ethereum", symbol: "ETH" },
@@ -70,4 +70,12 @@ export const DEFAULT_NETWORKS: NetworkOption[] = [
     chainId: 42161,
   },
   { key: "fantom", label: "Fantom", moralisKey: "fantom", chainId: 250 },
+];
+
+export const CHAIN_META: { key: ChainKey; label: string; icon?: string }[] = [
+  { key: "eth", label: "Ethereum", icon: "/logos/ethereum-icon.png" },
+  { key: "base", label: "Base", icon: "/logos/base-icon.svg" },
+  { key: "solana", label: "Solana", icon: "/logos/solana-icon.png" },
+  { key: "arbitrum", label: "Arbitrum", icon: "/logos/arbitrum-icon.png" },
+  { key: "bsc", label: "BSC", icon: "/logos/bnb-icon.png" },
 ];

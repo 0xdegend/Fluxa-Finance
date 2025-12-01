@@ -5,15 +5,8 @@ import ReactDOM from "react-dom";
 import type { NetworkOption } from "@/types";
 import { DEFAULT_NETWORKS } from "@/data";
 import type { NetworkDropdownProps } from "@/types";
-import type { ChainKey } from "@/types";
-
-const CHAIN_META: { key: ChainKey; label: string; icon?: string }[] = [
-  { key: "eth", label: "Ethereum", icon: "/logos/ethereum-icon.png" },
-  { key: "base", label: "Base", icon: "/logos/base-icon.svg" },
-  { key: "solana", label: "Solana", icon: "/logos/solana-icon.png" },
-  { key: "arbitrum", label: "Arbitrum", icon: "/logos/arbitrum-icon.png" },
-  { key: "bsc", label: "BSC", icon: "/logos/bnb-icon.png" },
-];
+import Image from "next/image";
+import { CHAIN_META } from "@/data";
 
 type LogoEntry =
   | { type: "url"; value: string }
@@ -202,7 +195,7 @@ export default function NetworkDropdown({
       );
     }
     return (
-      <img
+      <Image
         src={e.value}
         alt={alt}
         width={sizePx}
@@ -286,6 +279,7 @@ export default function NetworkDropdown({
                               lineHeight: "18px",
                               fontFamily: "audiowide, system-ui, sans-serif",
                             }}
+                            className="cursor-pointer"
                           >
                             {opt.label}
                           </span>
@@ -336,7 +330,7 @@ export default function NetworkDropdown({
           setOpen((s) => !s);
           if (!open) setFocusedIndex(null);
         }}
-        className={`flex items-center gap-2 ${sizeClasses} bg-white border border-slate-200 shadow-sm hover:brightness-95 focus:outline-none focus:ring-2 focus:ring-indigo-400 px-3`}
+        className={`flex items-center gap-2 ${sizeClasses} bg-white border border-slate-200 shadow-sm hover:brightness-95 focus:outline-none focus:ring-2 focus:ring-indigo-400 px-3 cursor-pointer`}
         title={`Network: ${currentOption.label}`}
         type="button"
       >

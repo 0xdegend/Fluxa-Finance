@@ -4,7 +4,7 @@ import Image, { StaticImageData } from "next/image";
 import { IoCopy, IoRefresh } from "react-icons/io5";
 import { formatSignificant, formatUsd } from "@/app/utils/numberFormat";
 import NetworkDropdown from "./NetworkDropdown";
-
+import { CHAIN_META } from "@/data";
 export type Token = {
   symbol: string;
   balance?: number | string | null;
@@ -65,6 +65,28 @@ export default function WalletSidebar({
   const [activeTab, setActiveTab] = React.useState<"tokens" | "activity">(
     "tokens"
   );
+
+  function getChainIcon(chainKey?: string) {
+    // CHAIN_META should be imported / available in scope
+    // e.g. import { CHAIN_META } from "@/types" or "@/data"
+    const key = chainKey ?? network; // prefer token chain, fallback to current network
+    const meta = CHAIN_META.find((c) => c.key === key);
+    return meta?.icon ?? null;
+  }
+
+  function getChainColor(chainKey?: string) {
+    const key = chainKey ?? network;
+    return (
+      {
+        base: "#1a01fe",
+        eth: "#627eea",
+        solana: "#00ffa3",
+        bsc: "#f3ba2f",
+        arbitrum: "#28a0f0",
+        polygon: "#8247e5",
+      }[key] ?? "#94a3b8"
+    );
+  }
 
   return (
     <aside
@@ -194,12 +216,53 @@ export default function WalletSidebar({
                             {getInitial(t.symbol)}
                           </div>
                         )}
+                        {(() => {
+                          const chainKey = t.chain ?? network;
+                          const icon = getChainIcon(chainKey);
 
-                        <span
-                          className="absolute -bottom-0.5 -left-0.5 w-3 h-3 rounded-sm border-2 border-white"
-                          style={{ backgroundColor: "#2563EB" }}
-                          aria-hidden
-                        />
+                          return icon ? (
+                            <Image
+                              src={icon}
+                              alt={`${chainKey} logo`}
+                              width={18}
+                              height={18}
+                              style={{
+                                position: "absolute",
+                                left: -6, // match previous -left-0.5 offsets (tweak if needed)
+                                bottom: -3, // match previous -bottom-0.5 (tweak if needed)
+                                width: 18,
+                                height: 18,
+                                borderRadius: 6,
+                                border: "2px solid white",
+                                objectFit: "cover",
+                                background: "transparent",
+                              }}
+                            />
+                          ) : (
+                            <span
+                              style={{
+                                position: "absolute",
+                                left: -6,
+                                bottom: -3,
+                                width: 18,
+                                height: 18,
+                                borderRadius: 4,
+                                border: "2px solid white",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                fontSize: 10,
+                                fontWeight: 700,
+                                color: "white",
+                                background: getChainColor(chainKey),
+                              }}
+                              aria-hidden
+                              title={chainKey}
+                            >
+                              {(chainKey && chainKey[0]?.toUpperCase()) ?? "?"}
+                            </span>
+                          );
+                        })()}
                       </div>
 
                       <div>
