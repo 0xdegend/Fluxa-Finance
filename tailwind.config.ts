@@ -19,7 +19,9 @@ module.exports = {
       },
       fontFamily: {
         audiowide: ["var(--font-audiowide)", "sans-serif"],
+        rajdhani: ["var(--font-rajdhani),", "sans-serif"],
       },
+
       borderRadius: {
         "xl-2": "16px",
       },

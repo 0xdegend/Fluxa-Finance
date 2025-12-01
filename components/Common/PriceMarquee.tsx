@@ -234,11 +234,11 @@ export default function PriceMarquee({
               </div>
             )}
 
-            <div className="font-semibold mr-1 font-[audiowide]">
+            <div className="font-semibold mr-1 font-[rajdhani]">
               {it.symbol}
             </div>
 
-            <div className="text-[(--fluxa-muted)] font-[audiowide]">
+            <div className="text-[(--fluxa-muted)] font-[rajdhani]">
               {it.price === undefined ? (
                 <span className="animate-pulse">...</span>
               ) : (
