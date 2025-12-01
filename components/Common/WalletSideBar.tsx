@@ -85,23 +85,23 @@ export default function WalletSidebar({
             onChange={(k) => setNetwork?.(k)}
             size="sm"
           />
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-slate-100 rounded-full">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-slate-100 rounded-full cursor-pointer">
             <span className="text-sm font-mono">{truncate(`${address}`)}</span>
             <button
               onClick={copyAddress}
               aria-label="Copy address"
-              className="p-1 rounded hover:bg-slate-200"
+              className="p-1 rounded hover:bg-slate-200 "
             >
-              <IoCopy className="text-sm" />
+              <IoCopy className="text-sm cursor-pointer" />
             </button>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 ">
+        <div className="flex items-center justify-center gap-2 ml-2 ">
           <button
             aria-label="Close sidebar"
             onClick={() => setSidebarOpen(false)}
-            className="p-2 rounded-full hover:bg-slate-100 focus:outline-none cursor-pointer"
+            className="w-7 h-7 rounded-full hover:bg-slate-100 focus:outline-none cursor-pointer"
           >
             ×
           </button>
@@ -200,7 +200,6 @@ export default function WalletSidebar({
                             </div>
                           )}
 
-                          {/* small blue square badge bottom-left to indicate chain (like screenshot) */}
                           <span
                             className="absolute -bottom-0.5 -left-0.5 w-3 h-3 rounded-sm border-2 border-white"
                             style={{ backgroundColor: "#2563EB" }}
@@ -212,7 +211,7 @@ export default function WalletSidebar({
                           <div className="font-semibold text-sm text-slate-900">
                             {t.symbol}
                           </div>
-                          <div className="text-xs text-slate-400">
+                          <div className="text-xs text-slate-400 capitalize">
                             {t.name ?? t.chain ?? network}
                           </div>
                         </div>

@@ -26,10 +26,8 @@ export const Web3LoginButton: React.FC<
 }) => {
   const { login, user } = usePrivy();
   const { wallets } = useWallets();
-  const wallet = wallets[0];
   const { isConnected } = useAccount();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [networkName, setNetworkName] = useState<string | null>("base");
   const [balances, setBalances] = useState<TokenBalance[] | null>([]);
   const [walletBalance, setWalletBalance] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
@@ -168,23 +166,29 @@ export const Web3LoginButton: React.FC<
           role="dialog"
         >
           {sidebarOpen && (
-            <div
-              className="absolute inset-0 transition-opacity duration-300 pointer-events-auto"
-              onClick={() => setSidebarOpen(false)}
-              aria-hidden="true"
-            >
-              <WalletSidebar
-                address={address}
-                network={network}
-                balances={balances} // Token[] | null
-                walletBalance={walletBalance}
-                sidebarOpen={sidebarOpen}
-                setSidebarOpen={setSidebarOpen}
-                copyAddress={copyAddress}
-                handleLogout={handleLogout}
-                setNetwork={setNetwork}
+            <>
+              <div
+                className="fixed inset-0 z-40 bg-white/80 transition-opacity"
+                onClick={() => setSidebarOpen(false)}
+                aria-hidden="true"
               />
-            </div>
+
+              <div
+                className="fixed inset-y-0 right-0 z-50 flex justify-end pointer-events-auto"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <WalletSidebar
+                  address={address}
+                  network={network}
+                  balances={balances}
+                  walletBalance={walletBalance}
+                  sidebarOpen={sidebarOpen}
+                  setSidebarOpen={setSidebarOpen}
+                  copyAddress={copyAddress}
+                  handleLogout={handleLogout}
+                />
+              </div>
+            </>
           )}
         </div>
       </>
