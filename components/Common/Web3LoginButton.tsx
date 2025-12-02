@@ -10,7 +10,6 @@ import type { TokenBalance } from "@/types";
 import { Web3LoginButtonProps } from "@/types";
 import { FaEthereum } from "react-icons/fa6";
 import { formatSignificant } from "@/app/utils/numberFormat";
-import WalletSidebar from "./WalletSideBar";
 import WalletSidebarContainer from "./WalletSideBarContainer";
 
 export const Web3LoginButton: React.FC<
@@ -169,7 +168,7 @@ export const Web3LoginButton: React.FC<
           {sidebarOpen && (
             <>
               <div
-                className="fixed inset-0 z-40 bg-white/80 transition-opacity"
+                className="fixed inset-0 z-40 bg-white/80 transition-opacity pointer-events-auto"
                 onClick={() => setSidebarOpen(false)}
                 aria-hidden="true"
               />
