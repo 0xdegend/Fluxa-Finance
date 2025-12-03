@@ -16,8 +16,6 @@ const CHAIN_LOGOS: Record<string, string | undefined> = {
   bsc: "/logos/bnb-icon.png",
 };
 
-const isNumber = (v: number) => typeof v === "number" && !isNaN(v);
-
 function isAddress(x?: string) {
   return typeof x === "string" && /^0x[0-9a-fA-F]{40}$/.test(x);
 }
@@ -29,8 +27,8 @@ function compositeKey(chain?: string, address?: string) {
 type BalanceEntry = {
   loading: boolean;
   found: boolean;
-  balanceRaw: string; // raw smallest unit string
-  formatted: string; // human-friendly
+  balanceRaw: string;
+  formatted: string;
   decimals: number;
   symbol: string | null;
   name: string | null;
@@ -74,6 +72,38 @@ const SwapCard: React.FC = () => {
     const intPart = digits.slice(0, digits.length - dec);
     const fracPart = digits.slice(digits.length - dec).replace(/0+$/, "");
     return fracPart === "" ? intPart : `${intPart}.${fracPart}`;
+  }
+
+  function addThousandsSeparators(intStr: string) {
+    return intStr.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }
+
+  function formatForDisplay(numStr: string, maxDecimals = 3, truncate = true) {
+    if (!numStr) return "0";
+    const s = String(numStr);
+    if (!s.includes(".")) {
+      return addThousandsSeparators(s);
+    }
+    const [intPartRaw, fracRaw] = s.split(".");
+    const intPart = intPartRaw === "" ? "0" : intPartRaw;
+    if (maxDecimals <= 0) return addThousandsSeparators(intPart);
+
+    if (truncate) {
+      const frac = (fracRaw || "").slice(0, maxDecimals).replace(/0+$/, "");
+      if (!frac) return addThousandsSeparators(intPart);
+      return `${addThousandsSeparators(intPart)}.${frac}`;
+    } else {
+      const n = Number(s);
+      if (!Number.isFinite(n)) {
+        const frac = (fracRaw || "").slice(0, maxDecimals).replace(/0+$/, "");
+        return frac
+          ? `${addThousandsSeparators(intPart)}.${frac}`
+          : addThousandsSeparators(intPart);
+      }
+      return n.toLocaleString(undefined, {
+        maximumFractionDigits: maxDecimals,
+      });
+    }
   }
 
   async function fetchBalanceFor(
@@ -210,15 +240,17 @@ const SwapCard: React.FC = () => {
       const e = balances[key];
       if (!e) return "—";
       if (e.loading) return "Loading...";
-      return e.formatted ?? "0";
+      return formatForDisplay(e.formatted ?? "0", 3, true);
     }
     if (typeof t.balance === "string" || typeof t.balance === "number") {
-      return String(t.balance);
+      const s = String(t.balance);
+      const cleaned = s.replace(/,/g, "");
+      const n = parseFloat(cleaned || "0");
+      if (!Number.isFinite(n)) return "0";
+      return n.toLocaleString(undefined, { maximumFractionDigits: 3 });
     }
     return "—";
   }
-
-  // your existing preview/validation logic — unchanged except `fromToken.balance` references use getDisplayedBalance
   const parsedAmount = parseFloat(amount || "0");
 
   function validate() {
@@ -248,8 +280,8 @@ const SwapCard: React.FC = () => {
       return;
     }
 
-    const priceImpact = 0.2 + Math.random() * 0.3; // 0.2-0.5%
-    const fee = parsedAmount * 0.001; // 0.1%
+    const priceImpact = 0.2 + Math.random() * 0.3;
+    const fee = parsedAmount * 0.001;
     let estOut = 0;
     if (fromToken && toToken) {
       if (fromToken.symbol === "ETH" && toToken.symbol === "USDC") {
@@ -261,7 +293,7 @@ const SwapCard: React.FC = () => {
       } else if (fromToken.symbol === "DAI" && toToken.symbol === "ETH") {
         estOut = parsedAmount / 2000;
       } else {
-        estOut = parsedAmount; // same token or unknown pair -> pass-through
+        estOut = parsedAmount;
       }
     }
     const minReceived = estOut * (1 - slippage / 100);
