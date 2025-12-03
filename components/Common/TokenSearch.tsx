@@ -3,7 +3,8 @@ import React, { useEffect, useState } from "react";
 import { debounce } from "lodash";
 import { TokenInfo } from "@/types";
 import Image from "next/image";
-
+import Lottie from "lottie-react";
+import loadingAnimation from "../../public/lottie/loading.json";
 export default function TokenSearch({
   chain,
   onSelect,
@@ -143,7 +144,15 @@ export default function TokenSearch({
 
       <div className="mt-2 max-h-56 overflow-auto">
         {loading ? (
-          <div className="p-2 text-sm">Searching…</div>
+          <div role="status" aria-live="polite">
+            <div className="w-[40%] h-60">
+              <Lottie
+                animationData={loadingAnimation}
+                loop={true}
+                autoplay={true}
+              />
+            </div>
+          </div>
         ) : rateLimited ? (
           <div className="p-2 text-sm text-yellow-600">
             Rate limited. Please wait a moment and try again.
