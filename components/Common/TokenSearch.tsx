@@ -23,6 +23,19 @@ export default function TokenSearch({
     setRateLimited(false);
     setErrMsg(null);
   }, [chain]);
+  const makeCompositeKey = (t: TokenInfo) => {
+    const chainPart = String(t.chain ?? chain ?? "unknown")
+      .toLowerCase()
+      .trim();
+    const symbolPart = String(t.symbol ?? "")
+      .toLowerCase()
+      .trim();
+    const namePart = String(t.name ?? "")
+      .toLowerCase()
+      .trim();
+    const logoPart = String(t.logo ?? "").trim();
+    return `${chainPart}:${symbolPart}:${namePart}:${logoPart}`;
+  };
 
   useEffect(() => {
     const controller = new AbortController();
@@ -81,19 +94,26 @@ export default function TokenSearch({
         } else if (Array.isArray(json.data)) {
           arr = json.data;
         } else if (json && typeof json === "object") {
-          // Last-ditch: some APIs return object keyed by addresses
-          // convert values to array where possible
           const maybeArray = Object.values(json).filter(
             (v) => v && typeof v === "object"
           );
           if (maybeArray.length > 0) arr = maybeArray as TokenInfo[];
         }
 
+        const dedupeMap = new Map<string, TokenInfo>();
+        for (const t of arr) {
+          const key = makeCompositeKey(t);
+          if (!dedupeMap.has(key)) {
+            dedupeMap.set(key, t);
+          }
+        }
+        const deduped = Array.from(dedupeMap.values());
+
         // Ensure results is always an array
-        setResults(Array.isArray(arr) ? arr : []);
+        setResults(Array.isArray(deduped) ? deduped : []);
       } catch (err: unknown) {
-        //@ts-expect-error Just simple type
-        if (err.name === "AbortError") {
+        // @ts-expect-error Just simple type
+        if (err?.name === "AbortError") {
           // expected during rapid typing — ignore
           return;
         }
@@ -134,36 +154,40 @@ export default function TokenSearch({
         ) : results.length === 0 ? (
           <div className="p-2 text-sm text-gray-500">No results</div>
         ) : (
-          results.map((r, idx) => (
-            <div
-              key={`${r.chain ?? "unknown"}-${r.address ?? r.symbol ?? idx}`}
-              className="flex items-center gap-3 p-2 cursor-pointer hover:bg-slate-50"
-              onClick={() => onSelect(r)}
-            >
-              {r.logo ? (
-                // unoptimized avoids Next image domain config issues
-                <Image
-                  src={r.logo}
-                  width={28}
-                  height={28}
-                  className="rounded-full"
-                  alt={r.symbol}
-                  unoptimized
-                />
-              ) : (
-                <div className="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center">
-                  {r.symbol?.[0] ?? "—"}
+          results.map((r) => {
+            // use the same deterministic composite key for React
+            const key = makeCompositeKey(r);
+            return (
+              <div
+                key={key}
+                className="flex items-center gap-3 p-2 cursor-pointer hover:bg-slate-50"
+                onClick={() => onSelect(r)}
+              >
+                {r.logo ? (
+                  // unoptimized avoids Next image domain config issues
+                  <Image
+                    src={r.logo}
+                    width={28}
+                    height={28}
+                    className="rounded-full"
+                    alt={r.symbol}
+                    unoptimized
+                  />
+                ) : (
+                  <div className="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center">
+                    {r.symbol?.[0] ?? "—"}
+                  </div>
+                )}
+                <div>
+                  <div className="font-medium">{r.symbol}</div>
+                  <div className="text-xs text-gray-500">
+                    {r.name || r.address}
+                  </div>
                 </div>
-              )}
-              <div>
-                <div className="font-medium">{r.symbol}</div>
-                <div className="text-xs text-gray-500">
-                  {r.name || r.address}
-                </div>
+                <div className="ml-auto text-xs text-gray-400">{r.chain}</div>
               </div>
-              <div className="ml-auto text-xs text-gray-400">{r.chain}</div>
-            </div>
-          ))
+            );
+          })
         )}
       </div>
     </div>
