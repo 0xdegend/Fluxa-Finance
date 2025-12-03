@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { Preview, SwapResult, TokenInfo } from "@/types";
 import { TOKENS } from "@/data";
-import { usePrivy } from "@privy-io/react-auth";
+import { usePrivy, useWallets } from "@privy-io/react-auth";
 import ChainTokenModal from "../Common/ChainTokenModal";
 import { adaptToTokenInfo } from "@/app/utils/tokenAdapter";
 
@@ -18,8 +18,27 @@ const CHAIN_LOGOS: Record<string, string | undefined> = {
 
 const isNumber = (v: number) => typeof v === "number" && !isNaN(v);
 
+function isAddress(x?: string) {
+  return typeof x === "string" && /^0x[0-9a-fA-F]{40}$/.test(x);
+}
+
+function compositeKey(chain?: string, address?: string) {
+  return `${(chain ?? "").toLowerCase()}:${(address ?? "").toLowerCase()}`;
+}
+
+type BalanceEntry = {
+  loading: boolean;
+  found: boolean;
+  balanceRaw: string; // raw smallest unit string
+  formatted: string; // human-friendly
+  decimals: number;
+  symbol: string | null;
+  name: string | null;
+};
+
 const SwapCard: React.FC = () => {
-  const { authenticated } = usePrivy();
+  const { authenticated, user } = usePrivy();
+  const { wallets } = useWallets();
   const isWalletConnected = authenticated;
   const [fromToken, setFromToken] = useState<TokenInfo | undefined>(adapted[0]);
   const [toToken, setToToken] = useState<TokenInfo | undefined>(adapted[1]);
@@ -33,6 +52,7 @@ const SwapCard: React.FC = () => {
   const [amountTouched, setAmountTouched] = useState(false);
   const [swapping, setSwapping] = useState(false);
   const [success, setSuccess] = useState<SwapResult | null>(null);
+  const [balances, setBalances] = useState<Record<string, BalanceEntry>>({});
 
   const getUsdValue = (token: TokenInfo | undefined, amt: string | number) => {
     const n = typeof amt === "string" ? parseFloat(amt) || 0 : (amt as number);
@@ -42,13 +62,171 @@ const SwapCard: React.FC = () => {
     return 0;
   };
 
+  function formatWithDecimals(balanceStr: string, decimals: number) {
+    const digits = (balanceStr || "").replace(/^0+/, "");
+    const dec = Math.max(0, Math.floor(Number(decimals) || 0));
+    if (digits.length === 0) return "0";
+    if (dec === 0) return digits;
+    if (digits.length <= dec) {
+      const frac = digits.padStart(dec, "0").replace(/0+$/, "");
+      return frac === "" ? "0" : `0.${frac}`;
+    }
+    const intPart = digits.slice(0, digits.length - dec);
+    const fracPart = digits.slice(digits.length - dec).replace(/0+$/, "");
+    return fracPart === "" ? intPart : `${intPart}.${fracPart}`;
+  }
+
+  async function fetchBalanceFor(
+    chain: string,
+    tokenAddress: string,
+    wallet: string
+  ) {
+    const key = compositeKey(chain, tokenAddress);
+    setBalances((prev) => ({
+      ...prev,
+      [key]: prev[key]
+        ? { ...prev[key], loading: true }
+        : {
+            loading: true,
+            found: false,
+            balanceRaw: "0",
+            formatted: "0",
+            decimals: 18,
+            symbol: null,
+            name: null,
+          },
+    }));
+
+    try {
+      const url = `/api/erc20-balance?wallet=${encodeURIComponent(
+        wallet
+      )}&token=${encodeURIComponent(tokenAddress)}&chain=${encodeURIComponent(
+        chain
+      )}`;
+      const r = await fetch(url);
+      if (!r.ok) {
+        console.error("Balance API failed", r.status);
+        setBalances((prev) => ({
+          ...prev,
+          [key]: {
+            loading: false,
+            found: false,
+            balanceRaw: "0",
+            formatted: "0",
+            decimals: 18,
+            symbol: null,
+            name: null,
+          },
+        }));
+        return;
+      }
+      const j = await r.json();
+      if (j && j.found) {
+        const entry: BalanceEntry = {
+          loading: false,
+          found: true,
+          balanceRaw: j.balance ?? "0",
+          formatted:
+            j.formatted ??
+            formatWithDecimals(j.balance ?? "0", j.decimals ?? 18),
+          decimals: j.decimals ?? 18,
+          symbol: j.symbol ?? null,
+          name: j.name ?? null,
+        };
+        setBalances((prev) => ({ ...prev, [key]: entry }));
+      } else {
+        // not found -> zero
+        setBalances((prev) => ({
+          ...prev,
+          [key]: {
+            loading: false,
+            found: false,
+            balanceRaw: "0",
+            formatted: "0",
+            decimals: 18,
+            symbol: j?.symbol ?? null,
+            name: j?.name ?? null,
+          },
+        }));
+      }
+    } catch (err) {
+      console.error("fetchBalanceFor error", err);
+      setBalances((prev) => ({
+        ...prev,
+        [key]: {
+          loading: false,
+          found: false,
+          balanceRaw: "0",
+          formatted: "0",
+          decimals: 18,
+          symbol: null,
+          name: null,
+        },
+      }));
+    }
+  }
+
+  useEffect(() => {
+    let mounted = true;
+    async function run() {
+      if (!fromToken) return;
+      const chain = fromToken.chain ?? "eth";
+      const tokenAddr = fromToken.address ?? fromToken?.address ?? "";
+      if (!tokenAddr || !isAddress(tokenAddr)) {
+        console.debug(
+          "No contract address for selected token, skipping balance fetch",
+          fromToken?.symbol
+        );
+        return;
+      }
+      const wallet =
+        wallets && wallets.length > 0 ? wallets[0].address : undefined;
+      if (!wallet) {
+        console.debug("No wallet available to fetch balance");
+        return;
+      }
+      const key = compositeKey(chain, tokenAddr);
+      const existing = balances[key];
+      if (existing && !existing.loading && existing.found) return;
+      if (!mounted) return;
+      await fetchBalanceFor(chain, tokenAddr, wallet);
+    }
+    run();
+    return () => {
+      mounted = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    fromToken?.chain,
+    fromToken?.address,
+    fromToken?.symbol,
+    isWalletConnected,
+  ]);
+  function getDisplayedBalance(t: TokenInfo | undefined) {
+    if (!t) return "—";
+    const tokenAddr = t.address ?? t.address ?? "";
+    if (tokenAddr && isAddress(tokenAddr)) {
+      const key = compositeKey(t.chain ?? "eth", tokenAddr);
+      const e = balances[key];
+      if (!e) return "—";
+      if (e.loading) return "Loading...";
+      return e.formatted ?? "0";
+    }
+    if (typeof t.balance === "string" || typeof t.balance === "number") {
+      return String(t.balance);
+    }
+    return "—";
+  }
+
+  // your existing preview/validation logic — unchanged except `fromToken.balance` references use getDisplayedBalance
   const parsedAmount = parseFloat(amount || "0");
 
   function validate() {
     if (!fromToken || !toToken) return "Select tokens.";
     if (!amount || isNaN(parsedAmount) || parsedAmount <= 0)
       return "Enter a valid amount.";
-    const balance = Number(fromToken.balance) || 0;
+    const balStr = getDisplayedBalance(fromToken);
+    const balance = parseFloat(String(balStr).replace(/,/g, "")) || 0;
     if (parsedAmount > balance)
       return `Amount exceeds wallet balance (${balance} ${fromToken.symbol})`;
     if (fromToken.symbol === toToken.symbol) return "Select different tokens.";
@@ -57,10 +235,12 @@ const SwapCard: React.FC = () => {
 
   function handleQuick(percent: number) {
     if (!fromToken) return;
-    const balance = Number(fromToken.balance) || 0;
+    const balStr = getDisplayedBalance(fromToken);
+    const balance = parseFloat(String(balStr).replace(/,/g, "")) || 0;
     setAmount((balance * percent).toFixed(4));
   }
-  React.useEffect(() => {
+
+  useEffect(() => {
     const err = validate();
     setError(err);
     if (err) {
@@ -86,7 +266,8 @@ const SwapCard: React.FC = () => {
     }
     const minReceived = estOut * (1 - slippage / 100);
     setPreview({ estOut, priceImpact, fee, minReceived });
-  }, [amount, slippage, fromToken, toToken]); // parsedAmount derived from amount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [amount, slippage, fromToken, toToken]);
 
   async function handleSwap() {
     setSwapping(true);
@@ -104,7 +285,7 @@ const SwapCard: React.FC = () => {
 
   const [showAnim, setShowAnim] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
-  React.useEffect(() => {
+  useEffect(() => {
     if (preview) {
       setShowAnim(true);
       const t = setTimeout(() => setShowAnim(false), 400);
@@ -235,7 +416,7 @@ const SwapCard: React.FC = () => {
 
         <div className="flex items-center justify-between mb-2">
           <span className="text-xs font-[audiowide] text-gray-500">
-            Bal: {fromToken ? Number(fromToken.balance || 0) : "—"}
+            Bal: {getDisplayedBalance(fromToken)}
           </span>
         </div>
 
@@ -469,6 +650,7 @@ const SwapCard: React.FC = () => {
             </div>
           </div>
         )}
+
         {/* Token modals */}
         <ChainTokenModal
           open={showFromModal}
