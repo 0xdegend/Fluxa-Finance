@@ -114,7 +114,6 @@ export default function TokenSearch({
       } catch (err: unknown) {
         // @ts-expect-error Just simple type
         if (err?.name === "AbortError") {
-          // expected during rapid typing — ignore
           return;
         }
         console.error("search error", err);
