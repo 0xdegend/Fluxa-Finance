@@ -451,8 +451,6 @@ const SwapCard: React.FC = () => {
             Bal: {getDisplayedBalance(fromToken)}
           </span>
         </div>
-
-        {/* Swap arrow */}
         <div className="flex justify-center my-2">
           <button
             className="rounded-full bg-white border border-gray-200 shadow p-2 hover:bg-gray-50 focus:outline-none cursor-pointer"
