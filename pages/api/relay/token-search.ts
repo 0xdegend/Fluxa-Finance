@@ -60,6 +60,95 @@ function parseMoralisTokenRaw(
   };
 }
 
+function coinGeckoPlatformKeysForChain(chain: string): string[] {
+  const c = String(chain ?? "")
+    .toLowerCase()
+    .trim();
+  switch (c) {
+    case "eth":
+    case "ethereum":
+      return ["ethereum"];
+    case "base":
+      return ["base"];
+    case "sol":
+    case "solana":
+      return ["solana"];
+    case "arbitrum":
+      return ["arbitrum-one", "arbitrum"];
+    case "bsc":
+    case "binance":
+    case "binance-smart-chain":
+      return ["binance-smart-chain"];
+    default:
+      return [c]; // try the raw value — user can extend mapping if needed
+  }
+}
+
+/**
+ * Basic in-memory cache for coin detail platform lookups during the process lifecycle.
+ * Keyed by `${coinId}:${platformKey}` → address string or null.
+ */
+const coinPlatformCache = new Map<string, string | null>();
+
+/** fetch coin detail and extract a contract address for the given chain (platform keys) */
+async function fetchCoinAddressFromCoinGecko(
+  coinId: string,
+  chain: string
+): Promise<string | null> {
+  if (!coinId) return null;
+  const platformKeys = coinGeckoPlatformKeysForChain(chain);
+  const cacheKey = `${coinId}::${platformKeys.join(",")}`;
+  if (coinPlatformCache.has(cacheKey))
+    return coinPlatformCache.get(cacheKey) ?? null;
+
+  const url = `https://api.coingecko.com/api/v3/coins/${encodeURIComponent(
+    coinId
+  )}?localization=false&tickers=false&market_data=false&community_data=false&developer_data=false&sparkline=false`;
+
+  try {
+    const r = await fetch(url, { headers: { accept: "application/json" } });
+    if (!r.ok) {
+      // respect rate limits / errors — cache negative result briefly
+      coinPlatformCache.set(cacheKey, null);
+      return null;
+    }
+    const json = await r.json();
+    if (!isObject(json)) {
+      coinPlatformCache.set(cacheKey, null);
+      return null;
+    }
+
+    const platformsObj = isObject(json.platforms)
+      ? (json.platforms as Record<string, unknown>)
+      : {};
+    // try the mapped keys first
+    for (const pk of platformKeys) {
+      const v = platformsObj[pk];
+      if (typeof v === "string" && /^0x[0-9a-fA-F]{40}$/.test(v)) {
+        const addr = v.toLowerCase();
+        coinPlatformCache.set(cacheKey, addr);
+        return addr;
+      }
+    }
+
+    // fallback: pick first-looking-ethereum-address-looking value
+    for (const val of Object.values(platformsObj)) {
+      if (typeof val === "string" && /^0x[0-9a-fA-F]{40}$/.test(val)) {
+        const addr = val.toLowerCase();
+        coinPlatformCache.set(cacheKey, addr);
+        return addr;
+      }
+    }
+
+    coinPlatformCache.set(cacheKey, null);
+    return null;
+  } catch (err) {
+    // network or JSON error -> cache negative and return null
+    coinPlatformCache.set(cacheKey, null);
+    return null;
+  }
+}
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -114,6 +203,8 @@ export default async function handler(
       return res.status(500).json({ error: "token address lookup failed" });
     }
   }
+
+  // Non-address fuzzy search using CoinGecko
   try {
     const cgUrl = `https://api.coingecko.com/api/v3/search?query=${encodeURIComponent(
       q
@@ -130,43 +221,57 @@ export default async function handler(
     const rawJson: unknown = await r.json();
     const coins =
       isObject(rawJson) && Array.isArray(rawJson.coins) ? rawJson.coins : [];
-    const results: TokenSearchResult[] = (coins as unknown[])
-      .slice(0, 12)
-      .map((c) => {
-        if (!isObject(c)) {
-          return {
-            chain,
-            address: "",
-            symbol: String(c ?? "").toUpperCase(),
-            name: undefined,
-            decimals: 18,
-            logo: null,
-          } as TokenSearchResult;
-        }
-        const coin = c as Record<string, unknown>;
-        const id = typeof coin.id === "string" ? coin.id : "";
-        const symbol =
-          typeof coin.symbol === "string"
-            ? coin.symbol.toUpperCase()
-            : id.toUpperCase();
-        const name = typeof coin.name === "string" ? coin.name : undefined;
-        const image =
-          typeof coin.large === "string"
-            ? `${coin.large}`
-            : typeof coin.thumb === "string"
-            ? coin.thumb
-            : typeof coin.small === "string"
-            ? coin.small
-            : null;
-        return {
+
+    // limit and then enrich each coin by fetching coin detail to extract platform contract
+    const sliced = (coins as unknown[]).slice(0, 12);
+
+    // sequential-ish enrichment with caching — safe for small number of coins (12)
+    const results: TokenSearchResult[] = [];
+    for (const c of sliced) {
+      if (!isObject(c)) {
+        results.push({
           chain,
           address: "",
-          symbol,
-          name,
+          symbol: String(c ?? "").toUpperCase(),
+          name: undefined,
           decimals: 18,
-          logo: image,
-        } as TokenSearchResult;
-      });
+          logo: null,
+        } as TokenSearchResult);
+        continue;
+      }
+
+      const coin = c as Record<string, unknown>;
+      const id = typeof coin.id === "string" ? coin.id : "";
+      const symbol =
+        typeof coin.symbol === "string"
+          ? coin.symbol.toUpperCase()
+          : id.toUpperCase();
+      const name = typeof coin.name === "string" ? coin.name : undefined;
+      const image =
+        typeof coin.large === "string"
+          ? `${coin.large}`
+          : typeof coin.thumb === "string"
+          ? coin.thumb
+          : typeof coin.small === "string"
+          ? coin.small
+          : null;
+
+      // try to resolve a contract address via CoinGecko coin detail
+      let address = "";
+      if (id) {
+        const addr = await fetchCoinAddressFromCoinGecko(id, chain);
+        if (addr) address = addr;
+      }
+
+      results.push({
+        chain,
+        address: address || "",
+        symbol,
+        name,
+        decimals: 18,
+        logo: image,
+      } as TokenSearchResult);
+    }
 
     return res.status(200).json(results);
   } catch (err) {

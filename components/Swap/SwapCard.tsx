@@ -482,7 +482,6 @@ const SwapCard: React.FC = () => {
             if (picked) {
               setFromToken(picked);
               setPreview(null);
-              console.log(picked);
               setAmount("");
             }
             setShowFromModal(false);

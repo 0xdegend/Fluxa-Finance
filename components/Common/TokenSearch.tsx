@@ -112,6 +112,7 @@ export default function TokenSearch({
 
         // Ensure results is always an array
         setResults(Array.isArray(deduped) ? deduped : []);
+        console.log(results);
       } catch (err: unknown) {
         // @ts-expect-error Just simple type
         if (err?.name === "AbortError") {
