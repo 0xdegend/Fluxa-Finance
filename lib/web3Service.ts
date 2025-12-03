@@ -49,3 +49,21 @@ export async function fetchWalletBalance(address: string, chain: string) {
   }
   return res.json(); // { total_networth_usd, chains: [...] }
 }
+
+export async function fetchTokenBalance(
+  walletAddress: string,
+  tokenAddress: string,
+  chain = "eth"
+) {
+  const res = await fetch(
+    `/api/erc20-balance?wallet=${encodeURIComponent(
+      walletAddress
+    )}&token=${encodeURIComponent(tokenAddress)}&chain=${encodeURIComponent(
+      chain
+    )}`
+  );
+  if (!res.ok) {
+    throw new Error(`Balance fetch failed: ${res.status}`);
+  }
+  return res.json();
+}
