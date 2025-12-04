@@ -165,7 +165,6 @@ const SwapCard: React.FC = () => {
         };
         setBalances((prev) => ({ ...prev, [key]: entry }));
       } else {
-        // not found -> zero
         setBalances((prev) => ({
           ...prev,
           [key]: {
