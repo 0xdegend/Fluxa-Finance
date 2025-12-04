@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { usePrivy, useWallets, useLogout } from "@privy-io/react-auth";
 import { useAccount } from "wagmi";
 import {
