@@ -116,7 +116,6 @@ export const Web3LoginButton: React.FC<
     if (address) navigator.clipboard.writeText(address);
   };
 
-  // Button classes
   const base =
     "rounded-md transition font-semibold flex items-center justify-center cursor-pointer font-[audiowide]";
   const sizeMap = {
