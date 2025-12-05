@@ -51,11 +51,8 @@ export const Web3LoginButton: React.FC<
   const NETWORK_KEY_TO_CHAIN: Record<string, string> = {
     base: "base",
     eth: "eth",
-    polygon: "polygon",
+    sol: "sol",
     bsc: "bsc",
-    avalanche: "avalanche",
-    fantom: "fantom",
-    optimism: "optimism",
     arbitrum: "arbitrum",
   };
   const apiChain = NETWORK_KEY_TO_CHAIN[network ?? "base"] ?? "eth";

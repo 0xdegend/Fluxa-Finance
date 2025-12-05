@@ -4,6 +4,8 @@ import Image, { StaticImageData } from "next/image";
 import { IoCopy, IoRefresh } from "react-icons/io5";
 import { formatSignificant, formatUsd } from "@/app/utils/numberFormat";
 import NetworkDropdown from "./NetworkDropdown";
+import Lottie from "lottie-react";
+import loadingAnimation from "../../public/lottie/fingers-loading.json";
 import { CHAIN_META } from "@/data";
 export type Token = {
   symbol: string;
@@ -41,7 +43,7 @@ function getInitial(symbol?: string) {
 
 export default function WalletSidebar({
   address,
-  network = "unknown",
+  network = "eth",
   setNetwork,
   balances = null,
   walletBalance = null,
@@ -188,7 +190,15 @@ export default function WalletSidebar({
         {activeTab === "tokens" ? (
           <>
             {balances === null ? (
-              <div className="p-4 text-sm text-gray-500">Loading tokens…</div>
+              <div className="p-4">
+                <div className="w-full h-60">
+                  <Lottie
+                    animationData={loadingAnimation}
+                    loop={true}
+                    autoplay={true}
+                  />
+                </div>
+              </div>
             ) : balances.length === 0 ? (
               <div className="p-4 text-sm text-gray-500">No tokens found.</div>
             ) : (
