@@ -302,7 +302,7 @@ export default function WalletSidebar({
         <div className="flex flex-col gap-2">
           <button
             onClick={handleLogout}
-            className="w-full py-2 rounded-md bg-indigo-600 text-white font-semibold"
+            className="w-full py-2 cursor-pointer rounded-md bg-indigo-600 text-white font-semibold"
           >
             Disconnect
           </button>
