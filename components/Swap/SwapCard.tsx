@@ -35,7 +35,7 @@ type BalanceEntry = {
 };
 
 const SwapCard: React.FC = () => {
-  const { authenticated, user } = usePrivy();
+  const { authenticated } = usePrivy();
   const { wallets } = useWallets();
   const isWalletConnected = authenticated;
   const [fromToken, setFromToken] = useState<TokenInfo | undefined>(adapted[0]);
