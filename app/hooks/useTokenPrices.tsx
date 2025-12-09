@@ -12,7 +12,6 @@ export type TokenPriceItem = {
 type TokenConfig = { token: string; coingeckoId: string };
 
 function toHourKey(tsMs: number) {
-  // ISO truncated to hour: "YYYY-MM-DDTHH"
   return new Date(tsMs).toISOString().slice(0, 13);
 }
 
