@@ -47,8 +47,6 @@ export function useTokenPrices(
       mountedRef.current = false;
     };
   }, []);
-
-  // fetch HISTORICAL range for last N hours and build one price per hour
   useEffect(() => {
     let cancelled = false;
 
