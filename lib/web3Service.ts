@@ -67,3 +67,36 @@ export async function fetchTokenBalance(
   }
   return res.json();
 }
+
+export type NativeBalance = {
+  balance: string; // wei
+  eth: string; // formatted ETH string
+};
+
+export async function fetchNativeBalance(
+  address: string,
+  chain = "base"
+): Promise<NativeBalance> {
+  if (!address) throw new Error("address is required");
+
+  const params = new URLSearchParams();
+  params.append("wallet", address);
+  params.append("chain", chain);
+
+  // NOTE: this hits your Next.js api route at pages/api/balance.ts
+  const url = `/api/native-balance?${params.toString()}`;
+
+  const res = await fetch(url);
+  if (!res.ok) {
+    const text = await res.text().catch(() => "");
+    throw new Error(`Failed to fetch native balance: ${res.status} ${text}`);
+  }
+
+  const json = (await res.json()) as NativeBalance;
+  // basic validation
+  if (typeof json?.balance !== "string" || typeof json?.eth !== "string") {
+    throw new Error("Invalid response shape from native-balance API");
+  }
+
+  return json;
+}

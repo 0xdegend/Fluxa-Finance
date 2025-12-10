@@ -37,8 +37,16 @@ type BalanceEntry = {
 const SwapCard: React.FC = () => {
   const { authenticated } = usePrivy();
   const { wallets } = useWallets();
+  const NATIVE_PLACEHOLDER = "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
   const isWalletConnected = authenticated;
-  const [fromToken, setFromToken] = useState<TokenInfo | undefined>(adapted[0]);
+  // Default to ETH on Base network
+  const defaultChain = "base";
+  const defaultEthToken =
+    adapted.find((t) => t.symbol === "ETH" && t.chain === defaultChain) ||
+    adapted[0];
+  const [fromToken, setFromToken] = useState<TokenInfo | undefined>(
+    defaultEthToken
+  );
   const [toToken, setToToken] = useState<TokenInfo | undefined>(adapted[1]);
 
   const [amount, setAmount] = useState<string>("");
@@ -109,75 +117,100 @@ const SwapCard: React.FC = () => {
   async function fetchBalanceFor(
     chain: string,
     tokenAddress: string,
-    wallet: string
+    wallet: string,
+    symbol?: string
   ) {
     const key = compositeKey(chain, tokenAddress);
     setBalances((prev) => ({
       ...prev,
-      [key]: prev[key]
-        ? { ...prev[key], loading: true }
-        : {
-            loading: true,
-            found: false,
-            balanceRaw: "0",
-            formatted: "0",
-            decimals: 18,
-            symbol: null,
-            name: null,
-          },
+      [key]:
+        prev[key] && !prev[key].loading
+          ? { ...prev[key], loading: true }
+          : {
+              loading: true,
+              found: false,
+              balanceRaw: "0",
+              formatted: "0",
+              decimals: 18,
+              symbol: null,
+              name: null,
+            },
     }));
 
     try {
-      const url = `/api/erc20-balance?wallet=${encodeURIComponent(
-        wallet
-      )}&token=${encodeURIComponent(tokenAddress)}&chain=${encodeURIComponent(
-        chain
-      )}`;
-      const r = await fetch(url);
-      if (!r.ok) {
-        console.error("Balance API failed", r.status);
-        setBalances((prev) => ({
-          ...prev,
-          [key]: {
-            loading: false,
-            found: false,
-            balanceRaw: "0",
-            formatted: "0",
-            decimals: 18,
-            symbol: null,
-            name: null,
-          },
-        }));
-        return;
-      }
-      const j = await r.json();
-      if (j && j.found) {
-        const entry: BalanceEntry = {
-          loading: false,
-          found: true,
-          balanceRaw: j.balance ?? "0",
-          formatted:
-            j.formatted ??
-            formatWithDecimals(j.balance ?? "0", j.decimals ?? 18),
-          decimals: j.decimals ?? 18,
-          symbol: j.symbol ?? null,
-          name: j.name ?? null,
-        };
-        setBalances((prev) => ({ ...prev, [key]: entry }));
+      let entry: BalanceEntry | null = null;
+      if (
+        symbol === "ETH" &&
+        (tokenAddress === "" || tokenAddress === NATIVE_PLACEHOLDER)
+      ) {
+        const url = `/api/wallet-balance?address=${encodeURIComponent(
+          wallet
+        )}&chain=${encodeURIComponent(chain)}`;
+        const r = await fetch(url);
+        if (!r.ok) {
+          console.error("Wallet balance API failed", r.status);
+        } else {
+          const j = await r.json();
+          type ChainEntry = {
+            chain: string;
+            native_balance?: string;
+            native_balance_formatted?: string;
+            [k: string]: unknown;
+          };
+          const chainEntry = Array.isArray(j.chains)
+            ? (j.chains as ChainEntry[]).find((c) => c.chain === chain)
+            : (j.chains as ChainEntry);
+          if (chainEntry && chainEntry.native_balance_formatted) {
+            entry = {
+              loading: false,
+              found: true,
+              balanceRaw: chainEntry.native_balance ?? "0",
+              formatted: chainEntry.native_balance_formatted ?? "0",
+              decimals: 18,
+              symbol: "ETH",
+              name: "Ethereum",
+            };
+          }
+        }
       } else {
-        setBalances((prev) => ({
-          ...prev,
-          [key]: {
-            loading: false,
-            found: false,
-            balanceRaw: "0",
-            formatted: "0",
-            decimals: 18,
-            symbol: j?.symbol ?? null,
-            name: j?.name ?? null,
-          },
-        }));
+        // ERC20: use erc20-balance API
+        const url = `/api/erc20-balance?wallet=${encodeURIComponent(
+          wallet
+        )}&token=${encodeURIComponent(tokenAddress)}&chain=${encodeURIComponent(
+          chain
+        )}`;
+        const r = await fetch(url);
+        if (!r.ok) {
+          console.error("Balance API failed", r.status);
+        } else {
+          const j = await r.json();
+          if (j && j.found) {
+            entry = {
+              loading: false,
+              found: true,
+              balanceRaw: j.balance ?? "0",
+              formatted:
+                j.formatted ??
+                formatWithDecimals(j.balance ?? "0", j.decimals ?? 18),
+              decimals: j.decimals ?? 18,
+              symbol: j.symbol ?? null,
+              name: j.name ?? null,
+            };
+          }
+        }
       }
+      setBalances((prev) => ({
+        ...prev,
+        [key]: entry ?? {
+          loading: false,
+          found: false,
+          balanceRaw: "0",
+          formatted: "0",
+          decimals: 18,
+          symbol: symbol ?? null,
+          name: null,
+        },
+      }));
     } catch (err) {
       console.error("fetchBalanceFor error", err);
       setBalances((prev) => ({
@@ -188,7 +221,7 @@ const SwapCard: React.FC = () => {
           balanceRaw: "0",
           formatted: "0",
           decimals: 18,
-          symbol: null,
+          symbol: symbol ?? null,
           name: null,
         },
       }));
@@ -197,11 +230,20 @@ const SwapCard: React.FC = () => {
 
   useEffect(() => {
     let mounted = true;
+    console.log(fromToken);
     async function run() {
       if (!fromToken) return;
-      const chain = fromToken.chain ?? "eth";
-      const tokenAddr = fromToken.address ?? fromToken?.address ?? "";
-      if (!tokenAddr || !isAddress(tokenAddr)) {
+      const chain = fromToken.chain ?? defaultChain;
+      // For native ETH, use a placeholder address (e.g., '0xeeee...')
+      let tokenAddr = fromToken.address ?? "";
+      if (fromToken.symbol === "ETH" && (!tokenAddr || tokenAddr === "")) {
+        tokenAddr = NATIVE_PLACEHOLDER;
+      }
+
+      if (
+        !tokenAddr ||
+        (!isAddress(tokenAddr) && tokenAddr !== NATIVE_PLACEHOLDER)
+      ) {
         console.debug(
           "No contract address for selected token, skipping balance fetch",
           fromToken?.symbol
@@ -218,7 +260,7 @@ const SwapCard: React.FC = () => {
       const existing = balances[key];
       if (existing && !existing.loading && existing.found) return;
       if (!mounted) return;
-      await fetchBalanceFor(chain, tokenAddr, wallet);
+      await fetchBalanceFor(chain, tokenAddr, wallet, fromToken.symbol);
     }
     run();
     return () => {
@@ -230,17 +272,30 @@ const SwapCard: React.FC = () => {
     fromToken?.address,
     fromToken?.symbol,
     isWalletConnected,
+    wallets?.[0]?.address,
   ]);
   function getDisplayedBalance(t: TokenInfo | undefined) {
     if (!t) return "—";
-    const tokenAddr = t.address ?? t.address ?? "";
-    if (tokenAddr && isAddress(tokenAddr)) {
-      const key = compositeKey(t.chain ?? "eth", tokenAddr);
+    const chain = t.chain ?? defaultChain;
+    const tokenAddr = t.address ?? "";
+
+    // For native ETH use the NATIVE_PLACEHOLDER as the key
+    if (t.symbol === "ETH" && (!tokenAddr || tokenAddr === "")) {
+      const key = compositeKey(chain, NATIVE_PLACEHOLDER);
       const e = balances[key];
       if (!e) return "—";
       if (e.loading) return "Loading...";
       return formatForDisplay(e.formatted ?? "0", 3, true);
     }
+
+    if (tokenAddr && isAddress(tokenAddr)) {
+      const key = compositeKey(chain, tokenAddr);
+      const e = balances[key];
+      if (!e) return "—";
+      if (e.loading) return "Loading...";
+      return formatForDisplay(e.formatted ?? "0", 3, true);
+    }
+
     if (typeof t.balance === "string" || typeof t.balance === "number") {
       const s = String(t.balance);
       const cleaned = s.replace(/,/g, "");
@@ -250,54 +305,58 @@ const SwapCard: React.FC = () => {
     }
     return "—";
   }
-  const parsedAmount = parseFloat(amount || "0");
 
-  function validate() {
-    if (!fromToken || !toToken) return "Select tokens.";
-    if (!amount || isNaN(parsedAmount) || parsedAmount <= 0)
-      return "Enter a valid amount.";
-    const balStr = getDisplayedBalance(fromToken);
-    const balance = parseFloat(String(balStr).replace(/,/g, "")) || 0;
-    if (parsedAmount > balance)
-      return `Amount exceeds wallet balance (${balance} ${fromToken.symbol})`;
-    if (fromToken.symbol === toToken.symbol) return "Select different tokens.";
-    return "";
-  }
-
-  function handleQuick(percent: number) {
+  async function handleQuick(percentage: number) {
     if (!fromToken) return;
-    const balStr = getDisplayedBalance(fromToken);
-    const balance = parseFloat(String(balStr).replace(/,/g, "")) || 0;
-    setAmount((balance * percent).toFixed(4));
+    const chain = fromToken.chain ?? defaultChain;
+    const tokenAddr = fromToken.address ?? "";
+    // For native ETH, use a placeholder address (e.g., '0xeeee...')
+    let resolvedAddr = NATIVE_PLACEHOLDER;
+    if (fromToken.symbol === "ETH" && (!resolvedAddr || resolvedAddr === "")) {
+      resolvedAddr = "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"; // Native ETH placeholder
+    }
+    const wallet =
+      wallets && wallets.length > 0 ? wallets[0].address : undefined;
+    if (!wallet) return;
+    const key = compositeKey(chain, resolvedAddr);
+    const balanceEntry = balances[key];
+    if (!balanceEntry || balanceEntry.loading) {
+      // Balance not loaded yet, fetch it
+      await fetchBalanceFor(chain, resolvedAddr, wallet, fromToken.symbol);
+    }
+    const balance = (balanceEntry?.formatted ?? "0").replace(/,/g, "");
+    const numericBalance = parseFloat(balance);
+    if (isNaN(numericBalance)) return;
+    const newAmount = (numericBalance * percentage).toFixed(6);
+    setAmount(newAmount);
+    setPreview(null);
   }
 
   useEffect(() => {
-    const err = validate();
-    setError(err);
-    if (err) {
-      setPreview(null);
-      return;
-    }
+    if (amount && fromToken) {
+      const parsedAmount = parseFloat(amount.replace(/,/g, ""));
+      if (isNaN(parsedAmount)) return;
 
-    const priceImpact = 0.2 + Math.random() * 0.3;
-    const fee = parsedAmount * 0.001;
-    let estOut = 0;
-    if (fromToken && toToken) {
-      if (fromToken.symbol === "ETH" && toToken.symbol === "USDC") {
-        estOut = parsedAmount * 2000;
-      } else if (fromToken.symbol === "USDC" && toToken.symbol === "ETH") {
-        estOut = parsedAmount / 2000;
-      } else if (fromToken.symbol === "ETH" && toToken.symbol === "DAI") {
-        estOut = parsedAmount * 2000;
-      } else if (fromToken.symbol === "DAI" && toToken.symbol === "ETH") {
-        estOut = parsedAmount / 2000;
-      } else {
-        estOut = parsedAmount;
+      // Simple preview calculation: just for display, not for real swapping
+      const priceImpact = 0.2 + Math.random() * 0.3;
+      const fee = parsedAmount * 0.001;
+      let estOut = 0;
+      if (fromToken && toToken) {
+        if (fromToken.symbol === "ETH" && toToken.symbol === "USDC") {
+          estOut = parsedAmount * 2000;
+        } else if (fromToken.symbol === "USDC" && toToken.symbol === "ETH") {
+          estOut = parsedAmount / 2000;
+        } else if (fromToken.symbol === "ETH" && toToken.symbol === "DAI") {
+          estOut = parsedAmount * 2000;
+        } else if (fromToken.symbol === "DAI" && toToken.symbol === "ETH") {
+          estOut = parsedAmount / 2000;
+        } else {
+          estOut = parsedAmount;
+        }
       }
+      const minReceived = estOut * (1 - slippage / 100);
+      setPreview({ estOut, priceImpact, fee, minReceived });
     }
-    const minReceived = estOut * (1 - slippage / 100);
-    setPreview({ estOut, priceImpact, fee, minReceived });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [amount, slippage, fromToken, toToken]);
 
   async function handleSwap() {
@@ -711,7 +770,7 @@ const SwapCard: React.FC = () => {
             if (picked) {
               setToToken(picked);
               setPreview(null);
-              console.log(picked);
+              setAmount("");
             }
             setShowToModal(false);
           }}
@@ -720,6 +779,19 @@ const SwapCard: React.FC = () => {
       </div>
     </div>
   );
+
+  // Add missing validate function
+  function validate() {
+    if (!fromToken || !toToken) return "Select tokens.";
+    if (!amount || isNaN(parseFloat(amount)) || parseFloat(amount) <= 0)
+      return "Enter a valid amount.";
+    const balStr = getDisplayedBalance(fromToken);
+    const balance = parseFloat(String(balStr).replace(/,/g, "")) || 0;
+    if (parseFloat(amount) > balance)
+      return `Amount exceeds wallet balance (${balance} ${fromToken.symbol})`;
+    if (fromToken.symbol === toToken.symbol) return "Select different tokens.";
+    return "";
+  }
 };
 
 export default SwapCard;
