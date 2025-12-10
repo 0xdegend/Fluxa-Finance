@@ -89,7 +89,7 @@ const Landing: React.FC = () => {
           className="w-full max-w-md bg-white/90 rounded-2xl shadow-xl p-6 flex flex-col items-center mb-6"
           aria-label="Swap section"
         >
-          <SwapCard />
+          <SwapCard selectedChain={network} />
         </section>
         <section
           className="w-full max-w-md flex  justify-center items-stretch md:flex-row flex-col md:gap-4 gap-2"
