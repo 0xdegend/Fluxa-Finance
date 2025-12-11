@@ -36,7 +36,6 @@ export async function fetchTokenBalances(
   return payload.balances ?? [];
 }
 
-// lib/web3Service.ts (updated)
 export async function fetchWalletBalance(address: string, chain: string) {
   const params = new URLSearchParams();
   params.append("address", address);

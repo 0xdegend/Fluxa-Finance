@@ -310,14 +310,12 @@ const SwapCard: React.FC<SwapCardProps> = ({ selectedChain }) => {
     if (!t) return "—";
     const chain = selectedChain;
     const tokenAddr = t.address ?? "";
-
-    // For native ETH use the NATIVE_PLACEHOLDER as the key
     if (t.symbol === "ETH" && (!tokenAddr || tokenAddr === "")) {
       const key = compositeKey(chain, NATIVE_PLACEHOLDER);
       const e = balances[key];
       if (!e) return "—";
       if (e.loading) return "Loading...";
-      return formatForDisplay(e.formatted ?? "0", 3, true);
+      return formatForDisplay(e.formatted ?? "0", 7, true);
     }
 
     if (tokenAddr && isAddress(tokenAddr)) {
