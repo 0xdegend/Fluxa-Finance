@@ -46,7 +46,7 @@ export async function fetchWalletBalance(address: string, chain: string) {
     const text = await res.text().catch(() => "");
     throw new Error(`Failed to fetch wallet net worth: ${res.status} ${text}`);
   }
-  return res.json(); // { total_networth_usd, chains: [...] }
+  return res.json();
 }
 
 export async function fetchTokenBalance(
