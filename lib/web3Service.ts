@@ -68,8 +68,8 @@ export async function fetchTokenBalance(
 }
 
 export type NativeBalance = {
-  balance: string; // wei
-  eth: string; // formatted ETH string
+  balance: string;
+  eth: string;
 };
 
 export async function fetchNativeBalance(
