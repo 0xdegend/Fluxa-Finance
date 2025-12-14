@@ -82,7 +82,6 @@ export async function fetchNativeBalance(
   params.append("wallet", address);
   params.append("chain", chain);
 
-  // NOTE: this hits your Next.js api route at pages/api/balance.ts
   const url = `/api/native-balance?${params.toString()}`;
 
   const res = await fetch(url);
