@@ -91,7 +91,6 @@ export async function fetchNativeBalance(
   }
 
   const json = (await res.json()) as NativeBalance;
-  // basic validation
   if (typeof json?.balance !== "string" || typeof json?.eth !== "string") {
     throw new Error("Invalid response shape from native-balance API");
   }
