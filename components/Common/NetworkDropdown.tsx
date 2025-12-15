@@ -26,8 +26,6 @@ export default function NetworkDropdown({
   const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
 
   const allowedKeys = new Set(networks.map((n) => n.key));
-
-  // index CHAIN_META by key
   const metaByKey = Object.fromEntries(CHAIN_META.map((m) => [m.key, m]));
 
   const allowedFromMeta = CHAIN_META.filter((m) => allowedKeys.has(m.key)).map(

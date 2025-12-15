@@ -1,8 +1,8 @@
 "use client";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import WalletSidebar, { Token } from "./WalletSideBar";
+import WalletSidebar from "./WalletSideBar";
 import { fetchTokenBalances, fetchWalletBalance } from "@/lib/web3Service"; // adjust path if needed
-
+import type { Token } from "@/types";
 const EXPLORER_BY_NETWORK: Record<string, string> = {
   eth: "https://etherscan.io",
   base: "https://explorer.base.org",
