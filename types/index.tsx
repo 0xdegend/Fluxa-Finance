@@ -1,3 +1,5 @@
+import { StaticImageData } from "next/image";
+
 export type Ticker = {
   id: string;
   symbol: string;
@@ -8,9 +10,12 @@ export type Ticker = {
 
 export interface Token {
   symbol: string;
-  name: string;
-  balance: number;
-  icon?: string;
+  balance?: number | string | null;
+  usd?: number | string | null;
+  logo?: string | StaticImageData | null;
+  chain?: string;
+  name?: string;
+  icon?: string | null;
 }
 
 export interface Preview {
@@ -100,3 +105,20 @@ export type TokenInfo = {
 export type TokenSearchResult = TokenInfo & {
   score?: number;
 };
+
+export interface WalletSidebarProps {
+  address: string | undefined;
+  network?: string;
+  setNetwork?: (k: string) => void;
+  balances?: Token[] | null;
+  walletBalance?: number | string | null;
+  sidebarOpen: boolean;
+  setSidebarOpen: (open: boolean) => void;
+  copyAddress: () => void;
+  handleLogout: () => void;
+  truncate?: (a: string) => string;
+  onClaimRewards?: () => void;
+  explorerBase?: string;
+  networks?: { key: string; label: string }[];
+  onRefreshBalances?: () => void;
+}

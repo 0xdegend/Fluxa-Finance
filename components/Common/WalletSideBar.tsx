@@ -1,37 +1,13 @@
 "use client";
 import React from "react";
-import Image, { StaticImageData } from "next/image";
+import Image from "next/image";
 import { IoCopy, IoRefresh } from "react-icons/io5";
 import { formatSignificant, formatUsd } from "@/app/utils/numberFormat";
 import NetworkDropdown from "./NetworkDropdown";
 import Lottie from "lottie-react";
 import loadingAnimation from "../../public/lottie/fingers-loading.json";
 import { CHAIN_META } from "@/data";
-export type Token = {
-  symbol: string;
-  balance?: number | string | null;
-  usd?: number | string | null;
-  logo?: string | StaticImageData | null;
-  chain?: string;
-  name?: string;
-};
-
-export interface WalletSidebarProps {
-  address: string | undefined;
-  network?: string;
-  setNetwork?: (k: string) => void;
-  balances?: Token[] | null;
-  walletBalance?: number | string | null;
-  sidebarOpen: boolean;
-  setSidebarOpen: (open: boolean) => void;
-  copyAddress: () => void;
-  handleLogout: () => void;
-  truncate?: (a: string) => string;
-  onClaimRewards?: () => void;
-  explorerBase?: string;
-  networks?: { key: string; label: string }[];
-  onRefreshBalances?: () => void;
-}
+import { WalletSidebarProps } from "@/types";
 
 const DEFAULT_TRUNCATE = (a: string) =>
   a && a.length > 12 ? `${a.slice(0, 6)}...${a.slice(-6)}` : a;
@@ -69,9 +45,7 @@ export default function WalletSidebar({
   );
 
   function getChainIcon(chainKey?: string) {
-    // CHAIN_META should be imported / available in scope
-    // e.g. import { CHAIN_META } from "@/types" or "@/data"
-    const key = chainKey ?? network; // prefer token chain, fallback to current network
+    const key = chainKey ?? network;
     const meta = CHAIN_META.find((c) => c.key === key);
     return meta?.icon ?? null;
   }
@@ -238,8 +212,8 @@ export default function WalletSidebar({
                               height={18}
                               style={{
                                 position: "absolute",
-                                left: -6, // match previous -left-0.5 offsets (tweak if needed)
-                                bottom: -3, // match previous -bottom-0.5 (tweak if needed)
+                                left: -6,
+                                bottom: -3,
                                 width: 18,
                                 height: 18,
                                 borderRadius: 6,
@@ -306,8 +280,6 @@ export default function WalletSidebar({
           </div>
         )}
       </div>
-
-      {/* Footer */}
       <div className="mt-4">
         <div className="flex flex-col gap-2">
           <button
