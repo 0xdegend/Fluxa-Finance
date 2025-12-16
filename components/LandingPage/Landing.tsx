@@ -161,7 +161,6 @@ const Landing: React.FC = () => {
 
   return (
     <div className="min-h-screen w-full flex flex-col items-center justify-center relative overflow-hidden">
-      {/* Sidebar trigger button */}
       <button
         className="fixed hover:cursor-pointer top-6 right-6 z-50 p-2 rounded-full bg-indigo-600 text-white shadow-lg hover:bg-indigo-700 -mt-2"
         onClick={() => setSidebarOpen(true)}
