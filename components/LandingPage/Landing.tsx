@@ -4,7 +4,6 @@ import TokenSummaryCard from "../Swap/TokenSummaryCard";
 import SwapCard from "../Swap/SwapCard";
 import GridBg from "../Common/GridBg";
 import PriceMarquee from "../Common/PriceMarquee";
-import Web3LoginButton from "../Common/Web3LoginButton";
 import WalletSideBar from "../Common/WalletSideBar";
 import type { Token } from "@/types";
 import { fetchTokenBalances, fetchWalletBalance } from "@/lib/web3Service";
@@ -71,8 +70,6 @@ const Landing: React.FC = () => {
         setWalletBalance(null);
         return;
       }
-
-      // reset previous controller (mark previous request as "aborted" by aborting controller)
       if (abortRef.current) {
         try {
           abortRef.current.controller.abort();
@@ -82,8 +79,6 @@ const Landing: React.FC = () => {
 
       const controller = new AbortController();
       abortRef.current = { controller };
-
-      // show loading UI
       setBalances(null);
       setWalletBalance(null);
 
@@ -126,7 +121,6 @@ const Landing: React.FC = () => {
         setWalletBalance(tot);
       } catch (err: unknown) {
         if (isAbortError(err)) {
-          // just ignore aborted requests
           return;
         }
         const message = err instanceof Error ? err.message : String(err);
