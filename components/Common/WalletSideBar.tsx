@@ -106,8 +106,6 @@ export default function WalletSidebar({
           </button>
         </div>
       </div>
-
-      {/* Header */}
       <div className="mb-4 px-2">
         <div className="flex items-center gap-3">
           <div>
