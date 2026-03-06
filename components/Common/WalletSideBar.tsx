@@ -37,11 +37,11 @@ export default function WalletSidebar({
     walletBalance == null
       ? "—"
       : typeof walletBalance === "number"
-      ? walletBalance.toFixed(2)
-      : String(walletBalance);
+        ? walletBalance.toFixed(2)
+        : String(walletBalance);
 
   const [activeTab, setActiveTab] = React.useState<"tokens" | "activity">(
-    "tokens"
+    "tokens",
   );
 
   function getChainIcon(chainKey?: string) {
@@ -96,7 +96,6 @@ export default function WalletSidebar({
             </button>
           </div>
         </div>
-
         <div className="flex items-center justify-center gap-2 ml-2 ">
           <button
             aria-label="Close sidebar"
