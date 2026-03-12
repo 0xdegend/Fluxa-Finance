@@ -50,12 +50,11 @@ const Landing: React.FC = () => {
     historyHours: 24,
   });
 
-  const address =
-    wallets && wallets.length > 0 ? wallets[0].address : undefined;
+  const address = wallets && wallets.length > 0 ? wallets[0].address : "";
   const walletAddress = `${address}`;
   const [balances, setBalances] = useState<Token[] | null>(null);
   const [walletBalance, setWalletBalance] = useState<number | string | null>(
-    null
+    null,
   );
 
   const abortRef = useRef<{ controller: AbortController } | null>(null);
@@ -100,7 +99,7 @@ const Landing: React.FC = () => {
         }
         const items: Token[] = Array.isArray(tokens)
           ? tokens
-          : tokens?.balances ?? [];
+          : (tokens?.balances ?? []);
         let tot = 0;
         if (walletSummary && typeof walletSummary === "object") {
           const maybe =
@@ -133,7 +132,7 @@ const Landing: React.FC = () => {
         }
       }
     },
-    []
+    [],
   );
 
   useEffect(() => {

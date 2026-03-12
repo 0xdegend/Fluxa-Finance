@@ -68,7 +68,7 @@ export const Web3LoginButton: React.FC<
         }
         const data = await fetchTokenBalances(address, apiChain, 10);
         if (!mounted) return;
-        setBalances(Array.isArray(data) ? data : data?.balances ?? []);
+        setBalances(Array.isArray(data) ? data : (data?.balances ?? []));
       } catch (err) {
         console.error("Error fetching balances:", err);
         if (mounted) setBalances([]);
@@ -93,7 +93,7 @@ export const Web3LoginButton: React.FC<
       try {
         const walletBalance = await fetchWalletBalance(
           address as string,
-          apiChain
+          apiChain,
         );
         const value = Number(walletBalance?.total_networth_usd ?? 0);
 

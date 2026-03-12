@@ -47,16 +47,13 @@ export default function WalletSidebarContainer({
   handleLogout: () => void;
   onClaimRewards?: () => void;
 }) {
-  const address = rawAddress ?? undefined;
+  const address = rawAddress ?? "";
   const [network, setNetwork] = useState<string>(initialNetwork);
-
-  // balances: null = loading, [] = no tokens, Token[] loaded
   const [balances, setBalances] = useState<Token[] | null>(null);
   const [walletBalance, setWalletBalance] = useState<number | string | null>(
-    null
+    null,
   );
 
-  // abort marker for in-flight request (so we can ignore stale results)
   const abortRef = useRef<{ controller: AbortController } | null>(null);
 
   const explorerBase =
@@ -69,8 +66,6 @@ export default function WalletSidebarContainer({
         setWalletBalance(null);
         return;
       }
-
-      // reset previous controller (mark previous request as "aborted" by aborting controller)
       if (abortRef.current) {
         try {
           abortRef.current.controller.abort();
@@ -103,7 +98,7 @@ export default function WalletSidebarContainer({
         }
         const items: Token[] = Array.isArray(tokens)
           ? tokens
-          : tokens?.balances ?? [];
+          : (tokens?.balances ?? []);
         let tot = 0;
         if (walletSummary && typeof walletSummary === "object") {
           const maybe =
@@ -137,7 +132,7 @@ export default function WalletSidebarContainer({
         }
       }
     },
-    []
+    [],
   );
   useEffect(() => {
     let cancelled = false;

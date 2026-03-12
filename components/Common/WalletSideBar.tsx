@@ -8,6 +8,8 @@ import Lottie from "lottie-react";
 import loadingAnimation from "../../public/lottie/fingers-loading.json";
 import { CHAIN_META } from "@/data";
 import { WalletSidebarProps } from "@/types";
+import { usePrivy } from "@privy-io/react-auth";
+import Web3LoginButton from "./Web3LoginButton";
 
 const DEFAULT_TRUNCATE = (a: string) =>
   a && a.length > 12 ? `${a.slice(0, 6)}...${a.slice(-6)}` : a;
@@ -63,6 +65,9 @@ export default function WalletSidebar({
       }[key] ?? "#94a3b8"
     );
   }
+  const { authenticated } = usePrivy();
+
+  const updatedAddress = address ?? "";
 
   return (
     <aside
@@ -85,16 +90,20 @@ export default function WalletSidebar({
             size="sm"
           />
 
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-slate-100 rounded-full cursor-pointer">
-            <span className="text-sm font-mono">{truncate(`${address}`)}</span>
-            <button
-              onClick={copyAddress}
-              aria-label="Copy address"
-              className="p-1 rounded hover:bg-slate-200 "
-            >
-              <IoCopy className="text-sm cursor-pointer" />
-            </button>
-          </div>
+          {authenticated && (
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-slate-100 rounded-full cursor-pointer">
+              <span className="text-sm font-mono">
+                {truncate(`${updatedAddress}`)}
+              </span>
+              <button
+                onClick={copyAddress}
+                aria-label="Copy address"
+                className="p-1 rounded hover:bg-slate-200 "
+              >
+                <IoCopy className="text-sm cursor-pointer" />
+              </button>
+            </div>
+          )}
         </div>
         <div className="flex items-center justify-center gap-2 ml-2 ">
           <button
@@ -279,26 +288,32 @@ export default function WalletSidebar({
       </div>
       <div className="mt-4">
         <div className="flex flex-col gap-2">
-          <button
-            onClick={handleLogout}
-            className="w-full py-2 cursor-pointer rounded-md bg-indigo-600 text-white font-semibold"
-          >
-            Disconnect
-          </button>
+          {authenticated ? (
+            <button
+              onClick={handleLogout}
+              className="w-full py-2 cursor-pointer rounded-md bg-indigo-600 text-white font-semibold"
+            >
+              Disconnect
+            </button>
+          ) : (
+            <Web3LoginButton />
+          )}
           <button
             onClick={onClaimRewards}
             className="w-full py-2 rounded-md border border-slate-200 bg-white text-slate-700"
           >
             Claim rewards
           </button>
-          <a
-            href={`${explorerBase}/address/${address}`}
-            target="_blank"
-            rel="noreferrer"
-            className="w-full text-center block mt-2 py-2 rounded-md text-xs text-indigo-600 underline"
-          >
-            View on explorer
-          </a>
+          {address && (
+            <a
+              href={`${explorerBase}/address/${address}`}
+              target="_blank"
+              rel="noreferrer"
+              className="w-full text-center block mt-2 py-2 rounded-md text-xs text-indigo-600 underline"
+            >
+              View on explorer
+            </a>
+          )}
         </div>
       </div>
     </aside>
