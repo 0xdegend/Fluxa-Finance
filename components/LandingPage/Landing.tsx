@@ -9,7 +9,7 @@ import type { Token } from "@/types";
 import { fetchTokenBalances, fetchWalletBalance } from "@/lib/web3Service";
 import { useTokenPrices } from "@/app/hooks/useTokenPrices";
 import { useWallets } from "@privy-io/react-auth";
-
+import { useLogout } from "@privy-io/react-auth";
 const EXPLORER_BY_NETWORK: Record<string, string> = {
   eth: "https://etherscan.io",
   base: "https://explorer.base.org",
@@ -49,6 +49,17 @@ const Landing: React.FC = () => {
     pollIntervalMs: 60_000,
     historyHours: 24,
   });
+
+  const { logout } = useLogout({
+    onSuccess: () => {
+      console.log("User successfully logged out");
+    },
+  });
+
+  const handleLogout = () => {
+    logout();
+    setSidebarOpen(false);
+  };
 
   const address = wallets && wallets.length > 0 ? wallets[0].address : "";
   const walletAddress = `${address}`;
@@ -210,7 +221,7 @@ const Landing: React.FC = () => {
               sidebarOpen={sidebarOpen}
               setSidebarOpen={setSidebarOpen}
               copyAddress={() => navigator.clipboard.writeText(walletAddress)}
-              handleLogout={() => {}}
+              handleLogout={handleLogout}
               truncate={(s) => (s ? `${s.slice(0, 6)}...${s.slice(-6)}` : "")}
               explorerBase={explorerBase}
               networks={AVAILABLE_NETWORKS}

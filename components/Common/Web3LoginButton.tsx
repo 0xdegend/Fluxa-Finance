@@ -41,6 +41,8 @@ export const Web3LoginButton: React.FC<
   });
   const handleLogin = async () => {
     login();
+    setSidebarOpen(false);
+    console.log(user);
   };
 
   const handleLogout = () => {

@@ -47,7 +47,7 @@ const SwapCard: React.FC<SwapCardProps> = ({ selectedChain }) => {
     adapted.find((t) => t.symbol === "ETH" && t.chain === selectedChain) ||
     adapted[0];
   const [fromToken, setFromToken] = useState<TokenInfo | undefined>(
-    defaultEthToken
+    defaultEthToken,
   );
   const [toToken, setToToken] = useState<TokenInfo | undefined>(adapted[1]);
 
@@ -141,7 +141,7 @@ const SwapCard: React.FC<SwapCardProps> = ({ selectedChain }) => {
     chain: string,
     tokenAddress: string,
     wallet: string,
-    symbol?: string
+    symbol?: string,
   ): Promise<BalanceEntry | null> {
     const key = compositeKey(chain, tokenAddress);
     setBalances((prev) => ({
@@ -169,7 +169,7 @@ const SwapCard: React.FC<SwapCardProps> = ({ selectedChain }) => {
       ) {
         // Native ETH: use wallet-balance API
         const url = `/api/wallet-balance?address=${encodeURIComponent(
-          wallet
+          wallet,
         )}&chain=${encodeURIComponent(chain)}`;
         const r = await fetch(url);
         const j = await r.json().catch(() => null);
@@ -208,9 +208,9 @@ const SwapCard: React.FC<SwapCardProps> = ({ selectedChain }) => {
       } else {
         // ERC20: use erc20-balance API
         const url = `/api/erc20-balance?wallet=${encodeURIComponent(
-          wallet
+          wallet,
         )}&token=${encodeURIComponent(tokenAddress)}&chain=${encodeURIComponent(
-          chain
+          chain,
         )}`;
         const r = await fetch(url);
         const j = await r.json().catch(() => null);
@@ -355,7 +355,7 @@ const SwapCard: React.FC<SwapCardProps> = ({ selectedChain }) => {
         chain,
         resolvedAddr,
         wallet,
-        fromToken.symbol
+        fromToken.symbol,
       );
       balanceEntry = fetched ?? balances[key];
     }
@@ -644,7 +644,7 @@ const SwapCard: React.FC<SwapCardProps> = ({ selectedChain }) => {
                 $
                 {getUsdValue(
                   toToken,
-                  preview ? preview.estOut : 0
+                  preview ? preview.estOut : 0,
                 ).toLocaleString(undefined, { maximumFractionDigits: 2 })}
               </span>
             </div>
@@ -781,7 +781,7 @@ const SwapCard: React.FC<SwapCardProps> = ({ selectedChain }) => {
           singleSelect
           initialSelected={fromToken ? [fromToken] : []}
           allowedTokens={adaptToTokenInfo(
-            TOKENS.filter((t) => t.symbol !== toToken?.symbol)
+            TOKENS.filter((t) => t.symbol !== toToken?.symbol),
           )}
           onConfirm={(tokens) => {
             const picked = tokens && tokens.length > 0 ? tokens[0] : undefined;
@@ -799,7 +799,7 @@ const SwapCard: React.FC<SwapCardProps> = ({ selectedChain }) => {
           singleSelect
           initialSelected={toToken ? [toToken] : []}
           allowedTokens={adaptToTokenInfo(
-            TOKENS.filter((t) => t.symbol !== fromToken?.symbol)
+            TOKENS.filter((t) => t.symbol !== fromToken?.symbol),
           )}
           onConfirm={(tokens) => {
             const picked = tokens && tokens.length > 0 ? tokens[0] : undefined;

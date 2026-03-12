@@ -117,20 +117,24 @@ export default function WalletSidebar({
       </div>
       <div className="mb-4 px-2">
         <div className="flex items-center gap-3">
-          <div>
-            <div className="text-3xl font-extrabold text-black">
-              ${displayTotal}
-            </div>
-            <div className="text-xs text-gray-500 mt-1">Total balance</div>
-          </div>
+          {authenticated && (
+            <>
+              <div>
+                <div className="text-3xl font-extrabold text-black">
+                  ${displayTotal}
+                </div>
+                <div className="text-xs text-gray-500 mt-1">Total balance</div>
+              </div>
 
-          <button
-            aria-label="Refresh balances"
-            className="ml-auto p-2 rounded-full bg-slate-50 hover:bg-slate-100 cursor-pointer"
-            onClick={() => onRefreshBalances?.()}
-          >
-            <IoRefresh />
-          </button>
+              <button
+                aria-label="Refresh balances"
+                className="ml-auto p-2 rounded-full bg-slate-50 hover:bg-slate-100 cursor-pointer"
+                onClick={() => onRefreshBalances?.()}
+              >
+                <IoRefresh />
+              </button>
+            </>
+          )}
         </div>
 
         <div className="mt-4 border-b border-slate-100">
@@ -183,100 +187,102 @@ export default function WalletSidebar({
               <div className="p-4 text-sm text-gray-500">No tokens found.</div>
             ) : (
               <ul className="space-y-4">
-                {balances.map((t, idx) => (
-                  <li
-                    key={`${t.symbol ?? "token"}-${
-                      t.chain ?? "unknown"
-                    }-${idx}`}
-                    className="flex items-center gap-3 justify-between"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="relative w-10 h-10 shrink-0">
-                        {t.logo ? (
-                          <Image
-                            src={t.logo as string}
-                            alt={`${t.symbol} logo`}
-                            width={40}
-                            height={40}
-                            className="rounded-full object-cover"
-                            unoptimized
-                          />
-                        ) : (
-                          <div className="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center text-sm font-semibold text-slate-700">
-                            {getInitial(t.symbol)}
-                          </div>
-                        )}
-                        {(() => {
-                          const chainKey = t.chain ?? network;
-                          const icon = getChainIcon(chainKey);
-
-                          return icon ? (
+                {authenticated &&
+                  balances.map((t, idx) => (
+                    <li
+                      key={`${t.symbol ?? "token"}-${
+                        t.chain ?? "unknown"
+                      }-${idx}`}
+                      className="flex items-center gap-3 justify-between"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="relative w-10 h-10 shrink-0">
+                          {t.logo ? (
                             <Image
-                              src={icon}
-                              alt={`${chainKey} logo`}
-                              width={18}
-                              height={18}
-                              style={{
-                                position: "absolute",
-                                left: -6,
-                                bottom: -3,
-                                width: 18,
-                                height: 18,
-                                borderRadius: 6,
-                                border: "2px solid white",
-                                objectFit: "cover",
-                                background: "transparent",
-                              }}
+                              src={t.logo as string}
+                              alt={`${t.symbol} logo`}
+                              width={40}
+                              height={40}
+                              className="rounded-full object-cover"
+                              unoptimized
                             />
                           ) : (
-                            <span
-                              style={{
-                                position: "absolute",
-                                left: -6,
-                                bottom: -3,
-                                width: 18,
-                                height: 18,
-                                borderRadius: 4,
-                                border: "2px solid white",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                fontSize: 10,
-                                fontWeight: 700,
-                                color: "white",
-                                background: getChainColor(chainKey),
-                              }}
-                              aria-hidden
-                              title={chainKey}
-                            >
-                              {(chainKey && chainKey[0]?.toUpperCase()) ?? "?"}
-                            </span>
-                          );
-                        })()}
+                            <div className="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center text-sm font-semibold text-slate-700">
+                              {getInitial(t.symbol)}
+                            </div>
+                          )}
+                          {(() => {
+                            const chainKey = t.chain ?? network;
+                            const icon = getChainIcon(chainKey);
+
+                            return icon ? (
+                              <Image
+                                src={icon}
+                                alt={`${chainKey} logo`}
+                                width={18}
+                                height={18}
+                                style={{
+                                  position: "absolute",
+                                  left: -6,
+                                  bottom: -3,
+                                  width: 18,
+                                  height: 18,
+                                  borderRadius: 6,
+                                  border: "2px solid white",
+                                  objectFit: "cover",
+                                  background: "transparent",
+                                }}
+                              />
+                            ) : (
+                              <span
+                                style={{
+                                  position: "absolute",
+                                  left: -6,
+                                  bottom: -3,
+                                  width: 18,
+                                  height: 18,
+                                  borderRadius: 4,
+                                  border: "2px solid white",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  fontSize: 10,
+                                  fontWeight: 700,
+                                  color: "white",
+                                  background: getChainColor(chainKey),
+                                }}
+                                aria-hidden
+                                title={chainKey}
+                              >
+                                {(chainKey && chainKey[0]?.toUpperCase()) ??
+                                  "?"}
+                              </span>
+                            );
+                          })()}
+                        </div>
+
+                        <div>
+                          <div className="font-semibold text-sm text-slate-900">
+                            {t.symbol}
+                          </div>
+                          <div className="text-xs text-slate-400 capitalize">
+                            {t.name ?? t.chain ?? network}
+                          </div>
+                        </div>
                       </div>
 
-                      <div>
+                      <div className="text-right">
                         <div className="font-semibold text-sm text-slate-900">
-                          {t.symbol}
+                          {t.usd ? formatUsd(t.usd) : "—"}
                         </div>
-                        <div className="text-xs text-slate-400 capitalize">
-                          {t.name ?? t.chain ?? network}
+                        <div className="text-xs text-slate-400">
+                          {t.balance != null
+                            ? formatSignificant(t.balance, 6) + ` ${t.symbol}`
+                            : ""}
                         </div>
                       </div>
-                    </div>
-
-                    <div className="text-right">
-                      <div className="font-semibold text-sm text-slate-900">
-                        {t.usd ? formatUsd(t.usd) : "—"}
-                      </div>
-                      <div className="text-xs text-slate-400">
-                        {t.balance != null
-                          ? formatSignificant(t.balance, 6) + ` ${t.symbol}`
-                          : ""}
-                      </div>
-                    </div>
-                  </li>
-                ))}
+                    </li>
+                  ))}
               </ul>
             )}
           </>
