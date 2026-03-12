@@ -36,6 +36,7 @@ export const Web3LoginButton: React.FC<
 
   const { logout } = useLogout({
     onSuccess: () => {
+      setSidebarOpen(false);
       console.log("User successfully logged out");
     },
   });
@@ -47,7 +48,6 @@ export const Web3LoginButton: React.FC<
 
   const handleLogout = () => {
     logout();
-    setSidebarOpen(false);
   };
 
   const NETWORK_KEY_TO_CHAIN: Record<string, string> = {
