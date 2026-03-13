@@ -39,7 +39,7 @@ interface SwapCardProps {
 }
 
 const SwapCard: React.FC<SwapCardProps> = ({ selectedChain }) => {
-  const { authenticated } = usePrivy();
+  const { authenticated, login } = usePrivy();
   const { wallets } = useWallets();
   const NATIVE_PLACEHOLDER = "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
   const isWalletConnected = authenticated;
@@ -61,6 +61,10 @@ const SwapCard: React.FC<SwapCardProps> = ({ selectedChain }) => {
   const [swapping, setSwapping] = useState(false);
   const [success, setSuccess] = useState<SwapResult | null>(null);
   const [balances, setBalances] = useState<Record<string, BalanceEntry>>({});
+
+  const handleLogin = async () => {
+    login();
+  };
 
   const getUsdValue = (token: TokenInfo | undefined, amt: string | number) => {
     const n = typeof amt === "string" ? parseFloat(amt) || 0 : (amt as number);
@@ -744,8 +748,8 @@ const SwapCard: React.FC<SwapCardProps> = ({ selectedChain }) => {
           } transition-colors cursor-pointer`}
           style={{ boxShadow: "inset 0 2px 8px 0 rgba(0,0,0,0.08)" }}
           aria-label={isWalletConnected ? "Swap" : "Connect wallet"}
-          disabled={swapping || !!validate()}
-          onClick={isWalletConnected ? handleSwap : undefined}
+          disabled={swapping || (isWalletConnected && !!validate())}
+          onClick={isWalletConnected ? handleSwap : handleLogin}
         >
           {isWalletConnected
             ? swapping
