@@ -1,9 +1,9 @@
 // utils/tokenAdapter.ts (or wherever)
-import type { Token, TokenInfo } from "@/types";
+import type { Token, TokenInfo } from "@/app/types";
 
 export function adaptToTokenInfo(
   tokens: Token[],
-  defaultChain = "eth"
+  defaultChain = "eth",
 ): TokenInfo[] {
   return tokens.map((t) => {
     return {

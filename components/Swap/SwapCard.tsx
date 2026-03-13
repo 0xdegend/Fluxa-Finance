@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Preview, SwapResult, TokenInfo, BalanceEntry } from "@/types";
-import { TOKENS, NATIVE_PLACEHOLDER } from "@/data";
+import { Preview, SwapResult, TokenInfo, BalanceEntry } from "@/app/types";
+import { TOKENS, NATIVE_PLACEHOLDER } from "@/app/data";
 import { usePrivy, useWallets } from "@privy-io/react-auth";
 import ChainTokenModal from "../Common/ChainTokenModal";
 import { adaptToTokenInfo } from "@/app/utils/tokenAdapter";

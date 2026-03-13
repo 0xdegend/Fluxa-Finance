@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
-import { DEFAULT_ASSETS } from "@/data";
+import { DEFAULT_ASSETS } from "@/app/data";
 import Image from "next/image";
 
 function formatPrice(n?: number) {
@@ -38,8 +38,8 @@ export default function PriceMarquee({
           change24h: undefined,
           logo: undefined,
         },
-      ])
-    )
+      ]),
+    ),
   );
 
   const wsRef = useRef<WebSocket | null>(null);
@@ -78,7 +78,7 @@ export default function PriceMarquee({
         const data = JSON.parse(ev.data);
 
         for (const [key, val] of Object.entries<number>(
-          data as Record<string, number>
+          data as Record<string, number>,
         )) {
           pendingRef.current[key] = Number(val);
         }
@@ -125,7 +125,7 @@ export default function PriceMarquee({
         const ids = assets.map((a) => a.id).join(",");
         if (!ids) return;
         const url = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${encodeURIComponent(
-          ids
+          ids,
         )}&order=market_cap_desc&per_page=${
           assets.length
         }&page=1&sparkline=false&price_change_percentage=24h`;
@@ -253,8 +253,8 @@ export default function PriceMarquee({
                   it.change == null
                     ? undefined
                     : it.change >= 0
-                    ? "#16a34a"
-                    : "var(--fluxa-danger)",
+                      ? "#16a34a"
+                      : "var(--fluxa-danger)",
               }}
             >
               {it.change == null

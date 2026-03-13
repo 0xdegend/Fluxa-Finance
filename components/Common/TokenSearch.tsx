@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { debounce } from "lodash";
-import { TokenInfo } from "@/types";
+import { TokenInfo } from "@/app/types";
 import Image from "next/image";
 import Lottie from "lottie-react";
 import loadingAnimation from "../../public/lottie/loading.json";
@@ -56,7 +56,7 @@ export default function TokenSearch({
       setLoading(true);
       try {
         const url = `/api/relay/token-search?chain=${encodeURIComponent(
-          chain
+          chain,
         )}&q=${encodeURIComponent(value)}`;
         const res = await fetch(url, { signal });
         if (!res.ok) {
@@ -96,7 +96,7 @@ export default function TokenSearch({
           arr = json.data;
         } else if (json && typeof json === "object") {
           const maybeArray = Object.values(json).filter(
-            (v) => v && typeof v === "object"
+            (v) => v && typeof v === "object",
           );
           if (maybeArray.length > 0) arr = maybeArray as TokenInfo[];
         }

@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import fetch from "node-fetch";
-import type { TokenSearchResult } from "@/types";
+import type { TokenSearchResult } from "@/app/types";
 
 const MORALIS_API_KEY = process.env.MORALIS_API_KEY;
 function isObject(x: unknown): x is Record<string, unknown> {
@@ -10,7 +10,7 @@ function isObject(x: unknown): x is Record<string, unknown> {
 function parseMoralisTokenRaw(
   raw: unknown,
   fallbackAddress: string,
-  chain: string
+  chain: string,
 ): TokenSearchResult | null {
   if (!isObject(raw)) return null;
   const r = raw as Record<string, unknown>;
@@ -93,7 +93,7 @@ const coinPlatformCache = new Map<string, string | null>();
 /** fetch coin detail and extract a contract address for the given chain (platform keys) */
 async function fetchCoinAddressFromCoinGecko(
   coinId: string,
-  chain: string
+  chain: string,
 ): Promise<string | null> {
   if (!coinId) return null;
   const platformKeys = coinGeckoPlatformKeysForChain(chain);
@@ -102,7 +102,7 @@ async function fetchCoinAddressFromCoinGecko(
     return coinPlatformCache.get(cacheKey) ?? null;
 
   const url = `https://api.coingecko.com/api/v3/coins/${encodeURIComponent(
-    coinId
+    coinId,
   )}?localization=false&tickers=false&market_data=false&community_data=false&developer_data=false&sparkline=false`;
 
   try {
@@ -151,7 +151,7 @@ async function fetchCoinAddressFromCoinGecko(
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   const q = typeof req.query.q === "string" ? req.query.q.trim() : "";
   const chain =
@@ -168,7 +168,7 @@ export default async function handler(
 
     try {
       const url = `https://deep-index.moralis.io/api/v2.2/erc20/metadata?chain=${encodeURIComponent(
-        chain
+        chain,
       )}&addresses[]=${encodeURIComponent(q)}`;
 
       const r = await fetch(url, {
@@ -207,7 +207,7 @@ export default async function handler(
   // Non-address fuzzy search using CoinGecko
   try {
     const cgUrl = `https://api.coingecko.com/api/v3/search?query=${encodeURIComponent(
-      q
+      q,
     )}`;
     const r = await fetch(cgUrl, { headers: { accept: "application/json" } });
     if (!r.ok) {
@@ -251,10 +251,10 @@ export default async function handler(
         typeof coin.large === "string"
           ? `${coin.large}`
           : typeof coin.thumb === "string"
-          ? coin.thumb
-          : typeof coin.small === "string"
-          ? coin.small
-          : null;
+            ? coin.thumb
+            : typeof coin.small === "string"
+              ? coin.small
+              : null;
 
       // try to resolve a contract address via CoinGecko coin detail
       let address = "";

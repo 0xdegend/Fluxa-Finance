@@ -1,11 +1,11 @@
 "use client";
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import ReactDOM from "react-dom";
-import type { NetworkOption } from "@/types";
-import { DEFAULT_NETWORKS } from "@/data";
-import type { NetworkDropdownProps } from "@/types";
+import type { NetworkOption } from "@/app/types";
+import { DEFAULT_NETWORKS } from "@/app/data";
+import type { NetworkDropdownProps } from "@/app/types";
 import Image from "next/image";
-import { CHAIN_META } from "@/data";
+import { CHAIN_META } from "@/app/data";
 
 type LogoEntry =
   | { type: "url"; value: string }
@@ -32,7 +32,7 @@ export default function NetworkDropdown({
     (m) => ({
       key: m.key,
       label: m.label,
-    })
+    }),
   ) as NetworkOption[];
 
   const extras = networks
@@ -59,15 +59,15 @@ export default function NetworkDropdown({
     CHAIN_META.map((m) => [
       m.key,
       m.icon ? { type: "url", value: m.icon } : undefined,
-    ])
+    ]),
   ) as Record<string, LogoEntry | undefined>;
 
   const sizeClasses =
     size === "sm"
       ? "text-xs px-2 py-0.5 rounded"
       : size === "lg"
-      ? "text-sm px-3 py-1 rounded-md"
-      : "text-xs px-2 py-0.5 rounded";
+        ? "text-sm px-3 py-1 rounded-md"
+        : "text-xs px-2 py-0.5 rounded";
 
   // portal creation
   useEffect(() => {
@@ -243,8 +243,8 @@ export default function NetworkDropdown({
                         background: active
                           ? "rgba(59,130,246,0.06)"
                           : focused
-                          ? "rgba(59,130,246,0.04)"
-                          : "transparent",
+                            ? "rgba(59,130,246,0.04)"
+                            : "transparent",
                         marginBottom: 6,
                       }}
                       aria-current={active ? "true" : undefined}
@@ -312,7 +312,7 @@ export default function NetworkDropdown({
               Tip: switching networks updates balances and data.
             </div>
           </div>,
-          portalEl
+          portalEl,
         )
       : null;
 

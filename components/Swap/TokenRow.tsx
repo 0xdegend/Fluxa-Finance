@@ -1,6 +1,6 @@
 import Image from "next/image";
-import { TokenInfo } from "@/types";
-import { CHAIN_LOGOS } from "@/data";
+import { TokenInfo } from "@/app/types";
+import { CHAIN_LOGOS } from "@/app/data";
 
 interface TokenRowProps {
   token: TokenInfo | undefined;

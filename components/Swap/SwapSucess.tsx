@@ -1,4 +1,4 @@
-import { SwapResult } from "@/types";
+import { SwapResult } from "@/app/types";
 
 interface SwapSuccessProps {
   result: SwapResult;

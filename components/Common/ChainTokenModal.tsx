@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import TokenSearch from "./TokenSearch";
-import { TokenInfo, ChainKey } from "@/types";
+import { TokenInfo, ChainKey } from "@/app/types";
 import Image from "next/image";
 
 const CHAIN_META: { key: ChainKey; label: string; icon?: string }[] = [
@@ -181,10 +181,10 @@ export default function ChainTokenModal({
   allowedTokens?: TokenInfo[];
 }) {
   const [activeChain, setActiveChain] = useState<ChainKey>(
-    (initialSelected && initialSelected[0]?.chain) ?? "eth"
+    (initialSelected && initialSelected[0]?.chain) ?? "eth",
   );
   const [selectedTokens, setSelectedTokens] = useState<TokenInfo[]>(
-    initialSelected ?? []
+    initialSelected ?? [],
   );
   const [logos, setLogos] = useState<Record<string, LogoEntry | undefined>>({});
   const [loadingLogos, setLoadingLogos] = useState(false);
@@ -204,7 +204,7 @@ export default function ChainTokenModal({
         if (!r.ok) {
           console.warn(
             "Failed to fetch /api/chain-logos",
-            await r.text().catch(() => "")
+            await r.text().catch(() => ""),
           );
           return;
         }
@@ -259,7 +259,7 @@ export default function ChainTokenModal({
     const exists = selectedTokens.some(
       (st) =>
         st.chain === tokenWithChain.chain &&
-        (st.address ?? "").toLowerCase() === tAddr
+        (st.address ?? "").toLowerCase() === tAddr,
     );
 
     if (singleSelect) {
@@ -276,8 +276,8 @@ export default function ChainTokenModal({
     setSelectedTokens((s) =>
       s.filter(
         (x) =>
-          !(x.chain === t.chain && (x.address ?? "").toLowerCase() === addr)
-      )
+          !(x.chain === t.chain && (x.address ?? "").toLowerCase() === addr),
+      ),
     );
   }
 

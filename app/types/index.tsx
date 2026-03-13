@@ -132,3 +132,16 @@ export type BalanceEntry = {
   symbol: string | null;
   name: string | null;
 };
+
+export type RelayQuote = {
+  estOut: string;
+  estOutUsd: string;
+  gasFee: string;
+  gasFeeUsd: string;
+  relayerFee: string;
+  relayerFeeUsd: string;
+  timeEstimate: number;
+  rate: string;
+  priceImpact: string;
+  minReceived: string;
+};

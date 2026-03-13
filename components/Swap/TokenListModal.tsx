@@ -1,6 +1,6 @@
 import Image from "next/image";
 import React from "react";
-import { Token } from "@/types";
+import { Token } from "@/app/types";
 
 // TODO: Replace with real modal and token icon logic
 const TokenListModal = ({

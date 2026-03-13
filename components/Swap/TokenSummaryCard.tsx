@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import type { TokenSummaryCardProps } from "@/types";
+import type { TokenSummaryCardProps } from "@/app/types";
 import SparkLine from "../Common/SparkLine";
 import SparklineRecharts from "../Common/SparklineRecharts";
 function formatPrice(n?: number) {

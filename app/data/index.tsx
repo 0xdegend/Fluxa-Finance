@@ -1,6 +1,6 @@
-import { Token } from "@/types";
-import { NetworkOption } from "@/types";
-import { ChainKey } from "@/types";
+import { Token } from "@/app/types";
+import { NetworkOption } from "@/app/types";
+import { ChainKey } from "@/app/types";
 
 export const NATIVE_PLACEHOLDER = "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
 export const DEFAULT_ASSETS = [

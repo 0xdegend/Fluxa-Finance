@@ -6,8 +6,8 @@ import { formatSignificant, formatUsd } from "@/app/utils/numberFormat";
 import NetworkDropdown from "./NetworkDropdown";
 import Lottie from "lottie-react";
 import loadingAnimation from "../../public/lottie/fingers-loading.json";
-import { CHAIN_META } from "@/data";
-import { WalletSidebarProps } from "@/types";
+import { CHAIN_META } from "@/app/data";
+import { WalletSidebarProps } from "@/app/types";
 import { usePrivy } from "@privy-io/react-auth";
 import Web3LoginButton from "./Web3LoginButton";
 

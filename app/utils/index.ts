@@ -1,5 +1,5 @@
-import { BalanceEntry, TokenInfo } from "@/types";
-import { NATIVE_PLACEHOLDER } from "@/data";
+import { BalanceEntry, TokenInfo } from "@/app/types";
+import { NATIVE_PLACEHOLDER } from "@/app/data";
 export function formatWeiToEth(weiStr: string): string | null {
   if (typeof weiStr !== "string" || !/^\d+$/.test(weiStr)) return null;
   try {

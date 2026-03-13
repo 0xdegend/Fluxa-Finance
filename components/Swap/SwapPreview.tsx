@@ -1,5 +1,5 @@
-import { Preview } from "@/types";
-import { TokenInfo } from "@/types";
+import { Preview } from "@/app/types";
+import { TokenInfo } from "@/app/types";
 
 interface SwapPreviewProps {
   preview: Preview;
