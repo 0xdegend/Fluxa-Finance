@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import axios from "axios";
-
-const DEFAULT_CHAINS = ["eth", "base", "arbitrum"];
+import { SUPPORTED_CHAINS } from "../data";
+const DEFAULT_CHAINS = SUPPORTED_CHAINS;
 
 function parseChainsParam(raw: unknown): string[] {
   if (!raw) return DEFAULT_CHAINS;
@@ -10,7 +10,7 @@ function parseChainsParam(raw: unknown): string[] {
       String(r)
         .split(",")
         .map((s) => s.trim().toLowerCase())
-        .filter(Boolean)
+        .filter(Boolean),
     );
   }
   return String(raw)
@@ -31,7 +31,7 @@ type ChainEntry = {
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   const { address } = req.query;
 
@@ -45,7 +45,7 @@ export default async function handler(
     return res.status(400).json({ error: "Address must be a string" });
   }
   const chainsFromQuery = parseChainsParam(
-    req.query.chain ?? req.query.chains ?? req.query["chains[]"]
+    req.query.chain ?? req.query.chains ?? req.query["chains[]"],
   );
   const bodyChains = req.body
     ? parseChainsParam((req.body.chain ?? req.body.chains) as unknown)
@@ -86,19 +86,21 @@ export default async function handler(
         entry = {
           chain: chainKey,
           native_balance: String(
-            first.native_balance ?? first.nativeBalance ?? ""
+            first.native_balance ?? first.nativeBalance ?? "",
           ),
           native_balance_formatted: String(
-            first.native_balance_formatted ?? first.nativeBalanceFormatted ?? ""
+            first.native_balance_formatted ??
+              first.nativeBalanceFormatted ??
+              "",
           ),
           native_balance_usd: String(
-            first.native_balance_usd ?? first.nativeBalanceUsd ?? ""
+            first.native_balance_usd ?? first.nativeBalanceUsd ?? "",
           ),
           token_balance_usd: String(
-            first.token_balance_usd ?? first.tokenBalanceUsd ?? ""
+            first.token_balance_usd ?? first.tokenBalanceUsd ?? "",
           ),
           networth_usd: String(
-            first.networth_usd ?? first.networthUsd ?? first.networth ?? ""
+            first.networth_usd ?? first.networthUsd ?? first.networth ?? "",
           ),
           ...first,
         };
@@ -110,7 +112,10 @@ export default async function handler(
           native_balance_usd: String(data.native_balance_usd ?? ""),
           token_balance_usd: String(data.token_balance_usd ?? ""),
           networth_usd: String(
-            data.networth_usd ?? data.networth ?? data.total_networth_usd ?? "0"
+            data.networth_usd ??
+              data.networth ??
+              data.total_networth_usd ??
+              "0",
           ),
           ...data,
         };
@@ -157,7 +162,7 @@ export default async function handler(
       console.error(
         "Moralis API error:",
         error.response?.status,
-        error.response?.data ?? error.message
+        error.response?.data ?? error.message,
       );
       const status = error.response?.status ?? 500;
       const message = error.response?.data ?? error.message;

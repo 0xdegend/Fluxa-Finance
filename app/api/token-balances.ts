@@ -1,20 +1,10 @@
 // pages/api/getTokenBalances.ts
 import type { NextApiRequest, NextApiResponse } from "next";
 import axios from "axios";
-
-const SUPPORTED_CHAINS = [
-  "eth",
-  "base",
-  "polygon",
-  "bsc",
-  "avalanche",
-  "fantom",
-  "optimism",
-  "arbitrum",
-];
+import { SUPPORTED_CHAINS } from "../data";
 
 function getFirstQueryValue(
-  q: string | string[] | undefined
+  q: string | string[] | undefined,
 ): string | undefined {
   if (!q) return undefined;
   return Array.isArray(q) ? q[0] : q;
@@ -90,7 +80,7 @@ function parseMoralisToken(input: unknown): TokenBalance {
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   // prefer query params, fall back to body (for POST)
   const rawAddress =
@@ -115,7 +105,7 @@ export default async function handler(
   if (!SUPPORTED_CHAINS.includes(chain)) {
     return res.status(400).json({
       error: `Unsupported chain '${chain}'. Supported: ${SUPPORTED_CHAINS.join(
-        ", "
+        ", ",
       )}`,
     });
   }
@@ -129,9 +119,9 @@ export default async function handler(
   }
 
   const url = `https://deep-index.moralis.io/api/v2.2/wallets/${encodeURIComponent(
-    address
+    address,
   )}/tokens?chain=${encodeURIComponent(
-    chain
+    chain,
   )}&limit=${limit}&exclude_spam=true`;
 
   try {
@@ -148,10 +138,10 @@ export default async function handler(
     const resultsArray: unknown[] = Array.isArray(data?.result)
       ? data.result
       : Array.isArray(data)
-      ? data
-      : Array.isArray(data?.result)
-      ? data.result
-      : [];
+        ? data
+        : Array.isArray(data?.result)
+          ? data.result
+          : [];
 
     // parse with typed parser (no `any`)
     const balances: TokenBalance[] = resultsArray.map(parseMoralisToken);
@@ -164,7 +154,7 @@ export default async function handler(
       console.error(
         "Moralis API error:",
         error.response?.status,
-        error.response?.data ?? error.message
+        error.response?.data ?? error.message,
       );
       const status = error.response?.status ?? 500;
       const message = error.response?.data ?? error.message;
@@ -174,7 +164,7 @@ export default async function handler(
     }
     console.error(
       "Unknown error calling Moralis:",
-      (error as Error).message ?? error
+      (error as Error).message ?? error,
     );
     return res.status(500).json({ error: "Internal server error" });
   }

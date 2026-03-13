@@ -97,4 +97,17 @@ export const CHAIN_IDS: Record<string, number> = {
   optimism: 10,
   polygon: 137,
   bsc: 56,
+  solana: 101,
 };
+
+export const SUPPORTED_CHAINS = [
+  "eth",
+  "base",
+  "polygon",
+  "bsc",
+  "avalanche",
+  "fantom",
+  "optimism",
+  "arbitrum",
+  "solana",
+];

@@ -1,17 +1,7 @@
 // pages/api/getTokenBalances.ts
 import type { NextApiRequest, NextApiResponse } from "next";
 import axios from "axios";
-
-const SUPPORTED_CHAINS = [
-  "eth",
-  "base",
-  "polygon",
-  "bsc",
-  "avalanche",
-  "fantom",
-  "optimism",
-  "arbitrum",
-];
+import { SUPPORTED_CHAINS } from "@/app/data";
 
 function getFirstQueryValue(
   q: string | string[] | undefined,
