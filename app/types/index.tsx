@@ -18,12 +18,15 @@ export interface Token {
   icon?: string | null;
 }
 
-export interface Preview {
+export type Preview = {
   estOut: number;
   priceImpact: number;
   fee: number;
   minReceived: number;
-}
+  gasFeeUsd?: string;
+  timeEstimate?: number;
+  rate?: string;
+};
 
 export interface SwapParams {
   fromToken: Token;

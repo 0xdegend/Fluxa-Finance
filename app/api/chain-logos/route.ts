@@ -118,7 +118,7 @@ function normalizeSvg(svgText: string): string {
         const newStyle = `${existing};width:100%;height:100%;display:block`;
         attrs = attrs.replace(
           /\sstyle\s*=\s*["'][^"']*["']/i,
-          ` style="${newStyle}"`
+          ` style="${newStyle}"`,
         );
       } else {
         attrs = attrs + ` style="width:100%;height:100%;display:block"`;
@@ -166,7 +166,7 @@ async function responseToDataUrl(res: Response): Promise<LogoEntry | null> {
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   try {
     // in-memory cache
@@ -174,8 +174,8 @@ export default async function handler(
       res.setHeader(
         "Cache-Control",
         `public, s-maxage=${Math.floor(
-          TTL_MS / 1000
-        )}, stale-while-revalidate=60`
+          TTL_MS / 1000,
+        )}, stale-while-revalidate=60`,
       );
       return res.status(200).json({ logos: cache.logos, cached: true });
     }
@@ -189,7 +189,7 @@ export default async function handler(
           const fsPath = path.join(
             process.cwd(),
             "public",
-            m.localPath.replace(/^\//, "")
+            m.localPath.replace(/^\//, ""),
           );
           await stat(fsPath); // throws if missing
           if (m.localPath.toLowerCase().endsWith(".svg")) {
@@ -204,8 +204,8 @@ export default async function handler(
               ext === "png"
                 ? "image/png"
                 : ext === "jpg" || ext === "jpeg"
-                ? "image/jpeg"
-                : "application/octet-stream";
+                  ? "image/jpeg"
+                  : "application/octet-stream";
             const b64 = Buffer.from(buf).toString("base64");
             entry = { type: "url", value: `data:${mime};base64,${b64}` };
           }
@@ -218,7 +218,7 @@ export default async function handler(
       if (!entry && m.coinGeckoId) {
         try {
           const mdUrl = `https://api.coingecko.com/api/v3/coins/${encodeURIComponent(
-            m.coinGeckoId
+            m.coinGeckoId,
           )}?localization=false&tickers=false&market_data=false&community_data=false&developer_data=false&sparkline=false`;
           const mdRes = await fetchWithTimeout(mdUrl, 4000);
           if (mdRes.ok) {
@@ -233,7 +233,7 @@ export default async function handler(
               } catch (imgErr) {
                 console.warn(
                   `Failed to fetch/convert image for ${m.coinGeckoId}`,
-                  imgErr
+                  imgErr,
                 );
               }
             } else {
@@ -241,7 +241,7 @@ export default async function handler(
             }
           } else {
             console.warn(
-              `CoinGecko metadata fetch failed for ${m.coinGeckoId}: ${mdRes.status}`
+              `CoinGecko metadata fetch failed for ${m.coinGeckoId}: ${mdRes.status}`,
             );
           }
         } catch (cgErr) {
@@ -263,7 +263,7 @@ export default async function handler(
     // set caching headers for CDN / browser
     res.setHeader(
       "Cache-Control",
-      `public, s-maxage=${Math.floor(TTL_MS / 1000)}, stale-while-revalidate=60`
+      `public, s-maxage=${Math.floor(TTL_MS / 1000)}, stale-while-revalidate=60`,
     );
     return res.status(200).json({ logos, cached: false });
   } catch (err) {

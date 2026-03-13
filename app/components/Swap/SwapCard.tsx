@@ -16,6 +16,7 @@ import {
 import TokenRow from "./TokenRow";
 import SwapPreview from "./SwapPreview";
 import SwapSuccess from "./SwapSucess";
+import { fetchRelayQuote } from "@/app/lib/relayQuote";
 const adapted = adaptToTokenInfo(TOKENS);
 
 interface SwapCardProps {
@@ -252,31 +253,52 @@ const SwapCard: React.FC<SwapCardProps> = ({ selectedChain }) => {
   }
 
   useEffect(() => {
-    if (amount && fromToken) {
-      const parsedAmount = parseFloat(amount.replace(/,/g, ""));
-      if (isNaN(parsedAmount)) return;
+    const controller = new AbortController();
 
-      // Simple preview calculation: just for display, not for real swapping
-      const priceImpact = 0.2 + Math.random() * 0.3;
-      const fee = parsedAmount * 0.001;
-      let estOut = 0;
-      if (fromToken && toToken) {
-        if (fromToken.symbol === "ETH" && toToken.symbol === "USDC") {
-          estOut = parsedAmount * 2000;
-        } else if (fromToken.symbol === "USDC" && toToken.symbol === "ETH") {
-          estOut = parsedAmount / 2000;
-        } else if (fromToken.symbol === "ETH" && toToken.symbol === "DAI") {
-          estOut = parsedAmount * 2000;
-        } else if (fromToken.symbol === "DAI" && toToken.symbol === "ETH") {
-          estOut = parsedAmount / 2000;
-        } else {
-          estOut = parsedAmount;
-        }
+    async function fetchQuote() {
+      if (!fromToken || !toToken || !amount) {
+        setPreview(null);
+        return;
       }
-      const minReceived = estOut * (1 - slippage / 100);
-      setPreview({ estOut, priceImpact, fee, minReceived });
+      const parsed = parseFloat(amount.replace(/,/g, ""));
+      if (isNaN(parsed) || parsed <= 0) {
+        setPreview(null);
+        return;
+      }
+      const wallet = wallets?.[0]?.address;
+      if (!wallet) return;
+
+      const quote = await fetchRelayQuote(
+        fromToken,
+        toToken,
+        amount,
+        wallet,
+        selectedChain,
+        toToken.chain ?? selectedChain, // destination chain from toToken
+        slippage * 100, // convert 0.5% → 50 bps
+      );
+
+      if (!quote) return;
+
+      setPreview({
+        estOut: parseFloat(quote.estOut),
+        priceImpact: parseFloat(quote.priceImpact),
+        fee: parseFloat(quote.relayerFee),
+        minReceived: parseFloat(quote.minReceived),
+        // store raw quote too if you want to show gas, time etc
+      });
     }
-  }, [amount, slippage, fromToken, toToken]);
+
+    fetchQuote();
+    return () => controller.abort();
+  }, [
+    amount,
+    slippage,
+    fromToken,
+    toToken,
+    wallets?.[0]?.address,
+    selectedChain,
+  ]);
 
   async function handleSwap() {
     setSwapping(true);

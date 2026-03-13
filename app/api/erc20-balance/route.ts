@@ -34,7 +34,7 @@ function formatWithDecimals(balanceStr: string, decimals: number) {
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   const wallet =
     typeof req.query.wallet === "string" ? req.query.wallet.trim() : "";
@@ -61,7 +61,7 @@ export default async function handler(
   try {
     // fetch all ERC20 balances for the wallet
     const url = `https://deep-index.moralis.io/api/v2.2/${encodeURIComponent(
-      wallet
+      wallet,
     )}/erc20?chain=${encodeURIComponent(chain)}`;
     const r = await fetch(url, {
       headers: { "X-API-Key": MORALIS_API_KEY, accept: "application/json" },
@@ -92,7 +92,7 @@ export default async function handler(
         return (
           typeof candidate === "string" && candidate.toLowerCase() === lcToken
         );
-      }
+      },
     );
 
     if (!found) {
@@ -112,15 +112,15 @@ export default async function handler(
       typeof found.balance === "string"
         ? found.balance
         : typeof found.balance === "number"
-        ? String(found.balance)
-        : "0";
+          ? String(found.balance)
+          : "0";
 
     const decimals =
       typeof found.decimals === "number"
         ? found.decimals
         : typeof found.decimals === "string" && /^\d+$/.test(found.decimals)
-        ? parseInt(found.decimals as string, 10)
-        : 18;
+          ? parseInt(found.decimals as string, 10)
+          : 18;
 
     const symbol =
       (typeof found.symbol === "string" && found.symbol) ||
