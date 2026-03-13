@@ -20,6 +20,8 @@ export interface Token {
 
 export type Preview = {
   estOut: number;
+  estOutUsd: string;
+  estInUsd: string;
   priceImpact: number;
   fee: number;
   minReceived: number;
@@ -147,4 +149,5 @@ export type RelayQuote = {
   rate: string;
   priceImpact: string;
   minReceived: string;
+  estInUsd: string;
 };

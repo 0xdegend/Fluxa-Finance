@@ -279,13 +279,18 @@ const SwapCard: React.FC<SwapCardProps> = ({ selectedChain }) => {
       );
 
       if (!quote) return;
+      console.log(quote);
 
       setPreview({
         estOut: parseFloat(quote.estOut),
+        estOutUsd: quote.estOutUsd,
+        estInUsd: quote.estInUsd,
         priceImpact: parseFloat(quote.priceImpact),
         fee: parseFloat(quote.relayerFee),
         minReceived: parseFloat(quote.minReceived),
-        // store raw quote too if you want to show gas, time etc
+        gasFeeUsd: quote.gasFeeUsd,
+        timeEstimate: quote.timeEstimate,
+        rate: quote.rate,
       });
     }
 
@@ -362,7 +367,7 @@ const SwapCard: React.FC<SwapCardProps> = ({ selectedChain }) => {
           inputId="sell-amount"
           token={fromToken}
           amount={amount}
-          usdValue={amount ? getUsdValue(fromToken, amount) : 0}
+          usdValue={preview ? parseFloat(preview.estInUsd) : 0}
           onSelectToken={() => setShowFromModal(true)}
           onAmountChange={(val) => {
             setAmount(val);
@@ -417,8 +422,8 @@ const SwapCard: React.FC<SwapCardProps> = ({ selectedChain }) => {
         <TokenRow
           label="Buy"
           token={toToken}
-          amount={preview ? preview.estOut.toFixed(0) : "0"}
-          usdValue={getUsdValue(toToken, preview ? preview.estOut : 0)}
+          amount={preview ? preview.estOutUsd : "0"}
+          usdValue={getUsdValue(toToken, preview ? preview.estOutUsd : 0)}
           onSelectToken={() => setShowToModal(true)}
           readOnly
         />

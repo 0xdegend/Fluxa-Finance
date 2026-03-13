@@ -54,6 +54,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
       estOut: details?.currencyOut?.amountFormatted ?? "0",
       estOutUsd: details?.currencyOut?.amountUsd ?? "0",
+      estInUsd: details?.currencyIn?.amountUsd ?? "0", // ← add this
       gasFee: fees?.gas?.amountFormatted ?? "0",
       gasFeeUsd: fees?.gas?.amountUsd ?? "0",
       relayerFee: fees?.relayer?.amountFormatted ?? "0",
@@ -62,7 +63,6 @@ export async function POST(req: NextRequest) {
       rate: details?.rate ?? "0",
       priceImpact: details?.totalImpact?.percent ?? "0",
       minReceived: details?.currencyOut?.minimumAmount ?? "0",
-      // Keep steps for when we implement actual swap execution
       steps: data?.steps ?? [],
     });
   } catch (err) {
