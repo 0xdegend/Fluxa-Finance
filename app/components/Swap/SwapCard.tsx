@@ -280,7 +280,6 @@ const SwapCard: React.FC<SwapCardProps> = ({ selectedChain }) => {
       );
 
       if (!quote) return;
-      console.log(quote);
 
       setPreview({
         estOut: parseFloat(quote.estOut),
