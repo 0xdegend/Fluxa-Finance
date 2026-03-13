@@ -1,6 +1,8 @@
 import { Token } from "@/types";
 import { NetworkOption } from "@/types";
 import { ChainKey } from "@/types";
+
+export const NATIVE_PLACEHOLDER = "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
 export const DEFAULT_ASSETS = [
   { id: "bitcoin", symbol: "BTC" },
   { id: "ethereum", symbol: "ETH" },

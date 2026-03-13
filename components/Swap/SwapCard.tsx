@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
-import Image from "next/image";
 import { Preview, SwapResult, TokenInfo, BalanceEntry } from "@/types";
-import { TOKENS, CHAIN_LOGOS } from "@/data";
+import { TOKENS, NATIVE_PLACEHOLDER } from "@/data";
 import { usePrivy, useWallets } from "@privy-io/react-auth";
 import ChainTokenModal from "../Common/ChainTokenModal";
 import { adaptToTokenInfo } from "@/app/utils/tokenAdapter";
@@ -9,17 +8,15 @@ import {
   formatWeiToEth,
   getUsdValue,
   formatWithDecimals,
-  formatForDisplay,
+  isAddress,
+  compositeKey,
+  getDisplayedBalance,
+  validate,
 } from "@/app/utils";
+import TokenRow from "./TokenRow";
+import SwapPreview from "./SwapPreview";
+import SwapSuccess from "./SwapSucess";
 const adapted = adaptToTokenInfo(TOKENS);
-
-function isAddress(x?: string) {
-  return typeof x === "string" && /^0x[0-9a-fA-F]{40}$/.test(x);
-}
-
-function compositeKey(chain?: string, address?: string) {
-  return `${(chain ?? "").toLowerCase()}:${(address ?? "").toLowerCase()}`;
-}
 
 interface SwapCardProps {
   selectedChain: string;
@@ -28,7 +25,6 @@ interface SwapCardProps {
 const SwapCard: React.FC<SwapCardProps> = ({ selectedChain }) => {
   const { authenticated, login } = usePrivy();
   const { wallets } = useWallets();
-  const NATIVE_PLACEHOLDER = "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
   const isWalletConnected = authenticated;
   const defaultEthToken =
     adapted.find((t) => t.symbol === "ETH" && t.chain === selectedChain) ||
@@ -222,35 +218,6 @@ const SwapCard: React.FC<SwapCardProps> = ({ selectedChain }) => {
     wallets?.[0]?.address,
     selectedChain,
   ]);
-  function getDisplayedBalance(t: TokenInfo | undefined) {
-    if (!t) return "—";
-    const chain = selectedChain;
-    const tokenAddr = t.address ?? "";
-    if (t.symbol === "ETH" && (!tokenAddr || tokenAddr === "")) {
-      const key = compositeKey(chain, NATIVE_PLACEHOLDER);
-      const e = balances[key];
-      if (!e) return "—";
-      if (e.loading) return "Loading...";
-      return formatForDisplay(e.formatted ?? "0", 7, true);
-    }
-
-    if (tokenAddr && isAddress(tokenAddr)) {
-      const key = compositeKey(chain, tokenAddr);
-      const e = balances[key];
-      if (!e) return "—";
-      if (e.loading) return "Loading...";
-      return formatForDisplay(e.formatted ?? "0", 3, true);
-    }
-
-    if (typeof t.balance === "string" || typeof t.balance === "number") {
-      const s = String(t.balance);
-      const cleaned = s.replace(/,/g, "");
-      const n = parseFloat(cleaned || "0");
-      if (!Number.isFinite(n)) return "0";
-      return n.toLocaleString(undefined, { maximumFractionDigits: 3 });
-    }
-    return "—";
-  }
 
   async function handleQuick(percentage: number) {
     if (!fromToken) return;
@@ -341,7 +308,8 @@ const SwapCard: React.FC<SwapCardProps> = ({ selectedChain }) => {
         className="rounded-xl shadow-md bg-white p-6 relative border border-gray-100 w-full"
         style={{ boxShadow: "0 4px 24px 0 rgba(0,0,0,0.04)" }}
       >
-        <div className="flex items-center justify-between mb-2 ">
+        {/* Sell header */}
+        <div className="flex items-center justify-between mb-2">
           <label
             htmlFor="sell-amount"
             className="text-xs font-semibold text-gray-600 font-[audiowide]"
@@ -366,101 +334,33 @@ const SwapCard: React.FC<SwapCardProps> = ({ selectedChain }) => {
           </div>
         </div>
 
-        <div className="flex items-center gap-3 mb-2">
-          <button
-            className="flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-200 bg-gray-50 hover:bg-gray-100 focus:outline-none text-black font-[audiowide]"
-            onClick={() => setShowFromModal(true)}
-            aria-label="Select sell token"
-          >
-            <div className="w-7 h-7 rounded-full flex items-center justify-center font-bold text-xs overflow-hidden">
-              {fromToken?.icon ? (
-                <Image
-                  src={fromToken.icon}
-                  alt={fromToken.symbol}
-                  width={24}
-                  height={24}
-                  className="rounded-full"
-                  unoptimized
-                />
-              ) : fromToken?.logo ? (
-                <div className="relative">
-                  <Image
-                    src={fromToken.logo}
-                    alt={fromToken.symbol}
-                    width={24}
-                    height={24}
-                    className="rounded-full"
-                    unoptimized
-                  />
-                  <div className="absolute bottom-0 right-0">
-                    {fromToken?.chain && CHAIN_LOGOS[fromToken.chain] ? (
-                      <Image
-                        src={CHAIN_LOGOS[fromToken.chain]!}
-                        alt={`${fromToken?.chain ?? ""} logo`}
-                        width={12}
-                        height={12}
-                        className="rounded-full border border-white"
-                        unoptimized
-                      />
-                    ) : null}
-                  </div>
-                </div>
-              ) : (
-                <div className="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center text-xs">
-                  {fromToken?.symbol?.[0] ?? "—"}
-                </div>
-              )}
-            </div>
-            <span className="font-semibold font-[audiowide]">
-              {fromToken?.symbol ?? "Select"}
-            </span>
-            <svg
-              width="16"
-              height="16"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-            >
-              <path d="M6 9l6 6 6-6" />
-            </svg>
-          </button>
+        {/* Sell token row */}
+        <TokenRow
+          label="Sell"
+          inputId="sell-amount"
+          token={fromToken}
+          amount={amount}
+          usdValue={amount ? getUsdValue(fromToken, amount) : 0}
+          onSelectToken={() => setShowFromModal(true)}
+          onAmountChange={(val) => {
+            setAmount(val);
+            setPreview(null);
+          }}
+          onFocus={() => setAmountTouched(true)}
+          onBlur={() => setAmountTouched(true)}
+        />
 
-          <div className="flex-1 flex flex-col items-end">
-            <input
-              id="sell-amount"
-              type="text"
-              inputMode="decimal"
-              pattern="[0-9]*[.,]?[0-9]*"
-              step="any"
-              value={amount}
-              onChange={(e) => {
-                setAmount(e.target.value);
-                setPreview(null);
-              }}
-              onFocus={() => setAmountTouched(true)}
-              onBlur={() => setAmountTouched(true)}
-              className="text-2xl text-right outline-none bg-transparent w-full text-black font-[audiowide]"
-              placeholder="0"
-              aria-label="Sell amount"
-            />
-            <span className="text-xs font-[audiowide] text-gray-400">
-              $
-              {amount
-                ? getUsdValue(fromToken, amount).toLocaleString(undefined, {
-                    maximumFractionDigits: 2,
-                  })
-                : "0.00"}
-            </span>
-          </div>
-        </div>
-
+        {/* Balance display */}
         <div className="flex items-center justify-between mb-2">
           <span className="text-xs font-[audiowide] text-gray-500">
-            Bal: {getDisplayedBalance(fromToken)}
+            Bal:{" "}
+            {authenticated
+              ? getDisplayedBalance(fromToken, selectedChain, balances)
+              : "0"}
           </span>
         </div>
+
+        {/* Switch button */}
         <div className="flex justify-center my-2">
           <button
             className="rounded-full bg-white border border-gray-200 shadow p-2 hover:bg-gray-50 focus:outline-none cursor-pointer"
@@ -486,86 +386,22 @@ const SwapCard: React.FC<SwapCardProps> = ({ selectedChain }) => {
           </button>
         </div>
 
-        {/* Buy row */}
-        <div>
-          <label className="text-xs font-semibold text-gray-600 font-[audiowide]">
-            Buy
-          </label>
-          <div className="flex items-center gap-3 mb-2">
-            <button
-              className="flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-200 bg-gray-50 hover:bg-gray-100 focus:outline-none font-[audiowide]"
-              onClick={() => setShowToModal(true)}
-              aria-label="Select buy token"
-            >
-              <div className="w-7 h-7 rounded-full flex items-center justify-center font-bold text-xs overflow-hidden">
-                {toToken?.icon ? (
-                  <Image
-                    src={toToken.icon}
-                    alt={toToken.symbol}
-                    width={24}
-                    height={24}
-                    className="rounded-full"
-                    unoptimized
-                  />
-                ) : toToken?.logo ? (
-                  <div className="relative">
-                    <Image
-                      src={toToken.logo}
-                      alt={toToken.symbol}
-                      width={24}
-                      height={24}
-                      className="rounded-full"
-                      unoptimized
-                    />
-                    <div className="absolute -bottom-px right-0">
-                      {toToken?.chain && CHAIN_LOGOS[toToken.chain] ? (
-                        <Image
-                          src={CHAIN_LOGOS[toToken.chain]!}
-                          alt={`${fromToken?.chain ?? ""} logo`}
-                          width={12}
-                          height={12}
-                          className="rounded-full border border-white"
-                          unoptimized
-                        />
-                      ) : null}
-                    </div>
-                  </div>
-                ) : (
-                  <div className="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center text-xs">
-                    {toToken?.symbol?.[0] ?? "—"}
-                  </div>
-                )}
-              </div>
-              <span className="font-semibold text-black font-[audiowide]">
-                {toToken?.symbol ?? "Select"}
-              </span>
-              <svg
-                width="16"
-                height="16"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-              >
-                <path d="M6 9l6 6 6-6" />
-              </svg>
-            </button>
+        {/* Buy header */}
+        <label className="text-xs font-semibold text-gray-600 font-[audiowide]">
+          Buy
+        </label>
 
-            <div className="flex-1 flex flex-col items-end">
-              <span className="text-2xl text-right text-gray-700 font-[audiowide]">
-                {preview ? preview.estOut.toFixed(0) : "0"}
-              </span>
-              <span className="text-xs font-[audiowide] text-gray-400">
-                $
-                {getUsdValue(
-                  toToken,
-                  preview ? preview.estOut : 0,
-                ).toLocaleString(undefined, { maximumFractionDigits: 2 })}
-              </span>
-            </div>
-          </div>
-        </div>
+        {/* Buy token row */}
+        <TokenRow
+          label="Buy"
+          token={toToken}
+          amount={preview ? preview.estOut.toFixed(0) : "0"}
+          usdValue={getUsdValue(toToken, preview ? preview.estOut : 0)}
+          onSelectToken={() => setShowToModal(true)}
+          readOnly
+        />
+
+        {/* Slippage */}
         <div className="flex items-center gap-2 mb-2">
           <label
             htmlFor="slippage"
@@ -587,7 +423,7 @@ const SwapCard: React.FC<SwapCardProps> = ({ selectedChain }) => {
           <span className="text-xs text-gray-400">%</span>
         </div>
 
-        {/* Preview dropdown toggle */}
+        {/* Preview toggle */}
         <div className="flex justify-center mb-2">
           <button
             type="button"
@@ -602,9 +438,7 @@ const SwapCard: React.FC<SwapCardProps> = ({ selectedChain }) => {
               stroke="currentColor"
               strokeWidth="2"
               viewBox="0 0 24 24"
-              className={`transition-transform duration-200 ${
-                showPreview ? "rotate-180" : ""
-              }`}
+              className={`transition-transform duration-200 ${showPreview ? "rotate-180" : ""}`}
               aria-hidden="true"
             >
               <path d="M6 9l6 6 6-6" />
@@ -619,37 +453,14 @@ const SwapCard: React.FC<SwapCardProps> = ({ selectedChain }) => {
           </div>
         )}
 
-        {/* Preview info */}
-        {preview && showPreview && (
-          <div
-            className={`transition-opacity duration-300 ${
-              showAnim ? "opacity-0" : "opacity-100"
-            } bg-gray-50 rounded-lg p-4 mb-2 border border-gray-100`}
-            aria-live="polite"
-          >
-            <div className="mb-2 text-black font-[audiowide]">
-              Estimated Output:{" "}
-              <b>
-                {preview.estOut.toFixed(1)} {toToken?.symbol ?? ""}
-              </b>
-            </div>
-            <div className="mb-2 text-black font-[audiowide]">
-              Price Impact: <b>{preview.priceImpact.toFixed(2)}%</b>
-            </div>
-            <div className="mb-2 text-black font-[audiowide]">
-              Fee:{" "}
-              <b>
-                {preview.fee.toFixed(4)} {fromToken?.symbol ?? ""}
-              </b>
-            </div>
-            <div className="text-black font-[audiowide]">
-              Minimum Received:{" "}
-              <b>
-                {preview.minReceived.toFixed(1)} {toToken?.symbol ?? ""}
-              </b>
-            </div>
-          </div>
-        )}
+        {/* Swap preview */}
+        <SwapPreview
+          preview={preview!}
+          fromToken={fromToken}
+          toToken={toToken}
+          visible={!!preview && showPreview}
+          animating={showAnim}
+        />
 
         {/* CTA button */}
         <button
@@ -660,7 +471,11 @@ const SwapCard: React.FC<SwapCardProps> = ({ selectedChain }) => {
           } transition-colors cursor-pointer`}
           style={{ boxShadow: "inset 0 2px 8px 0 rgba(0,0,0,0.08)" }}
           aria-label={isWalletConnected ? "Swap" : "Connect wallet"}
-          disabled={swapping || (isWalletConnected && !!validate())}
+          disabled={
+            swapping ||
+            (isWalletConnected &&
+              !!validate(fromToken, toToken, amount, selectedChain, balances))
+          }
           onClick={isWalletConnected ? handleSwap : handleLogin}
         >
           {isWalletConnected
@@ -672,23 +487,7 @@ const SwapCard: React.FC<SwapCardProps> = ({ selectedChain }) => {
 
         {/* Success modal */}
         {success && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
-            <div className="bg-white rounded-lg p-6 shadow-lg text-center">
-              <div className="text-green-600 text-2xl mb-2 font-[audiowide]">
-                Swap Successful!
-              </div>
-              <div className="mb-2 font-[audiowide]">
-                Tx Hash:{" "}
-                <span className="font-mono text-xs">{success.txHash}</span>
-              </div>
-              <button
-                className="mt-2 px-4 py-2 bg-blue-600 text-white rounded font-[audiowide]"
-                onClick={() => setSuccess(null)}
-              >
-                Close
-              </button>
-            </div>
-          </div>
+          <SwapSuccess result={success} onClose={() => setSuccess(null)} />
         )}
 
         {/* Token modals */}
@@ -731,19 +530,6 @@ const SwapCard: React.FC<SwapCardProps> = ({ selectedChain }) => {
       </div>
     </div>
   );
-
-  // Add missing validate function
-  function validate() {
-    if (!fromToken || !toToken) return "Select tokens.";
-    if (!amount || isNaN(parseFloat(amount)) || parseFloat(amount) <= 0)
-      return "Enter a valid amount.";
-    const balStr = getDisplayedBalance(fromToken);
-    const balance = parseFloat(String(balStr).replace(/,/g, "")) || 0;
-    if (parseFloat(amount) > balance)
-      return `Amount exceeds wallet balance (${balance} ${fromToken.symbol})`;
-    if (fromToken.symbol === toToken.symbol) return "Select different tokens.";
-    return "";
-  }
 };
 
 export default SwapCard;

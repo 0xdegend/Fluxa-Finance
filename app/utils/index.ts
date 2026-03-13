@@ -1,4 +1,5 @@
-import { TokenInfo } from "@/types";
+import { BalanceEntry, TokenInfo } from "@/types";
+import { NATIVE_PLACEHOLDER } from "@/data";
 export function formatWeiToEth(weiStr: string): string | null {
   if (typeof weiStr !== "string" || !/^\d+$/.test(weiStr)) return null;
   try {
@@ -79,4 +80,66 @@ export function formatForDisplay(
       maximumFractionDigits: maxDecimals,
     });
   }
+}
+
+export function isAddress(x?: string) {
+  return typeof x === "string" && /^0x[0-9a-fA-F]{40}$/.test(x);
+}
+
+export function compositeKey(chain?: string, address?: string) {
+  return `${(chain ?? "").toLowerCase()}:${(address ?? "").toLowerCase()}`;
+}
+
+export type BalanceMap = Record<string, BalanceEntry>;
+
+export function getDisplayedBalance(
+  t: TokenInfo | undefined,
+  selectedChain: string,
+  balances: BalanceMap,
+) {
+  if (!t) return "—";
+  const chain = selectedChain;
+  const tokenAddr = t.address ?? "";
+  if (t.symbol === "ETH" && (!tokenAddr || tokenAddr === "")) {
+    const key = compositeKey(chain, NATIVE_PLACEHOLDER);
+    const e = balances[key];
+    if (!e) return "—";
+    if (e.loading) return "Loading...";
+    return formatForDisplay(e.formatted ?? "0", 7, true);
+  }
+
+  if (tokenAddr && isAddress(tokenAddr)) {
+    const key = compositeKey(chain, tokenAddr);
+    const e = balances[key];
+    if (!e) return "—";
+    if (e.loading) return "Loading...";
+    return formatForDisplay(e.formatted ?? "0", 3, true);
+  }
+
+  if (typeof t.balance === "string" || typeof t.balance === "number") {
+    const s = String(t.balance);
+    const cleaned = s.replace(/,/g, "");
+    const n = parseFloat(cleaned || "0");
+    if (!Number.isFinite(n)) return "0";
+    return n.toLocaleString(undefined, { maximumFractionDigits: 3 });
+  }
+  return "—";
+}
+
+export function validate(
+  fromToken: TokenInfo | undefined,
+  toToken: TokenInfo | undefined,
+  amount: string,
+  selectedChain: string,
+  balances: BalanceMap,
+) {
+  if (!fromToken || !toToken) return "Select tokens.";
+  if (!amount || isNaN(parseFloat(amount)) || parseFloat(amount) <= 0)
+    return "Enter a valid amount.";
+  const balStr = getDisplayedBalance(fromToken, selectedChain, balances);
+  const balance = parseFloat(String(balStr).replace(/,/g, "")) || 0;
+  if (parseFloat(amount) > balance)
+    return `Amount exceeds wallet balance (${balance} ${fromToken.symbol})`;
+  if (fromToken.symbol === toToken.symbol) return "Select different tokens.";
+  return "";
 }
