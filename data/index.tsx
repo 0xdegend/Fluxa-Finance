@@ -79,3 +79,11 @@ export const CHAIN_META: { key: ChainKey; label: string; icon?: string }[] = [
   { key: "arbitrum", label: "Arbitrum", icon: "/logos/arbitrum-icon.png" },
   { key: "bsc", label: "BSC", icon: "/logos/bnb-icon.png" },
 ];
+
+export const CHAIN_LOGOS: Record<string, string | undefined> = {
+  base: "/logos/base-icon.svg",
+  eth: "/logos/ethereum-icon.png",
+  arbitrum: "/logos/arbitrum-icon.png",
+  solana: "/logos/solana-icon.png",
+  bsc: "/logos/bnb-icon.png",
+};

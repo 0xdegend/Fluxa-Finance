@@ -122,3 +122,13 @@ export interface WalletSidebarProps {
   networks?: { key: string; label: string }[];
   onRefreshBalances?: () => void;
 }
+
+export type BalanceEntry = {
+  loading: boolean;
+  found: boolean;
+  balanceRaw: string;
+  formatted: string;
+  decimals: number;
+  symbol: string | null;
+  name: string | null;
+};

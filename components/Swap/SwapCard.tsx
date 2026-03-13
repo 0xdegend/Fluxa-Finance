@@ -1,20 +1,17 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { Preview, SwapResult, TokenInfo } from "@/types";
-import { TOKENS } from "@/data";
+import { Preview, SwapResult, TokenInfo, BalanceEntry } from "@/types";
+import { TOKENS, CHAIN_LOGOS } from "@/data";
 import { usePrivy, useWallets } from "@privy-io/react-auth";
 import ChainTokenModal from "../Common/ChainTokenModal";
 import { adaptToTokenInfo } from "@/app/utils/tokenAdapter";
-
+import {
+  formatWeiToEth,
+  getUsdValue,
+  formatWithDecimals,
+  formatForDisplay,
+} from "@/app/utils";
 const adapted = adaptToTokenInfo(TOKENS);
-
-const CHAIN_LOGOS: Record<string, string | undefined> = {
-  base: "/logos/base-icon.svg",
-  eth: "/logos/ethereum-icon.png",
-  arbitrum: "/logos/arbitrum-icon.png",
-  solana: "/logos/solana-icon.png",
-  bsc: "/logos/bnb-icon.png",
-};
 
 function isAddress(x?: string) {
   return typeof x === "string" && /^0x[0-9a-fA-F]{40}$/.test(x);
@@ -23,16 +20,6 @@ function isAddress(x?: string) {
 function compositeKey(chain?: string, address?: string) {
   return `${(chain ?? "").toLowerCase()}:${(address ?? "").toLowerCase()}`;
 }
-
-type BalanceEntry = {
-  loading: boolean;
-  found: boolean;
-  balanceRaw: string;
-  formatted: string;
-  decimals: number;
-  symbol: string | null;
-  name: string | null;
-};
 
 interface SwapCardProps {
   selectedChain: string;
@@ -65,81 +52,6 @@ const SwapCard: React.FC<SwapCardProps> = ({ selectedChain }) => {
   const handleLogin = async () => {
     login();
   };
-
-  const getUsdValue = (token: TokenInfo | undefined, amt: string | number) => {
-    const n = typeof amt === "string" ? parseFloat(amt) || 0 : (amt as number);
-    if (!token) return 0;
-    if (token.symbol === "ETH") return n * 2000;
-    if (token.symbol === "USDC" || token.symbol === "DAI") return n * 1;
-    return 0;
-  };
-
-  function formatWeiToEth(weiStr: string): string | null {
-    if (typeof weiStr !== "string" || !/^\d+$/.test(weiStr)) return null;
-    try {
-      const wei = BigInt(weiStr);
-      const WEI_PER_ETH = BigInt("1000000000000000000"); // 1e18 as bigint
-
-      const whole = wei / WEI_PER_ETH;
-      const remainder = wei % WEI_PER_ETH;
-
-      if (remainder === BigInt(0)) {
-        return whole.toString();
-      }
-      let frac = remainder.toString().padStart(18, "0");
-      frac = frac.replace(/0+$/g, ""); // remove trailing zeros
-
-      return `${whole.toString()}.${frac}`;
-    } catch {
-      return null;
-    }
-  }
-
-  function formatWithDecimals(balanceStr: string, decimals: number) {
-    const digits = (balanceStr || "").replace(/^0+/, "");
-    const dec = Math.max(0, Math.floor(Number(decimals) || 0));
-    if (digits.length === 0) return "0";
-    if (dec === 0) return digits;
-    if (digits.length <= dec) {
-      const frac = digits.padStart(dec, "0").replace(/0+$/, "");
-      return frac === "" ? "0" : `0.${frac}`;
-    }
-    const intPart = digits.slice(0, digits.length - dec);
-    const fracPart = digits.slice(digits.length - dec).replace(/0+$/, "");
-    return fracPart === "" ? intPart : `${intPart}.${fracPart}`;
-  }
-
-  function addThousandsSeparators(intStr: string) {
-    return intStr.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  }
-
-  function formatForDisplay(numStr: string, maxDecimals = 3, truncate = true) {
-    if (!numStr) return "0";
-    const s = String(numStr);
-    if (!s.includes(".")) {
-      return addThousandsSeparators(s);
-    }
-    const [intPartRaw, fracRaw] = s.split(".");
-    const intPart = intPartRaw === "" ? "0" : intPartRaw;
-    if (maxDecimals <= 0) return addThousandsSeparators(intPart);
-
-    if (truncate) {
-      const frac = (fracRaw || "").slice(0, maxDecimals).replace(/0+$/, "");
-      if (!frac) return addThousandsSeparators(intPart);
-      return `${addThousandsSeparators(intPart)}.${frac}`;
-    } else {
-      const n = Number(s);
-      if (!Number.isFinite(n)) {
-        const frac = (fracRaw || "").slice(0, maxDecimals).replace(/0+$/, "");
-        return frac
-          ? `${addThousandsSeparators(intPart)}.${frac}`
-          : addThousandsSeparators(intPart);
-      }
-      return n.toLocaleString(undefined, {
-        maximumFractionDigits: maxDecimals,
-      });
-    }
-  }
 
   async function fetchBalanceFor(
     chain: string,
