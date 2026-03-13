@@ -17,6 +17,7 @@ import TokenRow from "./TokenRow";
 import SwapPreview from "./SwapPreview";
 import SwapSuccess from "./SwapSucess";
 import { fetchRelayQuote } from "@/app/lib/relayQuote";
+import { isStablecoin } from "@/app/lib/web3Service";
 const adapted = adaptToTokenInfo(TOKENS);
 
 interface SwapCardProps {
@@ -412,23 +413,23 @@ const SwapCard: React.FC<SwapCardProps> = ({ selectedChain }) => {
             </svg>
           </button>
         </div>
-
-        {/* Buy header */}
         <label className="text-xs font-semibold text-gray-600 font-[audiowide]">
           Buy
         </label>
-
-        {/* Buy token row */}
         <TokenRow
           label="Buy"
           token={toToken}
-          amount={preview ? preview.estOutUsd : "0"}
-          usdValue={getUsdValue(toToken, preview ? preview.estOutUsd : 0)}
+          amount={
+            preview
+              ? isStablecoin(toToken?.symbol)
+                ? `${parseFloat(preview.estOutUsd).toFixed(2)}` // show USD amount for stables
+                : `${preview.estOut.toFixed(6)}` // show token amount for others
+              : "0"
+          }
+          usdValue={preview ? parseFloat(preview.estOutUsd) : 0}
           onSelectToken={() => setShowToModal(true)}
           readOnly
         />
-
-        {/* Slippage */}
         <div className="flex items-center gap-2 mb-2">
           <label
             htmlFor="slippage"

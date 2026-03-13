@@ -23,10 +23,10 @@ export const getUsd = (amount: number) => `$${(amount * 2).toFixed(2)}`;
 export async function fetchTokenBalances(
   address: string,
   network: string = "",
-  limit: number = 25
+  limit: number = 25,
 ) {
   const res = await fetch(
-    `/api/token-balances?address=${address}&chain=${network}&limit=${limit}`
+    `/api/token-balances?address=${address}&chain=${network}&limit=${limit}`,
   );
   if (!res.ok) {
     const text = await res.text().catch(() => "");
@@ -52,14 +52,14 @@ export async function fetchWalletBalance(address: string, chain: string) {
 export async function fetchTokenBalance(
   walletAddress: string,
   tokenAddress: string,
-  chain = "eth"
+  chain = "eth",
 ) {
   const res = await fetch(
     `/api/erc20-balance?wallet=${encodeURIComponent(
-      walletAddress
+      walletAddress,
     )}&token=${encodeURIComponent(tokenAddress)}&chain=${encodeURIComponent(
-      chain
-    )}`
+      chain,
+    )}`,
   );
   if (!res.ok) {
     throw new Error(`Balance fetch failed: ${res.status}`);
@@ -74,7 +74,7 @@ export type NativeBalance = {
 
 export async function fetchNativeBalance(
   address: string,
-  chain = "base"
+  chain = "base",
 ): Promise<NativeBalance> {
   if (!address) throw new Error("address is required");
 
@@ -96,4 +96,18 @@ export async function fetchNativeBalance(
   }
 
   return json;
+}
+
+const STABLECOINS = new Set([
+  "USDC",
+  "USDT",
+  "DAI",
+  "BUSD",
+  "FRAX",
+  "LUSD",
+  "USDBC",
+]);
+
+export function isStablecoin(symbol?: string): boolean {
+  return !!symbol && STABLECOINS.has(symbol.toUpperCase());
 }

@@ -18,6 +18,14 @@ function toWei(amount: string, decimals: number): string {
   return raw.toString();
 }
 
+export function resolveChain(
+  tokenChain: string | undefined,
+  fallback: string,
+): string {
+  if (tokenChain && CHAIN_IDS[tokenChain]) return tokenChain;
+  return fallback;
+}
+
 export async function fetchRelayQuote(
   fromToken: TokenInfo,
   toToken: TokenInfo,
