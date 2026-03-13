@@ -89,3 +89,12 @@ export const CHAIN_LOGOS: Record<string, string | undefined> = {
   solana: "/logos/solana-icon.png",
   bsc: "/logos/bnb-icon.png",
 };
+
+export const CHAIN_IDS: Record<string, number> = {
+  eth: 1,
+  base: 8453,
+  arbitrum: 42161,
+  optimism: 10,
+  polygon: 137,
+  bsc: 56,
+};
