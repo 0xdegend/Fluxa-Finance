@@ -5,7 +5,7 @@ import {
   fetchTokenBalances,
   fetchWalletBalance,
   truncate,
-} from "../../app/lib/web3Service";
+} from "../../lib/web3Service";
 import type { TokenBalance } from "@/app/types";
 import { Web3LoginButtonProps } from "@/app/types";
 import { FaEthereum } from "react-icons/fa6";

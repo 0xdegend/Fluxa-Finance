@@ -5,7 +5,7 @@ import { IoCopy, IoRefresh } from "react-icons/io5";
 import { formatSignificant, formatUsd } from "@/app/utils/numberFormat";
 import NetworkDropdown from "./NetworkDropdown";
 import Lottie from "lottie-react";
-import loadingAnimation from "../../public/lottie/fingers-loading.json";
+import loadingAnimation from "../../../public/lottie/fingers-loading.json";
 import { CHAIN_META } from "@/app/data";
 import { WalletSidebarProps } from "@/app/types";
 import { usePrivy } from "@privy-io/react-auth";

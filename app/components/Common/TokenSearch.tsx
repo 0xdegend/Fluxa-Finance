@@ -4,7 +4,7 @@ import { debounce } from "lodash";
 import { TokenInfo } from "@/app/types";
 import Image from "next/image";
 import Lottie from "lottie-react";
-import loadingAnimation from "../../public/lottie/loading.json";
+import loadingAnimation from "../../../public/lottie/loading.json";
 export default function TokenSearch({
   chain,
   onSelect,
