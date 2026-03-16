@@ -58,6 +58,8 @@ const SwapCard: React.FC<SwapCardProps> = ({ selectedChain }) => {
     symbol?: string,
   ): Promise<BalanceEntry | null> {
     const key = compositeKey(chain, tokenAddress);
+
+    // Set loading state
     setBalances((prev) => ({
       ...prev,
       [key]:
@@ -81,46 +83,28 @@ const SwapCard: React.FC<SwapCardProps> = ({ selectedChain }) => {
         symbol === "ETH" &&
         (tokenAddress === "" || tokenAddress === NATIVE_PLACEHOLDER)
       ) {
-        // Native ETH: use wallet-balance API
-        const url = `/api/wallet-balance?address=${encodeURIComponent(
+        // ✅ Native ETH — use native-balance API
+        const url = `/api/native-balance?wallet=${encodeURIComponent(
           wallet,
         )}&chain=${encodeURIComponent(chain)}`;
         const r = await fetch(url);
         const j = await r.json().catch(() => null);
-        console.debug("wallet-balance response:", j);
+        console.debug("native-balance response:", j);
 
-        type ChainEntry = {
-          chain: string;
-          native_balance?: string; // wei
-          native_balance_formatted?: string; // human string, optional
-          [k: string]: unknown;
-        };
-
-        const chainEntry = Array.isArray(j?.chains)
-          ? (j.chains as ChainEntry[]).find((c) => c.chain === chain)
-          : (j?.chains as ChainEntry | undefined);
-
-        if (
-          chainEntry &&
-          (chainEntry.native_balance || chainEntry.native_balance_formatted)
-        ) {
-          const rawWei = chainEntry.native_balance ?? "0";
-          const formattedFromApi = chainEntry.native_balance_formatted;
-          const formatted = formattedFromApi ?? formatWeiToEth(rawWei) ?? "0";
+        // Response shape: { balance: string (wei), eth: string (formatted) }
+        if (j && typeof j.eth === "string") {
           entry = {
             loading: false,
             found: true,
-            balanceRaw: rawWei,
-            formatted,
+            balanceRaw: j.balance ?? "0",
+            formatted: j.eth,
             decimals: 18,
             symbol: "ETH",
             name: "Ethereum",
           };
-        } else {
-          // no data — leave entry null -> will fallback to not found
         }
       } else {
-        // ERC20: use erc20-balance API
+        // ✅ ERC20 — use erc20-balance API
         const url = `/api/erc20-balance?wallet=${encodeURIComponent(
           wallet,
         )}&token=${encodeURIComponent(tokenAddress)}&chain=${encodeURIComponent(
@@ -129,6 +113,7 @@ const SwapCard: React.FC<SwapCardProps> = ({ selectedChain }) => {
         const r = await fetch(url);
         const j = await r.json().catch(() => null);
         console.debug("erc20-balance response:", j);
+
         if (j && j.found) {
           entry = {
             loading: false,
@@ -144,7 +129,7 @@ const SwapCard: React.FC<SwapCardProps> = ({ selectedChain }) => {
         }
       }
 
-      const nextEntry = entry ?? {
+      const nextEntry: BalanceEntry = entry ?? {
         loading: false,
         found: false,
         balanceRaw: "0",
@@ -154,20 +139,16 @@ const SwapCard: React.FC<SwapCardProps> = ({ selectedChain }) => {
         name: null,
       };
 
-      // update state with the final entry
       setBalances((prev) => {
-        const next = {
-          ...prev,
-          [key]: nextEntry,
-        };
+        const next = { ...prev, [key]: nextEntry };
         console.debug("balances updated keys:", Object.keys(next));
         return next;
       });
 
       return nextEntry;
     } catch (err) {
-      console.error("fetchBalanceFor error", err);
-      const fallback = {
+      console.error("fetchBalanceFor error:", err);
+      const fallback: BalanceEntry = {
         loading: false,
         found: false,
         balanceRaw: "0",

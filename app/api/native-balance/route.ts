@@ -1,7 +1,6 @@
-// app/api/native-balance/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
-const MORALIS_BASE = "https://deep-index.moralis.io/api/v2";
+const MORALIS_BASE = "https://deep-index.moralis.io/api/v2.2";
 
 function formatWeiToEth(weiStr: string): string | null {
   if (typeof weiStr !== "string" || !/^\d+$/.test(weiStr)) return null;
