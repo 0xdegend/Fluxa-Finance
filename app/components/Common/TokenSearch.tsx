@@ -1,10 +1,11 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { debounce } from "lodash";
 import { TokenInfo } from "@/app/types";
 import Image from "next/image";
 import Lottie from "lottie-react";
 import loadingAnimation from "../../../public/lottie/loading.json";
+
 export default function TokenSearch({
   chain,
   onSelect,
@@ -17,6 +18,7 @@ export default function TokenSearch({
   const [loading, setLoading] = useState(false);
   const [rateLimited, setRateLimited] = useState(false);
   const [errMsg, setErrMsg] = useState<string | null>(null);
+  const abortRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
     setQ("");
@@ -24,6 +26,7 @@ export default function TokenSearch({
     setRateLimited(false);
     setErrMsg(null);
   }, [chain]);
+
   const makeCompositeKey = (t: TokenInfo) => {
     const chainPart = String(t.chain ?? chain ?? "unknown")
       .toLowerCase()
@@ -38,34 +41,33 @@ export default function TokenSearch({
     return `${chainPart}:${symbolPart}:${namePart}:${logoPart}`;
   };
 
-  useEffect(() => {
-    const controller = new AbortController();
-    const signal = controller.signal;
-
-    const run = debounce(async (value: string) => {
-      // clear previous error states
+  const search = useCallback(
+    debounce(async (value: string, currentChain: string) => {
       setErrMsg(null);
       setRateLimited(false);
 
-      if (!value || value.trim().length === 0) {
+      if (!value || value.trim().length < 2) {
         setResults([]);
         setLoading(false);
         return;
       }
+      if (abortRef.current) abortRef.current.abort();
+      abortRef.current = new AbortController();
+      const signal = abortRef.current.signal;
 
       setLoading(true);
       try {
         const url = `/api/relay/token-search?chain=${encodeURIComponent(
-          chain,
+          currentChain,
         )}&q=${encodeURIComponent(value)}`;
         const res = await fetch(url, { signal });
+
         if (!res.ok) {
           if (res.status === 429) {
             setRateLimited(true);
             setResults([]);
             return;
           }
-
           let text: string | null = null;
           try {
             const j = await res.json();
@@ -84,17 +86,12 @@ export default function TokenSearch({
 
         const json = await res.json();
 
-        // Normalize response into an array of TokenInfo
         let arr: TokenInfo[] = [];
-        if (Array.isArray(json)) {
-          arr = json;
-        } else if (Array.isArray(json.tokens)) {
-          arr = json.tokens;
-        } else if (Array.isArray(json.results)) {
-          arr = json.results;
-        } else if (Array.isArray(json.data)) {
-          arr = json.data;
-        } else if (json && typeof json === "object") {
+        if (Array.isArray(json)) arr = json;
+        else if (Array.isArray(json.tokens)) arr = json.tokens;
+        else if (Array.isArray(json.results)) arr = json.results;
+        else if (Array.isArray(json.data)) arr = json.data;
+        else if (json && typeof json === "object") {
           const maybeArray = Object.values(json).filter(
             (v) => v && typeof v === "object",
           );
@@ -104,35 +101,31 @@ export default function TokenSearch({
         const dedupeMap = new Map<string, TokenInfo>();
         for (const t of arr) {
           const key = makeCompositeKey(t);
-          if (!dedupeMap.has(key)) {
-            dedupeMap.set(key, t);
-          }
+          if (!dedupeMap.has(key)) dedupeMap.set(key, t);
         }
-        const deduped = Array.from(dedupeMap.values());
-
-        // Ensure results is always an array
-        setResults(Array.isArray(deduped) ? deduped : []);
-        console.log(results);
+        setResults(Array.from(dedupeMap.values()));
       } catch (err: unknown) {
-        // @ts-expect-error Just simple type
-        if (err?.name === "AbortError") {
-          return;
-        }
+        // @ts-expect-error simple check
+        if (err?.name === "AbortError") return;
         console.error("search error", err);
         setErrMsg("Network error");
         setResults([]);
       } finally {
         setLoading(false);
       }
-    }, 300);
+    }, 600),
+    [],
+  );
+  useEffect(() => {
+    search(q, chain);
+    return () => search.cancel();
+  }, [q, chain, search]);
 
-    run(q);
-
+  useEffect(() => {
     return () => {
-      run.cancel();
-      controller.abort();
+      if (abortRef.current) abortRef.current.abort();
     };
-  }, [q, chain]);
+  }, []);
 
   return (
     <div>
@@ -147,11 +140,7 @@ export default function TokenSearch({
         {loading ? (
           <div role="status" aria-live="polite">
             <div className="w-[40%] h-60">
-              <Lottie
-                animationData={loadingAnimation}
-                loop={true}
-                autoplay={true}
-              />
+              <Lottie animationData={loadingAnimation} loop autoplay />
             </div>
           </div>
         ) : rateLimited ? (
@@ -160,11 +149,12 @@ export default function TokenSearch({
           </div>
         ) : errMsg ? (
           <div className="p-2 text-sm text-red-600">Error: {errMsg}</div>
-        ) : results.length === 0 ? (
+        ) : results.length === 0 && q.trim().length >= 2 ? (
           <div className="p-2 text-sm text-gray-500">No results</div>
-        ) : (
+        ) : null}
+
+        {!loading &&
           results.map((r) => {
-            // use the same deterministic composite key for React
             const key = makeCompositeKey(r);
             return (
               <div
@@ -173,7 +163,6 @@ export default function TokenSearch({
                 onClick={() => onSelect(r)}
               >
                 {r.logo ? (
-                  // unoptimized avoids Next image domain config issues
                   <Image
                     src={r.logo}
                     width={28}
@@ -196,8 +185,7 @@ export default function TokenSearch({
                 <div className="ml-auto text-xs text-gray-400">{r.chain}</div>
               </div>
             );
-          })
-        )}
+          })}
       </div>
     </div>
   );
