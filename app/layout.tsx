@@ -4,7 +4,7 @@ import "./globals.css";
 import { ClientProviders } from "./Wrapper/ClientProvider";
 
 const funnel = Funnel_Sans({
-  variable: "--font-funnel",
+  variable: "--font-rajdhani",
   weight: ["300", "400", "500", "600", "700", "800"],
   subsets: ["latin"],
 });

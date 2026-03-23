@@ -55,7 +55,7 @@ const CustomTooltip: React.FC<CustomTooltipProps> = ({
       style={{ pointerEvents: "none" }}
     >
       {/* <div className="font-semibold">{point.label}</div> */}
-      <div className="text-xs text-gray-600 font-[funnel]">
+      <div className="text-xs text-gray-600 font-rajdhani">
         {formatPrice(point.value)}
       </div>
     </div>

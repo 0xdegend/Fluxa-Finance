@@ -116,7 +116,7 @@ export const Web3LoginButton: React.FC<
   };
 
   const base =
-    "rounded-md transition font-semibold flex items-center justify-center cursor-pointer font-[funnel]";
+    "rounded-md transition font-semibold flex items-center justify-center cursor-pointer font-rajdhani";
   const sizeMap = {
     sm: "px-3 py-1 text-xs",
     md: "px-4 py-2 text-sm",

@@ -21,7 +21,7 @@ const TokenListModal = ({
       onClick={onClose}
     >
       <div className="bg-white rounded-xl shadow-lg p-4 min-w-[380px]">
-        <h3 className="font-bold mb-2 font-[funnel]">Select a token</h3>
+        <h3 className="font-bold mb-2 font-rajdhani">Select a token</h3>
         <ul>
           {tokens.map((t) => (
             <li key={t.symbol}>
@@ -43,7 +43,7 @@ const TokenListModal = ({
                     unoptimized
                   />
                 </div>
-                <span className="text-black font-[funnel]">
+                <span className="text-black font-rajdhani">
                   {t.symbol} - {t.name}
                 </span>
               </button>

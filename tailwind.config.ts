@@ -18,8 +18,8 @@ module.exports = {
         "fluxa-glow": "var(--fluxa-glow)",
       },
       fontFamily: {
-        funnel: ["var(--font-funnel)", "sans-serif"],
-        rajdhani: ["var(--font-rajdhani),", "sans-serif"],
+        funnel: ["var(--font-rajdhani)", "sans-serif"],
+        rajdhani: ["var(--font-rajdhani)", "sans-serif"],
       },
 
       borderRadius: {

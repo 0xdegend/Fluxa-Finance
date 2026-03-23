@@ -30,7 +30,7 @@ export default function TokenRow({
   return (
     <div className="flex items-center gap-3 mb-2">
       <button
-        className="flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-200 bg-gray-50 hover:bg-gray-100 focus:outline-none text-black font-[funnel]"
+        className="flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-200 bg-gray-50 hover:bg-gray-100 focus:outline-none text-black font-rajdhani"
         onClick={onSelectToken}
         aria-label={`Select ${label} token`}
       >
@@ -73,7 +73,7 @@ export default function TokenRow({
             </div>
           )}
         </div>
-        <span className="font-semibold font-[funnel]">
+        <span className="font-semibold font-rajdhani">
           {token?.symbol ?? "Select"}
         </span>
         <svg
@@ -91,7 +91,7 @@ export default function TokenRow({
 
       <div className="flex-1 flex flex-col items-end">
         {readOnly ? (
-          <span className="text-2xl text-right text-gray-700 font-[funnel]">
+          <span className="text-2xl text-right text-gray-700 font-rajdhani">
             {amount ?? "0"}
           </span>
         ) : (
@@ -105,12 +105,12 @@ export default function TokenRow({
             onChange={(e) => onAmountChange?.(e.target.value)}
             onFocus={onFocus}
             onBlur={onBlur}
-            className="text-2xl text-right outline-none bg-transparent w-full text-black font-[funnel]"
+            className="text-2xl text-right outline-none bg-transparent w-full text-black font-rajdhani"
             placeholder="0"
             aria-label={`${label} amount`}
           />
         )}
-        <span className="text-xs font-[funnel] text-gray-400">
+        <span className="text-xs font-rajdhani text-gray-400">
           ${usdValue.toLocaleString(undefined, { maximumFractionDigits: 2 })}
         </span>
       </div>

@@ -1,5 +1,20 @@
 @import "tailwindcss";
 
+@theme {
+  --font-rajdhani: "Funnel Sans", sans-serif;
+  --font-rajdhani: "Rajdhani", sans-serif;
+  --color-fluxa-white: var(--fluxa-white);
+  --color-fluxa-black: var(--fluxa-black);
+  --color-fluxa-text: var(--fluxa-text);
+  --color-fluxa-muted: var(--fluxa-muted);
+  --color-fluxa-accent: var(--fluxa-accent);
+  --color-fluxa-accent-600: var(--fluxa-accent-600);
+  --color-fluxa-violet: var(--fluxa-violet);
+  --color-fluxa-reward: var(--fluxa-reward);
+  --shadow-fluxa-soft: var(--fluxa-shadow-soft);
+  --shadow-fluxa-glow: var(--fluxa-glow);
+}
+
 :root {
   --fluxa-white: #ffffff;
   --fluxa-black: #0a0f17;
@@ -69,10 +84,6 @@
 .no-spinner::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
-}
-
-* {
-  /* outline: 1px solid red; */
 }
 
 @keyframes marquee {

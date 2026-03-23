@@ -92,7 +92,7 @@ export default function WalletSidebar({
 
           {authenticated && (
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-slate-100 rounded-full cursor-pointer">
-              <span className="text-sm font-mono">
+              <span className="text-sm font-semibold font-rajdhani">
                 {truncate(`${updatedAddress}`)}
               </span>
               <button
@@ -120,10 +120,12 @@ export default function WalletSidebar({
           {authenticated && (
             <>
               <div>
-                <div className="text-3xl font-extrabold text-black">
+                <div className="text-3xl font-rajdhani font-extrabold text-black">
                   ${displayTotal}
                 </div>
-                <div className="text-xs text-gray-500 mt-1">Total balance</div>
+                <div className="text-xs text-gray-500 mt-1 font-rajdhani font-medium">
+                  Total balance
+                </div>
               </div>
 
               <button
@@ -147,7 +149,7 @@ export default function WalletSidebar({
               role="tab"
               aria-selected={activeTab === "tokens"}
               onClick={() => setActiveTab("tokens")}
-              className={`py-2 px-1 text-sm font-semibold ${
+              className={`py-2 cursor-pointer px-1 text-sm font-rajdhani font-semibold ${
                 activeTab === "tokens"
                   ? "text-slate-900 border-b-2 border-indigo-600"
                   : "text-slate-500"
@@ -159,7 +161,7 @@ export default function WalletSidebar({
               role="tab"
               aria-selected={activeTab === "activity"}
               onClick={() => setActiveTab("activity")}
-              className={`py-2 px-1 text-sm font-semibold ${
+              className={`cursor-pointer py-2 px-1 font-rajdhani text-sm font-semibold ${
                 activeTab === "activity"
                   ? "text-slate-900 border-b-2 border-indigo-600"
                   : "text-slate-500"
@@ -184,7 +186,9 @@ export default function WalletSidebar({
                 </div>
               </div>
             ) : balances.length === 0 ? (
-              <div className="p-4 text-sm text-gray-500">No tokens found.</div>
+              <div className="p-4 text-sm text-gray-50 font-rajdhani">
+                No tokens found.
+              </div>
             ) : (
               <ul className="space-y-4">
                 {authenticated &&
@@ -207,7 +211,7 @@ export default function WalletSidebar({
                               unoptimized
                             />
                           ) : (
-                            <div className="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center text-sm font-semibold text-slate-700">
+                            <div className="w-10 h-10 font-rajdhani rounded-full bg-slate-200 flex items-center justify-center text-sm font-semibold text-slate-700">
                               {getInitial(t.symbol)}
                             </div>
                           )}
@@ -235,6 +239,7 @@ export default function WalletSidebar({
                               />
                             ) : (
                               <span
+                                className="font-rajdhani"
                                 style={{
                                   position: "absolute",
                                   left: -6,
@@ -262,20 +267,20 @@ export default function WalletSidebar({
                         </div>
 
                         <div>
-                          <div className="font-semibold text-sm text-slate-900">
+                          <div className="font-semibold font-rajdhani text-sm text-slate-900">
                             {t.symbol}
                           </div>
-                          <div className="text-xs text-slate-400 capitalize">
+                          <div className="text-xs font-rajdhani text-slate-400 capitalize">
                             {t.name ?? t.chain ?? network}
                           </div>
                         </div>
                       </div>
 
                       <div className="text-right">
-                        <div className="font-semibold text-sm text-slate-900">
+                        <div className="font-bold font-rajdhani text-sm text-slate-900">
                           {t.usd ? formatUsd(t.usd) : "—"}
                         </div>
-                        <div className="text-xs text-slate-400">
+                        <div className="text-xs text-slate-400 font-rajdhani font-semibold">
                           {t.balance != null
                             ? formatSignificant(t.balance, 6) + ` ${t.symbol}`
                             : ""}
@@ -297,7 +302,7 @@ export default function WalletSidebar({
           {authenticated ? (
             <button
               onClick={handleLogout}
-              className="w-full py-2 cursor-pointer rounded-md bg-indigo-600 text-white font-semibold"
+              className="w-full font-rajdhani py-2 cursor-pointer rounded-md bg-indigo-600 text-white font-semibold"
             >
               Disconnect
             </button>
@@ -306,7 +311,7 @@ export default function WalletSidebar({
           )}
           <button
             onClick={onClaimRewards}
-            className="w-full py-2 rounded-md border border-slate-200 bg-white text-slate-700"
+            className="w-full py-2 rounded-md border border-slate-200 bg-white text-slate-700 font-rajdhani"
           >
             Claim rewards
           </button>
@@ -315,7 +320,7 @@ export default function WalletSidebar({
               href={`${explorerBase}/address/${address}`}
               target="_blank"
               rel="noreferrer"
-              className="w-full text-center block mt-2 py-2 rounded-md text-xs text-indigo-600 underline"
+              className="w-full font-rajdhani text-center block mt-2 py-2 rounded-md text-xs text-indigo-600 underline"
             >
               View on explorer
             </a>

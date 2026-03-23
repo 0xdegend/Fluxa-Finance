@@ -274,7 +274,7 @@ export default function NetworkDropdown({
                             style={{
                               fontSize: 14,
                               lineHeight: "18px",
-                              fontFamily: "funnel, system-ui, sans-serif",
+                              fontFamily: "rajdhani, system-ui, sans-serif",
                             }}
                             className="cursor-pointer"
                           >
@@ -297,7 +297,7 @@ export default function NetworkDropdown({
                             marginLeft: "auto",
                             fontSize: 12,
                             color: "#2563eb",
-                            fontFamily: "funnel",
+                            fontFamily: "rajdhani",
                           }}
                         >
                           Active
@@ -334,7 +334,7 @@ export default function NetworkDropdown({
         <span className="sr-only">Connected network</span>
         <span className="inline-flex items-center gap-2">
           {renderLogo(currentOption.key, currentOption.label, 18)}
-          <span className="text-sm font-[funnel]">{currentOption.label}</span>
+          <span className="text-sm font-rajdhani">{currentOption.label}</span>
         </span>
         <svg
           className="w-3 h-3 text-slate-500"
