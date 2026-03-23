@@ -73,7 +73,7 @@ export default function TokenRow({
             </div>
           )}
         </div>
-        <span className="font-semibold font-rajdhani">
+        <span className="font-bold font-rajdhani">
           {token?.symbol ?? "Select"}
         </span>
         <svg
@@ -91,7 +91,7 @@ export default function TokenRow({
 
       <div className="flex-1 flex flex-col items-end">
         {readOnly ? (
-          <span className="text-2xl text-right text-gray-700 font-rajdhani">
+          <span className="text-2xl text-right text-gray-700 font-bold font-rajdhani">
             {amount ?? "0"}
           </span>
         ) : (
@@ -105,12 +105,12 @@ export default function TokenRow({
             onChange={(e) => onAmountChange?.(e.target.value)}
             onFocus={onFocus}
             onBlur={onBlur}
-            className="text-2xl text-right outline-none bg-transparent w-full text-black font-rajdhani"
+            className="text-2xl text-right outline-none bg-transparent w-full text-black font-rajdhani font-bold"
             placeholder="0"
             aria-label={`${label} amount`}
           />
         )}
-        <span className="text-xs font-rajdhani text-gray-400">
+        <span className="text-xs font-rajdhani font-bold text-gray-400">
           ${usdValue.toLocaleString(undefined, { maximumFractionDigits: 2 })}
         </span>
       </div>
