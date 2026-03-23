@@ -239,7 +239,7 @@ const Landing: React.FC = () => {
 
       <nav className="top-0 left-0 w-full flex items-center justify-between px-6 py-4 relative">
         <div className="flex items-center gap-6">
-          <span className="font-bold text-lg text-indigo-700 font-[audiowide]">
+          <span className="font-bold text-lg text-indigo-700 font-[funnel]">
             Fluxa
           </span>
           <ul
@@ -249,18 +249,18 @@ const Landing: React.FC = () => {
             <li>
               <a
                 href="#"
-                className="hover:text-indigo-600 font-medium font-[audiowide]"
+                className="hover:text-indigo-600 font-medium font-[funnel]"
               >
                 Swap
               </a>
             </li>
             <li>
-              <a href="#" className="hover:text-indigo-600 font-[audiowide]">
+              <a href="#" className="hover:text-indigo-600 font-[funnel]">
                 Liquidity
               </a>
             </li>
             <li>
-              <a href="#" className="hover:text-indigo-600 font-[audiowide]">
+              <a href="#" className="hover:text-indigo-600 font-[funnel]">
                 Portfolio
               </a>
             </li>

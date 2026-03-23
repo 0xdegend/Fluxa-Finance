@@ -317,7 +317,7 @@ export default function ChainTokenModal({
         onClick={onClose}
         aria-hidden
       />
-      <div className="relative bg-white rounded-lg shadow max-w-2xl w-full p-6 font-[audiowide] z-10">
+      <div className="relative bg-white rounded-lg shadow max-w-2xl w-full p-6 font-[funnel] z-10">
         <h3 className="text-lg font-semibold mb-3">Select Chains & Tokens</h3>
 
         <div className="mb-3">

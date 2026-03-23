@@ -55,7 +55,7 @@ const CustomTooltip: React.FC<CustomTooltipProps> = ({
       style={{ pointerEvents: "none" }}
     >
       {/* <div className="font-semibold">{point.label}</div> */}
-      <div className="text-xs text-gray-600 font-[audiowide]">
+      <div className="text-xs text-gray-600 font-[funnel]">
         {formatPrice(point.value)}
       </div>
     </div>
@@ -84,13 +84,13 @@ export default function SparklineRecharts({
       ? change > 0
         ? upColor
         : change < 0
-        ? downColor
-        : neutralColor
+          ? downColor
+          : neutralColor
       : delta > 0
-      ? upColor
-      : delta < 0
-      ? downColor
-      : neutralColor;
+        ? upColor
+        : delta < 0
+          ? downColor
+          : neutralColor;
   const data: SparklineData[] = series.map((value, i) => ({
     idx: i,
     value: Number(value),

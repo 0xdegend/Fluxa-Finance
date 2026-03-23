@@ -320,20 +320,20 @@ const SwapCard: React.FC<SwapCardProps> = ({ selectedChain }) => {
         <div className="flex items-center justify-between mb-2">
           <label
             htmlFor="sell-amount"
-            className="text-xs font-semibold text-gray-600 font-[audiowide]"
+            className="text-xs font-semibold text-gray-600 font-[funnel]"
           >
             Sell
           </label>
           <div className="flex gap-2">
             <button
-              className="text-xs px-2 py-1 bg-gray-100 rounded-full font-medium hover:bg-gray-200 text-black hover:cursor-pointer font-[audiowide]"
+              className="text-xs px-2 py-1 bg-gray-100 rounded-full font-medium hover:bg-gray-200 text-black hover:cursor-pointer font-[funnel]"
               onClick={() => handleQuick(1)}
               aria-label="Set max amount"
             >
               Max
             </button>
             <button
-              className="text-xs px-2 py-1 bg-gray-100 rounded-full font-medium hover:bg-gray-200 text-black hover:cursor-pointer font-[audiowide]"
+              className="text-xs px-2 py-1 bg-gray-100 rounded-full font-medium hover:bg-gray-200 text-black hover:cursor-pointer font-[funnel]"
               onClick={() => handleQuick(0.5)}
               aria-label="Set 50 percent amount"
             >
@@ -360,7 +360,7 @@ const SwapCard: React.FC<SwapCardProps> = ({ selectedChain }) => {
 
         {/* Balance display */}
         <div className="flex items-center justify-between mb-2">
-          <span className="text-xs font-[audiowide] text-gray-500">
+          <span className="text-xs font-[funnel] text-gray-500">
             Bal:{" "}
             {authenticated
               ? getDisplayedBalance(fromToken, selectedChain, balances)
@@ -393,7 +393,7 @@ const SwapCard: React.FC<SwapCardProps> = ({ selectedChain }) => {
             </svg>
           </button>
         </div>
-        <label className="text-xs font-semibold text-gray-600 font-[audiowide]">
+        <label className="text-xs font-semibold text-gray-600 font-[funnel]">
           Buy
         </label>
         <TokenRow
@@ -413,7 +413,7 @@ const SwapCard: React.FC<SwapCardProps> = ({ selectedChain }) => {
         <div className="flex items-center gap-2 mb-2">
           <label
             htmlFor="slippage"
-            className="text-xs text-gray-500 font-[audiowide]"
+            className="text-xs text-gray-500 font-[funnel]"
           >
             Slippage
           </label>
@@ -425,7 +425,7 @@ const SwapCard: React.FC<SwapCardProps> = ({ selectedChain }) => {
             step="0.1"
             value={slippage}
             onChange={(e) => setSlippage(Number(e.target.value))}
-            className="border-[#6b63633f] border rounded px-2 py-1 w-20 text-xs text-black no-spinner outline-none mt-3 font-[audiowide]"
+            className="border-[#6b63633f] border rounded px-2 py-1 w-20 text-xs text-black no-spinner outline-none mt-3 font-[funnel]"
             aria-label="Slippage tolerance"
           />
           <span className="text-xs text-gray-400">%</span>
@@ -456,9 +456,7 @@ const SwapCard: React.FC<SwapCardProps> = ({ selectedChain }) => {
 
         {/* Error */}
         {amountTouched && error && (
-          <div className="text-red-500 text-xs mb-2 font-[audiowide]">
-            {error}
-          </div>
+          <div className="text-red-500 text-xs mb-2 font-[funnel]">{error}</div>
         )}
 
         {/* Swap preview */}
@@ -472,7 +470,7 @@ const SwapCard: React.FC<SwapCardProps> = ({ selectedChain }) => {
 
         {/* CTA button */}
         <button
-          className={`w-full mt-2 py-3 rounded-md font-bold text-lg uppercase tracking-wide shadow-inner font-[audiowide] ${
+          className={`w-full mt-2 py-3 rounded-md font-bold text-lg uppercase tracking-wide shadow-inner font-[funnel] ${
             isWalletConnected
               ? "bg-green-500 text-white hover:bg-green-600"
               : "bg-gray-700 text-white"

@@ -20,15 +20,15 @@ const TokenSummaryCard: React.FC<TokenSummaryCardProps> = ({
       change >= 0 ? "bg-[#e9f1e980]" : "bg-[#f4e8e96f]"
     }`}
   >
-    <div className="font-semibold text-lg font-[audiowide]">{token}</div>
-    <div className="text-sm text-gray-500 font-[audiowide]">
+    <div className="font-semibold text-lg font-[funnel]">{token}</div>
+    <div className="text-sm text-gray-500 font-[funnel]">
       ${formatPrice(price)}
     </div>
     <div
       className={`text-xs ${
         change >= 0
-          ? "text-green-600 font-[audiowide]"
-          : "text-red-500 font-[audiowide]"
+          ? "text-green-600 font-[funnel]"
+          : "text-red-500 font-[funnel]"
       }`}
     >
       {change >= 0 ? "+" : ""}

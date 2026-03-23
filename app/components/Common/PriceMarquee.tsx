@@ -234,11 +234,9 @@ export default function PriceMarquee({
               </div>
             )}
 
-            <div className="font-semibold mr-1 font-[audiowide]">
-              {it.symbol}
-            </div>
+            <div className="font-semibold mr-1 font-[funnel]">{it.symbol}</div>
 
-            <div className="text-[(--fluxa-muted)] font-[audiowide]">
+            <div className="text-[(--fluxa-muted)] font-[funnel]">
               {it.price === undefined ? (
                 <span className="animate-pulse">...</span>
               ) : (
@@ -247,7 +245,7 @@ export default function PriceMarquee({
             </div>
 
             <div
-              className={`ml-2 text-xs font-semibold font-[audiowide]`}
+              className={`ml-2 text-xs font-semibold font-[funnel]`}
               style={{
                 color:
                   it.change == null

@@ -18,7 +18,7 @@ module.exports = {
         "fluxa-glow": "var(--fluxa-glow)",
       },
       fontFamily: {
-        audiowide: ["var(--font-audiowide)", "sans-serif"],
+        funnel: ["var(--font-funnel)", "sans-serif"],
         rajdhani: ["var(--font-rajdhani),", "sans-serif"],
       },
 

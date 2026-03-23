@@ -1,39 +1,28 @@
 @import "tailwindcss";
 
 :root {
-  /* neutrals */
   --fluxa-white: #ffffff;
   --fluxa-black: #0a0f17;
   --fluxa-text: #071225;
   --fluxa-muted: #5c6670;
   --fluxa-danger: #ef4444;
   --fluxa-warning: #f59e0b;
-
-  /* accents */
   --fluxa-accent: #00c7ff;
   --fluxa-accent-600: #00a5cc;
   --fluxa-violet: #6f4cff;
   --fluxa-reward: #ffd166;
-
-  /* glass (light) */
   --fluxa-glass-light: rgba(255, 255, 255, 0.72);
   --fluxa-glass-light-border: rgba(17, 24, 39, 0.06);
   --fluxa-glass-frost: rgba(255, 255, 255, 0.3);
-
-  /* glass (dark) */
   --fluxa-glass-dark: rgba(10, 15, 23, 0.52);
   --fluxa-glass-dark-border: rgba(255, 255, 255, 0.06);
-
-  /* shadows & glow */
   --fluxa-shadow-soft: 0 8px 30px rgba(10, 15, 23, 0.08);
   --fluxa-glow: 0 10px 40px rgba(0, 199, 255, 0.1);
-
-  /* brand gradient */
   --fluxa-gradient: linear-gradient(90deg, #00c7ff 0%, #6f4cff 70%);
 }
 
 .dark {
-  --fluxa-white: #071225; /* invert naming for convenience on dark mode */
+  --fluxa-white: #071225;
   --fluxa-black: #ffffff;
   --fluxa-text: #e8f9ff;
   --fluxa-muted: #9fb0bd;
@@ -44,7 +33,6 @@
   --fluxa-glass-dark: rgba(6, 12, 18, 0.6);
 }
 
-/* glassmorphism utility classes (use alongside Tailwind) */
 .glass {
   background: var(--fluxa-glass-light);
   border: 1px solid var(--fluxa-glass-light-border);
@@ -54,7 +42,6 @@
   border-radius: 16px;
 }
 
-/* dark variant */
 .glass-dark {
   background: var(--fluxa-glass-dark);
   border: 1px solid var(--fluxa-glass-dark-border);
@@ -64,7 +51,6 @@
   border-radius: 16px;
 }
 
-/* inner sheen line for premium feel */
 .glass::before {
   content: "";
   position: absolute;
@@ -95,9 +81,9 @@
   }
   100% {
     transform: translateX(-50%);
-  } /* because items duplicated */
+  }
 }
-/* pause on hover for the marquee container */
+
 div:hover > div {
   animation-play-state: paused;
 }
