@@ -95,7 +95,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
 
   try {
     const r = await fetch(
-      `https://deep-index.moralis.io/api/v2.2/wallets/${encodeURIComponent(rawAddress)}/tokens?chain=${encodeURIComponent(chain)}&limit=${limit}&exclude_spam=true`,
+      `https://deep-index.moralis.io/api/v2.2/wallets/${encodeURIComponent(rawAddress)}/tokens?chain=${encodeURIComponent(chain)}&limit=${limit}&exclude_spam=true&exclude_unverified_contracts=true`,
       {
         headers: { accept: "application/json", "X-API-Key": MORALIS_API_KEY },
         signal: AbortSignal.timeout(10000),

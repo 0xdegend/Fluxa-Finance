@@ -59,7 +59,8 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
 
   try {
     const r = await fetch(
-      `https://deep-index.moralis.io/api/v2.2/${encodeURIComponent(wallet)}/erc20?chain=${encodeURIComponent(chain)}`,
+      `https://deep-index.moralis.io/api/v2.2/${encodeURIComponent(wallet)}/erc20?chain=${encodeURIComponent(chain)}&exclude_spam=true&
+exclude_unverified_contracts=true`,
       { headers: { "X-API-Key": MORALIS_API_KEY, accept: "application/json" } },
     );
 
