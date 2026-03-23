@@ -51,6 +51,8 @@ const SwapCard: React.FC<SwapCardProps> = ({ selectedChain }) => {
     login();
   };
 
+  console.log(preview);
+
   async function fetchBalanceFor(
     chain: string,
     tokenAddress: string,
@@ -466,6 +468,7 @@ const SwapCard: React.FC<SwapCardProps> = ({ selectedChain }) => {
           toToken={toToken}
           visible={!!preview && showPreview}
           animating={showAnim}
+          amount={amount}
         />
 
         {/* CTA button */}
