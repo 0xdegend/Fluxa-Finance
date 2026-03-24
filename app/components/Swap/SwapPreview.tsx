@@ -50,7 +50,7 @@ export default function SwapPreview({
         // },
         {
           label: "Rate",
-          value: `1 ${fromToken?.symbol} ≈ ${Number(preview.rate).toLocaleString(undefined, { maximumFractionDigits: 2 })} ${toToken?.symbol}`,
+          value: `1 ${fromToken?.symbol} ≈ $${(Number(preview.estInUsd) / Number(amount)).toLocaleString(undefined, { maximumFractionDigits: 2, minimumFractionDigits: 2 })}`,
         },
         {
           label: "Price impact",

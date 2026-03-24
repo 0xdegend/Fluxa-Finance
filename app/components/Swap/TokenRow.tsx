@@ -101,6 +101,7 @@ export default function TokenRow({
             inputMode="decimal"
             pattern="[0-9]*[.,]?[0-9]*"
             step="any"
+            autoComplete="off"
             value={amount}
             onChange={(e) => onAmountChange?.(e.target.value)}
             onFocus={onFocus}

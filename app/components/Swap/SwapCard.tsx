@@ -415,7 +415,7 @@ const SwapCard: React.FC<SwapCardProps> = ({ selectedChain }) => {
         <div className="flex items-center gap-2 mb-2">
           <label
             htmlFor="slippage"
-            className="text-xs text-gray-500 font-rajdhani"
+            className="text-xs text-gray-500 font-bold font-rajdhani"
           >
             Slippage
           </label>

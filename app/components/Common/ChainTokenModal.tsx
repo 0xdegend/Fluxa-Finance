@@ -303,7 +303,7 @@ export default function ChainTokenModal({
         ) : (
           <>
             {renderLogoEntry(entry, 18, c.label)}
-            <span className="text-xs">{c.label}</span>
+            <span className="text-xs font-rajdhani font-bold">{c.label}</span>
           </>
         )}
       </button>

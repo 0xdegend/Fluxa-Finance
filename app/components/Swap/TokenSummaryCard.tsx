@@ -21,7 +21,7 @@ const TokenSummaryCard: React.FC<TokenSummaryCardProps> = ({
     }`}
   >
     <div className="font-semibold text-lg font-rajdhani">{token}</div>
-    <div className="text-sm text-gray-500 font-rajdhani">
+    <div className="text-sm text-gray-500 font-bold font-rajdhani">
       ${formatPrice(price)}
     </div>
     <div
